@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>CaseTriggerHandlerTest</members>
+        <name>ApexClass</name>
+    </types>
+    <!--<types>
+        <members>CaseTriggerHandler</members>
+        <members>CaseTriggerHandler</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Division_Mapping__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>Division_Mapping__c.Active__c</members>
+        <members>Division_Mapping__c.Division__c</members>
+        <members>Division_Mapping__c.Group__c</members>
+        <members>Division_Mapping__c.Group_Code__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Division_Mapping__c-Division Mapping Layout</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>Division_Mapping__c.Active_Division_Mappings</members>
+        <members>Division_Mapping__c.Consumer_Division_Mappings</members>
+        <members>Division_Mapping__c.Other_Division_Mappings</members>
+        <members>Division_Mapping__c.Industrial_Division_Mappings</members>
+        <members>Division_Mapping__c.Mixed_Bag_Division_Mappings</members>
+        <members>Division_Mapping__c.Copy_of_Mixed_Bag_Division_Mappings</members>
+        <name>ListView</name>
+    </types>
+
+    Industrial_Brands
+Floorcare_Brands<types>
+        <members>*</members>
+        <name>ApexComponent</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>ApexTestSuite</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>ApexTrigger</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>StaticResource</name>
+    </types>-->
+    <version>58.0</version>
+</Package>
