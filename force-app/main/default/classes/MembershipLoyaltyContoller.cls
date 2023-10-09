@@ -13,10 +13,8 @@ public with sharing class MembershipLoyaltyContoller {
         List<Member_Benefit__c> memberBenefitToInsertList = new List<Member_Benefit__c>();
         List<Asset> registeredProductList = withoutSharing.getAssets(assetIds); // Retrieve Assets (Registered Products)
         Set<String> assetCustomerAccountIds = new Set<String>();
-        // Set<String> productCodes = new Set<String>();
         Set<String> eligibleProductIds = new Set<String>();
         List<String> brandSet = new List<String>{'Ryobi'};
-        // Map<String,List<memberBenefitProgramWrapper>> memberBenefitProgramWrapMap = new Map<String,List<memberBenefitProgramWrapper>>(); //Member Benefit Id - Member Benefit Wrapper Map
         Map<String,memberBenefitProgramWrapper> memberBenefitProgramWrapMap = new Map<String,memberBenefitProgramWrapper>();
         Map<Id,List<Eligible_Product_Line_Item__c>> memberBenefitProgramEligiblePliMap = new Map<Id,List<Eligible_Product_Line_Item__c>>();
         Map<String,List<Asset>> customerAssetListMap = new Map<String,List<Asset>>();
@@ -30,11 +28,6 @@ public with sharing class MembershipLoyaltyContoller {
 
         for(Member_Benefit_Program__c memberBenefit : withoutSharing.getMemberBenefitPrograms(brandSet,assetCustomerAccountIds).values()){ //Loop Member_Benefit_Program__c
             if(memberBenefit.Eligible_Customers__r != NULL && memberBenefit.Eligible_Customers__r.size() > 0){
-
-                // memberBenefitProgramWrapper memberBenefitWrap = new memberBenefitProgramWrapper();
-                // memberBenefitWrap.memberBenefitProgramRec = memberBenefit;
-                // // memberBenefitWrap.customerAssetListMap
-                // memberBenefitWrap.exactProductMatch = false;
 
                 Map<String,List<Asset>> filteredCustomerAssetListMap = new Map<String,List<Asset>>(); //Map of CustomerId(Contact Id) - List of Asset();
 
@@ -54,14 +47,6 @@ public with sharing class MembershipLoyaltyContoller {
                                 else{
                                     filteredCustomerAssetListMap.put(eligibleCustomer.Customer_ContactId__c,new List<Asset>{assetRec});
                                 }
-                                // memberBenefitProgramWrapper memberBenefitWrap = new memberBenefitProgramWrapper(memberBenefit,null,eligibleCustomer,false); //Build memberBenefitProgramWrapper Wrapper
-                                
-                                // if(memberBenefitProgramWrapMap.containsKey(memberBenefit.Id)){
-                                //     memberBenefitProgramWrapMap.get(memberBenefit.Id).add(memberBenefitWrap);
-                                // }   
-                                // else{
-                                //     memberBenefitProgramWrapMap.put(memberBenefit.Id,new List<memberBenefitProgramWrapper>{memberBenefitWrap});
-                                // }
                                 eligibleProductIds.add(memberBenefit.Eligible_Products__c); 
                             }
                         }
@@ -71,12 +56,6 @@ public with sharing class MembershipLoyaltyContoller {
                     memberBenefitProgramWrapper memberBenefitWrap = new memberBenefitProgramWrapper(memberBenefit,filteredCustomerAssetListMap,false); //Build memberBenefitProgramWrapper Wrapper
                     memberBenefitProgramWrapMap.put(memberBenefit.Id,memberBenefitWrap);
                 }      
-                // if(memberBenefitProgramWrapMap.containsKey(memberBenefit.Id)){
-                //     memberBenefitProgramWrapMap.get(memberBenefit.Id).add(memberBenefitWrap);
-                // }   
-                // else{
-                //     memberBenefitProgramWrapMap.put(memberBenefit.Id,new List<memberBenefitProgramWrapper>{memberBenefitWrap});
-                // }
             }
         }
 
@@ -94,14 +73,10 @@ public with sharing class MembershipLoyaltyContoller {
             }
         }
 
-        //Map<String,Member_Benefit__c> customerMemberBenefitMap = new Map<String,Member_Benefit__c>();
-
         for(String memberBenefitProgramId : memberBenefitProgramWrapMap.keySet()){ //Loop through Member Benefit Program Id
 
             Set<String> contactProductSet = new Set<String>(); //to check if Product is not duplicated
             
-            // Member_Benefit__c memberBenefitToInsert = new Member_Benefit__c(Status__c = 'Submitted', Member_Benefit_Program__c = memberBenefitProgramId); 
-            // String memberBenefitProductCode = '';
             memberBenefitProgramWrapper memberBenefitProgramWrap = memberBenefitProgramWrapMap.get(memberBenefitProgramId);
 
             String currEligibleProductId = memberBenefitProgramWrap.memberBenefitProgramRec.Eligible_Products__c;
@@ -132,9 +107,6 @@ public with sharing class MembershipLoyaltyContoller {
                         && memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c.containsIgnoreCase(assetRecord.SAPProductHeirarchy__c)){// && memberBenefitProgramWrap.exactProductMatch == false){
                             if(!productCodes.containsIgnoreCase(assetRecord.ProductCode)) productCodes += (productCodes != '') ? ';'+assetRecord.ProductCode : assetRecord.ProductCode;
                             System.debug('CUSTOMER '+assetRecord.Account.Name +' MATCH VIA PRODUCT HIERARCHY >>> '+ 'memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c >>> '+memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c + ' assetRecord.SAPProductHeirarchy__c >>> '+assetRecord.SAPProductHeirarchy__c);
-                            // Member_Benefit__c memberBenefitToInsert = new Member_Benefit__c(Status__c = 'Submitted', Brand__c=memberBenefitProgramWrap.assetRec.Brand__c, Member_Benefit_Program__c = memberBenefitProgramId);
-                            // memberBenefitToInsert.Customer_Name__c = memberBenefitProgramWrap.assetRec.ContactId;
-                            // memberBenefitToInsertList.add(memberBenefitToInsert);
                         }
 
                     }
@@ -150,59 +122,11 @@ public with sharing class MembershipLoyaltyContoller {
             
             }
             
-            //for(memberBenefitProgramWrapper memberBenefitProgramWrap : memberBenefitProgramWrapMap.get(memberBenefitProgramId)){ //Loop Wrapper
-
-                // if(memberBenefitProgramEligiblePliMap.get(memberBenefitProgramId) != NULL){
-                    
-                //     String currContactId = memberBenefitProgramWrap.assetRec.ContactId;
-
-                //     String currBrand = memberBenefitProgramWrap.assetRec.Brand__c;
-                //     String currEligibleProductId = memberBenefitProgramWrap.memberBenefitProgramRec.Eligible_Products__c;
-                    
-                //     // String eligibleProduct = '';
-                //     for(Eligible_Product_Line_Item__c elPli : memberBenefitProgramEligiblePliMap.get(memberBenefitProgramId)){ //Loop through Eligible PLI
-                //         if(memberBenefitProgramWrap.assetRec.ProductCode == elPli.Product_Model__c && !contactProductSet.contains(memberBenefitProgramId+memberBenefitProgramWrap.assetRec.ContactId+memberBenefitProgramWrap.assetRec.ProductCode)){
-                //             memberBenefitProductCode += (memberBenefitProductCode != '') ? ';'+memberBenefitProgramWrap.assetRec.ProductCode : memberBenefitProgramWrap.assetRec.ProductCode;
-                //             contactProductSet.add(memberBenefitProgramId+memberBenefitProgramWrap.assetRec.ContactId+memberBenefitProgramWrap.assetRec.ProductCode);
-                //             System.debug('CUSTOMER '+memberBenefitProgramWrap.assetRec.Account.Name + ' MATCH VIA PRODUCT CODE >>> '+ 'eligiblePli.Product_Model__c >>> '+elPli.Product_Model__c + ' memberBenefitProgramWrap.assetRec.ProductCode >>> '+memberBenefitProgramWrap.assetRec.ProductCode);
-                //             // eligibleProduct = elPli.Eligible_Product__c; //memberBenefitToInsert.Registered_Products__c = elPli.Eligible_Product__c;
-                //             memberBenefitProgramWrap.exactProductMatch = true;
-                //         }
-                //     }
-                    
-                //     // memberBenefitToInsert.Member_Benefit_Program__c = memberBenefitProgramId;
-                //     // memberBenefitToInsert.Product_Model__c = memberBenefitProductCode;
-                //     // memberBenefitToInsert.Brand__c = currBrand;
-                //     // memberBenefitToInsert.Registered_Products__c = currEligibleProductId;
-                //     // memberBenefitToInsert.Customer_Name__c = currContactId;
-
-                //     // if(customerMemberBenefitMap.containsKey(currContactId)){
-                //     //     Member_Benefit__c existMemberBenefit = customerMemberBenefitMap.get(currContactId);
-                //     //     existMemberBenefit.Product_Model__c += memberBenefitToInsert.Product_Model__c;
-                //     //     customerMemberBenefitMap.put(currContactId,existMemberBenefit);
-                //     // } 
-                //     // else{
-                //     //     customerMemberBenefitMap.put(currContactId,memberBenefitToInsert);
-                //     // }
-
-                // }
-
-                // if(memberBenefitProgramWrap.assetRec.SAPProductHeirarchy__c != NULL && memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c != NULL 
-                // && memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c.containsIgnoreCase(memberBenefitProgramWrap.assetRec.SAPProductHeirarchy__c) &&
-                // memberBenefitProgramWrap.exactProductMatch == false){
-                //     System.debug('CUSTOMER '+memberBenefitProgramWrap.assetRec.Account.Name +' MATCH VIA PRODUCT HIERARCHY >>> '+ 'memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c >>> '+memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c + ' memberBenefitProgramWrap.assetRec.SAPProductHeirarchy__c >>> '+memberBenefitProgramWrap.assetRec.SAPProductHeirarchy__c);
-                //     Member_Benefit__c memberBenefitToInsert = new Member_Benefit__c(Status__c = 'Submitted', Brand__c=memberBenefitProgramWrap.assetRec.Brand__c, Member_Benefit_Program__c = memberBenefitProgramId);
-                //     memberBenefitToInsert.Customer_Name__c = memberBenefitProgramWrap.assetRec.ContactId;
-                //     memberBenefitToInsertList.add(memberBenefitToInsert);
-                // }
-            //}
         }
-        // System.debug('customerMemberBenefitMap >>> '+customerMemberBenefitMap);
         System.debug('memberBenefitProgramWrapMap >>> '+memberBenefitProgramWrapMap);
         System.debug('memberBenefitToInsertList.size() >>> '+memberBenefitToInsertList.size());
         System.debug('memberBenefitToInsertList >>> '+memberBenefitToInsertList);
         System.debug('memberBenefitProgramEligiblePliMap >>> '+memberBenefitProgramEligiblePliMap);
-        // insert memberBenefitToInsertList;
         return memberBenefitToInsertList;
 
     }
@@ -223,16 +147,12 @@ public with sharing class MembershipLoyaltyContoller {
 
     public class memberBenefitProgramWrapper {
         public Member_Benefit_Program__c memberBenefitProgramRec {get; set;}
-        //public Asset assetRec {get; set;}
         public Map<String,List<Asset>> customerAssetListMap {get; set;} 
         public Boolean exactProductMatch {get; set;}
-        // public Eligible_Customer__c eligibleCustomerRec {get; set;}
         
         public memberBenefitProgramWrapper(Member_Benefit_Program__c memberBenefitProgramRec, Map<String,List<Asset>> customerAssetListMap, Boolean exactProductMatch){
             this.memberBenefitProgramRec = memberBenefitProgramRec;
-            //this.assetRec = assetRec;
             this.customerAssetListMap = customerAssetListMap;
-            // this.eligibleCustomerRec = eligibleCustomerRec;
             this.exactProductMatch = exactProductMatch;
         }
     }
