@@ -1,0 +1,21 @@
+.THIS .carousel-image {
+    margin: auto;
+    display: block;
+    height: auto;
+    width: auto;
+    max-width: 150px;
+    max-height: 150px;
+}
+
+.THIS .div-border--none {
+    border: none;
+}
+
+.THIS .carousel-brand-indicator {
+    background: #f48026;
+    border-color: #f48026;
+}
+
+.THIS .carousel-panel-active {
+    transform: translateX(-0%);
+}

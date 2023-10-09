@@ -1,0 +1,110 @@
+.THIS .setHeight {
+    max-height: 1024px; 
+    height: 1024px;
+}
+
+.THIS .setMaxHeight {
+    max-height: 1024px;
+}
+
+.THIS .stateCreateManifest::after {
+    position: absolute;
+    content: 'Creating Manifest ...';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+    font-size: large;
+}
+
+.THIS .stateCreateShipment::after {
+    position: absolute;
+    content: 'Creating Shipment ...';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+    font-size: large;
+}
+
+.THIS .stateUpdateShipment::after {
+    position: absolute;
+    content: 'Updating Shipment ...';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+    font-size: large;
+}
+
+.THIS .stateDeleteShipment::after {
+    position: absolute;
+    content: 'Deleting Shipment ...';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+    font-size: large;
+}
+
+.THIS .stateCreateLabel::after {
+    position: absolute;
+    content: 'Creating Label ...';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+    font-size: large;
+}
+
+.THIS .stateGetDGForm::after {
+    position: absolute;
+    content: 'Retrieving Dangerous Goods Form...';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+    font-size: large;
+}
+
+.THIS .stateGetLabel::after {
+    position: absolute;
+    content: 'Finalizing Label ...';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+    font-size: large;
+}
+
+.THIS .stateUpdateDeliveryOption::after {
+    position: absolute;
+    content: 'Updating Delivery Option ...';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+    font-size: large;
+}
+
+.THIS .spinnerContainer {
+    background-color: rgba(255, 255, 255, .7);
+}
+
+.THIS .table-header_action {
+    width: 50px; outline: none;
+}
+
+.THIS .width-50px {
+    width: 50px;
+}
+
+.THIS .adhoc-form {
+    height: 300px;
+}
+
+.THIS .pdfViewer {
+    padding: 10px;
+    overflow: hidden;
+    height: 600px;
+}

@@ -1,0 +1,157 @@
+<aura:component implements="c:TTI_Constants" controller="TTI_SubmtClaimController">
+    <aura:attribute name="myId" type="String" default="10"/> 
+    <aura:attribute name="claim" type="Case" />
+    <aura:attribute name="radiusval" type="Integer"/>
+    <aura:attribute name="radiusCountry" type="String"/>
+    <aura:attribute name="userObject" type="User"/>
+    <aura:attribute name="ServiceAgentAdd" type="String"/>
+    <aura:attribute name="selectedServiceAgentObject" type="Object"/>
+    <aura:attribute name="ShippingAddObj" type="Object"/>
+    <aura:attribute name="serviceagentype" type="String"/>
+    <aura:attribute name="PostCodeForNearBySearch" type="string"/>
+    <aura:attribute name="searchNearByActive" type="Boolean" default="false"/>
+    <aura:handler name="getSelectedObjectFromSearch" event="c:TTI_PredectiveSearchEvent" action="{!c.populateAddress}"/>
+    <aura:registerEvent name="CheckValidationOnServiceAgent" type="c:TTI_ValidateServiceAgent"/>
+    <aura:attribute name="isMobilePhone" type="Boolean"/>
+    
+    <aura:attribute name="mydata" type="Object"/>
+    <aura:attribute name="mycolumns" type="List"/>
+    
+    <style>
+    .width50{
+        width:50% !important;
+        }
+    </style>
+    <aura:if isTrue="{!v.activeScreenId == v.myId}">
+        <aura:if isTrue="{!!v.searchNearByActive}">
+            <div class="slds-align_absolute-center">
+                
+                <div class="slds-form slds-form_horizontal">
+                    <div class="slds-form-element">
+                        <p style="text-align:left !important">
+                            Select a Service Agent that you  would like the tool delivered to. You can either
+                            specify the agent name or search for a service agent nearby the pickup address.
+                        </p>
+                    </div>
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="input-id-01">
+                            Service Agent
+                        </label>
+                        <div class="slds-form-element__control"  >
+                            <c:TTI_PredictiveSearch SobjectName="Account" 
+                                                    SelectedItemName="{!v.claim.Service_Agent__c.Name}"
+                                                    whereQueryString=" RecordType.Name='Service Agent' " aura:id="serviceagensearchId"/>
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="input-id-01">
+                            Address
+                        </label>
+                        <div class="slds-form-element__control">
+                            <ui:inputTextArea aura:id="ServiceAgentAdd"  
+                                              class="slds-input"  
+                                              value="{!v.ServiceAgentAdd}" 
+                                              disabled="true"/>
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="input-id-01">
+                            Suburb/Post code
+                        </label>
+                        <div class="slds-form-element__control">
+                            <ui:inputPhone value="{!v.PostCodeForNearBySearch}" aura:id="PostCodeForNearBySearchId"/>
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="input-id-01">
+                            <abbr class="slds-required" title="required">*</abbr>
+                            Service Agent Classification
+                        </label>
+                        <div class="slds-form-element__control">
+                            <ui:inputSelect value="{!v.serviceagentype}" aura:id="serviceagentype" change="{!c.searchNearby}">
+                                <ui:inputSelectOption text="All" label="All" value="true"/>
+                                <ui:inputSelectOption text="Silver" label="Silver" />
+                                <ui:inputSelectOption text="Gold" label="Gold" />
+                                <ui:inputSelectOption text="Platinum" label="Platinum"/>
+                                
+                            </ui:inputSelect>
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="input-id-01">
+                            <abbr class="slds-required" title="required">*</abbr>
+                            Radius
+                        </label>
+                        <div class="slds-form-element__control">
+                            <ui:inputSelect value="{!v.radiusval}" aura:id="radiusId">
+                                <ui:inputSelectOption text="10" label="10 KM" value="true"/>
+                                <ui:inputSelectOption text="20" label="20 KM"/>
+                                <ui:inputSelectOption text="30" label="30 KM" />
+                                <ui:inputSelectOption text="40" label="40 KM" />
+                                <ui:inputSelectOption text="50" label="50 KM"/>
+                                <ui:inputSelectOption text="100" label="100 KM"/>
+                                <ui:inputSelectOption text="250" label="250 KM"/>
+                            </ui:inputSelect>
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="input-id-01">
+                            <abbr class="slds-required" title="required">*</abbr>
+                            Country
+                        </label>
+                        <div class="slds-form-element__control">
+                            <ui:inputSelect value="{!v.radiusCountry}" aura:id="radiusCountry">
+                                <ui:inputSelectOption text="Australia" label="Australia" value="true"/>
+                                <ui:inputSelectOption text="New Zealand" label="New Zealand"/>
+                            </ui:inputSelect>
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <ui:button class="slds-button slds-button_brand" 
+                                   label="SEARCH NEARBY LOACTIONS"
+                                   press="{!c.searchNearby}"/>
+                    </div>
+                    <div class="slds-form-element">
+                        <ui:button class="slds-button slds-button_brand" label="Previous" press="{!c.goToPrevious}"/>
+                        <ui:button class="slds-button slds-button_brand" label="Next" press="{!c.goToNext}"/>
+                    </div>
+                </div>
+            </div>
+            <aura:set attribute="else">
+                <div class="slds-clearfix slds-align_absolute-center slds-text-heading_medium slds-m-bottom_large slds-m-top_large" style="font-weight:bolder">
+                    Please select nominated Service Agent
+                </div>
+                <div class="slds-form slds-form_horizontal slds-m-bottom_large">
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="input-id-01">
+                            <abbr class="slds-required" title="required">*</abbr>
+                            Radius
+                        </label>
+                        <div class="slds-form-element__control">
+                            <ui:inputSelect value="{!v.radiusval}" aura:id="radiusId" change="{!c.searchNearby}" class="width50">
+                                <ui:inputSelectOption text="10" label="10 KM" value="true"/>
+                                <ui:inputSelectOption text="20" label="20 KM"/>
+                                <ui:inputSelectOption text="30" label="30 KM" />
+                                <ui:inputSelectOption text="40" label="40 KM" />
+                                <ui:inputSelectOption text="50" label="50 KM"/>
+                                <ui:inputSelectOption text="100" label="100 KM"/>
+                                <ui:inputSelectOption text="250" label="250 KM"/>
+                            </ui:inputSelect>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-align_absolute-center">
+                    <lightning:datatable data="{! v.mydata }" 
+                                         columns="{! v.mycolumns }" 
+                                         keyField="id"
+                                         onrowselection="{! c.getSelectedServiceAgent }"/>
+                </div>
+                <div class="slds-m-top_large slds-float_right">
+                    <ui:button class="slds-button slds-button_brand" label="Select" press="{!c.selectServiceAgent}"/>
+                    <ui:button class="slds-button slds-button_destructive" label="Cancel" press="{!c.closeSearchNearBy}"/>
+                </div>
+            </aura:set>
+        </aura:if>
+    </aura:if>
+    <lightning:spinner aura:id="mySpinner" class="slds-hide" />
+</aura:component>

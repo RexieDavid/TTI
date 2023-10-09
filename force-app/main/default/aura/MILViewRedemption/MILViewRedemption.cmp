@@ -1,0 +1,75 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global" controller="AEGRedemptionController" >
+
+	<aura:attribute type="String" name="PageName" default="MILViewRedemption" />
+	<aura:attribute type="Map" name="record" />
+
+	<aura:handler event="c:NavigateEvent" action="{!c.handleNavigate}"/>
+
+	<aura:registerEvent name="navigate" type="c:NavigateEvent"/>
+
+	<div aura:id="viewRedemptionDiv" class="slds-hide slds-p-vertical_x-large" >
+		<div class="slds-grid slds-wrap" >
+
+			<div class="slds-col slds-size_12-of-12 slds-grid slds-wrap slds-p-vertical_x-large" style="background-color: #F27828;"  >
+				<div class="slds-align_absolute-center" >
+					<div class="slds-text-title_caps slds-text-align_center">
+						<div class="slds-text-heading_large slds-text-color_inverse" >
+							My Redemptions
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>		
+
+		<article class="slds-card slds-m-top_small">
+			<div class="slds-card__header slds-grid slds-p-vertical_small" style="background-color: #040404;" >
+				<header class="slds-media slds-media_center slds-has-flexi-truncate">
+					<!--div class="slds-media__figure">
+						
+					</div-->
+					<div class="slds-media__body">
+						<h2>
+							<span class="slds-text-heading_small slds-text-color_inverse">REDEMPTION REFERENCE: {!v.record.Name}</span>
+						</h2>
+					</div>
+				</header>
+				<div class="slds-no-flex">
+					<!--button class="slds-button slds-button_neutral">New</button-->
+				</div>
+			</div>
+			<div class="slds-card__body slds-card__body_inner">
+				<dl class="slds-grid slds-list_horizontal slds-wrap">
+
+					<div class="slds-col slds-size_12-of-12 slds-p-top_large inlineDisplay" >
+						<dt class="slds-item_labelv2 slds-text-color_weak slds-truncate" title="First Label">Status:</dt>
+						<dd class="slds-item_detail slds-truncate" title="Description for first label">{!v.record.Status__c}</dd>
+					</div> 
+		
+					<div class="slds-col slds-size_12-of-12 slds-p-top_large inlineDisplay" >
+						<dt class="slds-item_labelv2 slds-text-color_weak slds-truncate" title="Second Label">Created Date:</dt>
+						<dd class="slds-item_detail slds-truncate" title="Description for second label">{!v.record.CreatedDate}</dd>
+					</div>
+
+					<div class="slds-col slds-size_6-of-12 slds-p-top_large inlineDisplay" >
+						<dt class="slds-item_labelv2 slds-text-color_weak" title="First Label">Product:</dt>
+						<dd class="slds-item_detail slds-truncate" title="Description for first label">
+							<img src="{!v.record.Product_Name__r.Image_URL__c}" title="Product Image" class="productImage" />
+						</dd>
+					</div>
+
+					<div class="slds-col slds-size_6-of-12 slds-p-top_large inlineDisplay" >
+						<dt class="slds-item_labelv3 slds-text-color_weak" title="First Label">Redeemed Item:</dt>
+						<dd class="slds-item_detail slds-truncate" title="Description for first label">
+							<img src="{!v.record.Redeemed_Item__r.Image_URL__c}" title="Redeemed Item" class="productImage" />
+						</dd>
+					</div>
+				</dl>
+			</div>
+			<footer class="slds-card__footer" style="border-top: 1px solid #dddbda;">
+				<div class="slds-align_absolute-center slds-p-top_small" >
+					<lightning:button variant="brand" label="Back" onclick="{!c.navigateToRedemptionList}" class="slds-align_absolute-center" />
+				</div>				
+			</footer>
+		</article>
+	</div>
+</aura:component>

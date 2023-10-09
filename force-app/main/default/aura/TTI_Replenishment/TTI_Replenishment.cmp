@@ -1,0 +1,381 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:appHostable,flexipage:availableForAllPageTypes,c:TTI_Constants,force:hasRecordId,forceCommunity:themeLayout"
+    access="global" controller="TTI_ReplenishmentController">
+    <aura:attribute name="warnings" type="String[]" />
+    <aura:attribute name="objReplenishmentHeader" type="TTI_Replenishment_Header__c" />
+    <aura:attribute name="lstReplenishmentLineItem" type="TTI_Replenishment_Line_Item__c[]" />
+    <aura:attribute name="lstRemoveReplenishmentLineItem" type="TTI_Replenishment_Line_Item__c[]" />
+    <aura:attribute name="BillOfMaterials" type="List" />
+    <aura:attribute name="SOHRAGStatusList" type="Object[]" />
+    <aura:attribute name="userType" type="User" />
+    <aura:attribute name="recordId" type="string" default="{!v.recordId}" />
+    <aura:attribute name="technicalDrawingURL" type="string" />
+    <aura:attribute name="selectedModel" type="Object" />
+    <aura:attribute name="totalValueOfOrder" type="Integer" default="0" />
+    <aura:method name="refreshInternally" action="{!c.doInit}" />
+    <aura:handler name="getSelectedObjectFromSearch" event="c:TTI_PredectiveSearchEvent"
+        action="{!c.populatePredictiveFields}" />
+    <aura:handler name="change" value="{!v.lstReplenishmentLineItem}" action="{!c.updateTotalValueOrder}" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="toastMessageSuccessSubmitReplenishment" type="String"
+        default="{!$Label.c.SP_Toast_Message_Success_Submit_Replenishment_Order}" />
+    <aura:attribute name="toastMessageSuccessSavedReplenishment" type="String"
+        default="{!$Label.c.SP_Toast_Message_Success_Saved_Replenishment_Order}" />
+    <aura:attribute name="confirmMessageReplenishmentOrder" type="String"
+        default="{!$Label.c.SP_Confirm_Replenishment_Order}" />
+    <aura:attribute name="errProvidePurchaseOrderReference" type="String"
+        default="{!$Label.c.SP_ERR_Provide_Purchase_Order_Reference}" />
+    <aura:attribute name="errNoProductsForReplenishment" type="String"
+        default="{!$Label.c.SP_ERR_No_Products_For_Replenishment}" />
+    <aura:attribute name="errInvalidQuantityForReplenishment" type="String"
+        default="{!$Label.c.SP_ERR_Invalid_Quantity_For_Replenishment}" />
+    <aura:attribute name="toastMessagePartsSuccessAddedToOrder" type="String"
+        default="{!$Label.c.SP_Toast_Message_Parts_Success_Added_To_Order}" />
+    <aura:attribute name="confirmLeaveWithoutSavingChanges" type="String"
+        default="{!$Label.c.SP_Confirm_To_Leave_Without_Saving_Changes}" />
+
+    <!-- Predictive search configurations -->
+    <aura:attribute name="orderPartsSOQLFilter" type="String" /> 
+
+    <lightning:navigation aura:id="navigationService" />
+
+    <c:UtilityMethods aura:id="utilityMethods" />
+    <div class="slds-form slds-form_compound">
+        <div class="slds-form-element__group">
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_3-of-12">
+                    <label class="slds-form-element__label">Purchase Order Reference</label>
+                    <ui:inputText disabled="{!if(v.objReplenishmentHeader.TTI_Status__c=='Pending',false,true)}"
+                        value="{!v.objReplenishmentHeader.TTI_Purchase_Order_Reference__c}" />
+                </div>
+                <div class="slds-form-element slds-size_1-of-12">
+                </div>
+                <div class="slds-form-element slds-size_3-of-12">
+                    <label class="slds-form-element__label">Status</label>
+                    <ui:inputText disabled="true" value="{!v.objReplenishmentHeader.TTI_Status__c}" />
+                </div>
+                <div class="slds-form-element slds-size_1-of-12">
+                </div>
+                <div class="slds-form-element slds-size_3-of-12">
+                    <label class="slds-form-element__label">Total Value of Order not including discounts</label>
+                    <ui:inputCurrency disabled="true" class="rightAlignText" value="{!v.totalValueOfOrder}"
+                        format="$###,###,###,##0.00" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slds-table_edit_container slds-is-relative">
+        <legend class="slds-form-element__label slds-text-heading_medium slds-m-top_medium">
+            <b><u>Order Parts</u></b>
+        </legend>
+        <table class="slds-m-top_large slds-table slds-table_bordered slds-table_fixed-layout" role="grid">
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <th style="width:20%" aria-sort="none" class="slds-is-sortable slds-is-resizable"
+                        aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                            tabindex="-1">
+                            <span class="slds-truncate" title="SKU">
+                                <b>SKU</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th style="width:25%" aria-sort="none" class="slds-is-sortable slds-is-resizable"
+                        aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                            tabindex="-1">
+                            <span class="slds-truncate" title="Description">
+                                <b>Description</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                            tabindex="-1">
+                            <span class="slds-truncate" title="Order Nbr">
+                                <b>Consignment Number</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                            tabindex="-1">
+                            <span class="slds-truncate" title="Quantity">
+                                <b>Availability</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                            tabindex="-1">
+                            <span class="slds-truncate" title="Quantity">
+                                <b>Quantity</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                            tabindex="-1">
+                            <span class="slds-truncate" title="SKU">
+                                <b>List Price</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                            tabindex="-1">
+                            <span class="slds-truncate" title="SKU">
+                                <b>Bin</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.lstReplenishmentLineItem}" var="ObjRepItem" indexVar="index">
+                    <tr class="slds-hint-parent">
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate">
+                                    <aura:if isTrue="{!v.objReplenishmentHeader.TTI_Status__c!='Pending'}">
+                                        <ui:outputText value="{!ObjRepItem.TTI_SKU_Number__c}" />
+                                        <aura:set attribute="else">
+                                            <c:TTI_PredictiveSearch SobjectName="Product2" 
+                                                                    SobjectLabel="SKU"
+                                                                    SelectedItemName="{!ObjRepItem.TTI_SKU_Number__c}"
+                                                                    objectIndexInList="{!index}"
+                                                                    whereQueryString="{!v.orderPartsSOQLFilter}" 
+                                                                    displayProdCode="true"
+                                                                    ignoreDefaultNameSearch="true" />
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate">
+                                    <ui:outputText value="{!ObjRepItem.Description}" />
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate">
+                                    <ui:outputText value="{!ObjRepItem.TTI_Consignment_Number__c}" />
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate">
+                                    <lightning:icon
+                                        class="{!if(v.objReplenishmentHeader.TTI_Status__c!='Pending','slds-hide',ObjRepItem.status)}"
+                                        iconName="utility:record" />
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate">
+                                    <ui:inputNumber value="{!ObjRepItem.TTI_Quantity__c}" keyup="{!c.quantityChanged}"
+                                        updateOn="keyup" labelClass="{!index}"
+                                        disabled="{!if(v.objReplenishmentHeader.TTI_Status__c=='Pending',false,true)}" />
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate slds-align_absolute-center">
+                                    <ui:outputCurrency value="{!ObjRepItem.TTI_Total_Cost__c}"
+                                        format="$###,###,###,##0.00" />
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate">
+                                    <ui:outputText value="{!ObjRepItem.Bin}" />
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <aura:if isTrue="{!if(v.objReplenishmentHeader.TTI_Status__c!='Pending',false,true)}">
+                                    <ui:button label="Remove" class="slds-button_destructive" labelClass="{!index}"
+                                        press="{!c.removeRowInOrderPartsTable}" />
+                                </aura:if>
+                            </span>
+                        </td>
+                    </tr>
+                </aura:iteration>
+                <aura:if isTrue="{!if(v.objReplenishmentHeader.TTI_Status__c!='Pending',false,true)}">
+                    <tr class="slds-hint-parent">
+                        <td colspan="7"></td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <ui:button label="Add" press="{!c.addRowInOrderPartsTable}" class="slds-button_brand" />
+                            </span>
+                        </td>
+                    </tr>
+                </aura:if>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <aura:if isTrue="{!v.objReplenishmentHeader.TTI_Status__c=='Pending'}">
+            <legend class="slds-form-element__label slds-text-heading_medium" style="margin-top:2%;margin-bottom:2%">
+                <b><u>Order Parts by Product</u></b>
+                <aura:if isTrue="{!v.technicalDrawingURL !=null}">
+                    <a target="_blank" href="{!v.technicalDrawingURL}">
+                        <lightning:icon iconName="custom:custom19" size="small" class="slds-m-left_medium" />
+                    </a>
+                </aura:if>
+            </legend>
+            <div class="slds-form slds-form_compound">
+                <div class="slds-form-element__group">
+                    <div class="slds-form-element__row">
+                        <div class="slds-form-element slds-size_1-of-3">
+                            <label class="slds-form-element__label">Model</label>
+                            <c:TTI_PredictiveSearch SobjectName="Product2" 
+                                                    SobjectLabel="Model" 
+                                                    aura:id="ModelCompId"
+                                                    whereQueryString="Kit__c = FALSE AND Spare_Part__c = FALSE AND IsActive=true AND ProductCode LIKE :searchString"
+                                                    displayProdCode="true" 
+                                                    ignoreDefaultNameSearch="true" />
+                            <ui:button label="Search" class="slds-button_brand slds-m-top_medium" press="{!c.searchClicked}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="slds-m-top_xx-large slds-table slds-table_bordered slds-table_fixed-layout " role="grid">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr"
+                            scope="col">
+                            <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                                tabindex="-1">
+                                <span class="slds-truncate" title="Select">
+                                    <b>Select</b>
+                                </span>
+                            </a>
+                        </th>
+                        <th style="width:25%" aria-sort="none" class="slds-is-sortable slds-is-resizable"
+                            aria-label="Order Nbr" scope="col">
+                            <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                                tabindex="-1">
+                                <span class="slds-truncate" title="SKU">
+                                    <b>SKU</b>
+                                </span>
+                            </a>
+                        </th>
+                        <th style="width:30%" aria-sort="none" class="slds-is-sortable slds-is-resizable"
+                            aria-label="Order Nbr" scope="col">
+                            <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                                tabindex="-1">
+                                <span class="slds-truncate" title="Description">
+                                    <b>Description</b>
+                                </span>
+                            </a>
+                        </th>
+                        <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr"
+                            scope="col">
+                            <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                                tabindex="-1">
+                                <span class="slds-truncate" title="Availability">
+                                    <b>Availability</b>
+                                </span>
+                            </a>
+                        </th>
+                        <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr"
+                            scope="col">
+                            <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                                tabindex="-1">
+                                <span class="slds-truncate" title="Quantity">
+                                    <b>Quantity</b>
+                                </span>
+                            </a>
+                        </th>
+                        <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr"
+                            scope="col">
+                            <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                                tabindex="-1">
+                                <span class="slds-truncate" title="Bin">
+                                    <b>Bin</b>
+                                </span>
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.BillOfMaterials}" var="ObjBillOfMatreial" indexVar="index">
+                        <tr class="slds-hint-parent">
+                            <td class="slds-cell-edit" role="gridcell">
+                                <span class="slds-grid slds-grid_align-spread">
+                                    <span class="slds-truncate">
+                                        <ui:inputCheckbox value="{!ObjBillOfMatreial.checked}" />
+                                    </span>
+                                </span>
+                            </td>
+                            <td class="slds-cell-edit" role="gridcell">
+                                <span class="slds-grid slds-grid_align-spread">
+                                    <span class="slds-truncate">
+                                        <ui:outputText value="{!ObjBillOfMatreial.ProductPart__r.ProductCode}" />
+                                    </span>
+                                </span>
+                            </td>
+                            <td class="slds-cell-edit" role="gridcell">
+                                <span class="slds-grid slds-grid_align-spread">
+                                    <span class="slds-truncate">
+                                        <ui:outputText value="{!ObjBillOfMatreial.ProductPart__r.Description}" />
+                                    </span>
+                                </span>
+                            </td>
+                            <td class="slds-cell-edit" role="gridcell">
+                                <span class="slds-grid slds-grid_align-spread">
+                                    <span class="slds-truncate">
+                                        <lightning:icon iconName="utility:record" class="{!ObjBillOfMatreial.status}" />
+                                    </span>
+                                </span>
+                            </td>
+                            <td class="slds-cell-edit" role="gridcell">
+                                <span class="slds-grid slds-grid_align-spread">
+                                    <span class="slds-truncate">
+                                        <ui:inputNumber value="{!ObjBillOfMatreial.Quantity__c}" />
+                                    </span>
+                                </span>
+                            </td>
+                            <td class="slds-cell-edit" role="gridcell">
+                                <span class="slds-grid slds-grid_align-spread">
+                                    <span class="slds-truncate">
+                                        {!ObjBillOfMatreial.Bin}
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                    <aura:if isTrue="{!v.objReplenishmentHeader.TTI_Status__c=='Pending'}">
+                        <tr class="slds-hint-parent">
+                            <td colspan="5"></td>
+                            <td class="slds-cell-edit" role="gridcell">
+                                <span class="slds-grid slds-grid_align-spread">
+                                    <ui:button label="Add" press="{!c.addBillOfMaterials}" class="slds-button_brand" />
+                                </span>
+                            </td>
+                        </tr>
+                    </aura:if>
+                </tbody>
+            </table>
+        </aura:if>
+        <div class="slds-align_absolute-center slds-m-top_xx-large">
+            <ui:inputDefaultError value="{!v.warnings}" />
+        </div>
+        <div class="slds-align_absolute-center slds-m-top_xx-large ">
+            <aura:if isTrue="{!v.objReplenishmentHeader.TTI_Status__c=='Pending'}">
+                <ui:button label="SUBMIT" class="slds-button_brand slds-m-top_medium" press="{!c.saveClicked}" />
+            </aura:if>
+        </div>
+    </div>
+    <lightning:spinner aura:id="mySpinner" />
+</aura:component>

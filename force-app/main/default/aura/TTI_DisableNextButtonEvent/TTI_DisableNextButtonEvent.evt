@@ -1,0 +1,3 @@
+<aura:event type="APPLICATION" description="To pass the isDisabled flag which disables the next button">
+    <aura:attribute name="isDisabled" type="boolean" default="false"/>
+</aura:event>

@@ -1,0 +1,11 @@
+<design:component>
+    <design:attribute name="showComponent" label="Show Component" default="True"/>
+    <design:attribute name="startUrl" label="Start URL" default="" />
+    <design:attribute name="usernameLabel" label="Username Label" default="Username" />
+    <design:attribute name="passwordLabel" label="Password Label" default="Password" />
+    <design:attribute name="loginButtonLabel" label="Login Button Label" default="Log in" />
+    <design:attribute name="forgotPasswordLabel" label="Forgot Password Link Label" default="Forgot your password?" />
+    <design:attribute name="forgotPasswordUrl" label="Forgot Password URL" default="/ForgotPassword" />
+    <design:attribute name="selfRegisterLabel" label="Self Register Link Label" default="Not a member?" />
+    <design:attribute name="selfRegisterUrl" label="Self Register URL" default="/SelfRegister" />
+</design:component>

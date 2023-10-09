@@ -1,0 +1,206 @@
+<aura:component controller="TTI_ServiceRequestController">
+    <aura:attribute name="Service_Request_Case" type="Case"/>
+    <aura:attribute name="RepairTypePicklistValuesActive" type="Boolean" default="false"/>
+    <aura:attribute name="RepairTypePicklistValues" type="List"/>
+    <aura:attribute name="RepairTypePicklistValuesMap" type="Map"/>
+    <aura:attribute name="ServiceMilestoneAttribute" type="Object" />
+    <aura:attribute name="FreightOutDeliveryAddress" type="String" />
+    <aura:attribute name="userType" type="Object" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="c:ServiceReqLineItemsChanged" action="{!c.checkServiceReqLineItems}"/> 
+    
+    <aura:method name="populateRepairType" action="{!c.populateRepairTypeMethod}"/>
+    <!-- Francis C. Nasalita - [SP-840] - 2018/11/13 -->
+    <aura:method name="faultCodeChangedHandler" action="{!c.faultCodeChangeMethod}"/>
+    
+    
+    <fieldset class="slds-m-top_medium">
+        <legend class="slds-form-element__label slds-text-heading_medium slds-m-top_medium 
+                       slds-m-bottom_medium" 
+                onclick="{!c.toggleSection}"
+                style="background:#f9f9fa;cursor:pointer;width:100%">
+            <div class="slds-float--left ">
+                <lightning:icon aura:id="section" iconName="utility:chevronright" size="x-small" alternativeText="Indicates add"/>
+                <lightning:icon class="slds-hide" aura:id="section" iconName="utility:chevrondown" size="x-small" alternativeText="Indicates dash"/>
+            </div>
+            <span class="slds-m-left_medium">
+                <b><u>Claim Completion Details</u></b>
+            </span>
+        </legend>
+        <div aura:id="section" class="slds-hide slds-form-element__group">
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-01">Repair Type</label>
+                    <aura:if isTrue="{!v.RepairTypePicklistValuesActive}">
+                        <ui:inputSelect disabled="{!if(v.ServiceMilestoneAttribute.New
+                                                  || v.ServiceMilestoneAttribute.AwaitingApproval
+                                                  || v.ServiceMilestoneAttribute.InProgress,false,true)}"  
+                                        aura:id="InputSelectMultiple"
+                                        value="{!v.Service_Request_Case.Repair_Type__c}"
+                                        >
+                            <ui:inputSelectOption text="" 
+                                                  label="--None--"/>
+                            <aura:iteration items="{!v.RepairTypePicklistValues}" var="objectRepairTypePicklist">
+                                <ui:inputSelectOption text="{!objectRepairTypePicklist}" 
+                                                      label="{!objectRepairTypePicklist}"/>
+                            </aura:iteration>
+                            
+                        </ui:inputSelect>
+                    </aura:if>
+                </div>
+                <aura:if isTrue="{!v.userType.Account.Allow_Delivery_to_Customers__c==true}">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" for="input-02">Delivery/ Pickup</label>
+                        <ui:inputSelect disabled="{!if(v.ServiceMilestoneAttribute.New
+                                                  || v.ServiceMilestoneAttribute.AwaitingApproval
+                                                  || v.ServiceMilestoneAttribute.InProgress,false,true)}"  
+                                        aura:id="pickupdelivery" 
+                                        value="{!v.Service_Request_Case.TTI_Customer_Delivery_Method__c}"
+                                        change="{!c.deliveryPicklistChange}">
+                            <ui:inputSelectOption text="" label="--None--"/>
+                            <ui:inputSelectOption text="Deliver" label="Deliver" /> 
+                            <ui:inputSelectOption text="Pickup from Service Agent" label="Pickup from Service Agent" /> 
+                        </ui:inputSelect>
+                    </div>
+                </aura:if>
+            </div>
+            <div class="slds-form-element__row">
+                <aura:if isTrue="{!if(v.userType.Account.Internal_Service_Agent__c &amp;&amp; v.ServiceMilestoneAttribute.InProgress,true,false)}">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" for="input-01">Time Spent (Hours)</label>
+                        
+                        <ui:inputNumber value="{!v.Service_Request_Case.TTI_Time_Spent_Hours__c}"
+                                        disabled="{! !v.userType.Account.Internal_Service_Agent__c
+                                                  &amp;&amp; (v.ServiceMilestoneAttribute.AwaitingInvoiceApproval
+                                                  || v.ServiceMilestoneAttribute.Completed
+                                                  || v.ServiceMilestoneAttribute.Invoiced)}"/>
+                        
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!v.userType.Account.Allow_Delivery_to_Customers__c==true}">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-02">Courier</label>
+                    <ui:inputText disabled="true" value="{!v.Service_Request_Case.TTI_Freight_Out_Courier}" />
+                </div>
+                </aura:if>
+            </div>
+            <div class="slds-form-element__row">
+                <aura:if isTrue="{!if(v.userType.Account.Internal_Service_Agent__c &amp;&amp; v.ServiceMilestoneAttribute.InProgress,true,false)}">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" for="input-01">Time Spent (Minutes)</label>
+                        
+                        <ui:inputNumber value="{!v.Service_Request_Case.TTI_Time_Spent_Minutes__c}"
+                                        disabled="{! !v.userType.Account.Internal_Service_Agent__c
+                                                  &amp;&amp; (v.ServiceMilestoneAttribute.AwaitingInvoiceApproval
+                                                  || v.ServiceMilestoneAttribute.Completed
+                                                  || v.ServiceMilestoneAttribute.Invoiced)}"/>
+                        
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!v.userType.Account.Allow_Delivery_to_Customers__c==true}">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-02">Delivery Address</label>
+                    <ui:inputText disabled="{!if(v.ServiceMilestoneAttribute.New 
+                                            || v.ServiceMilestoneAttribute.InProgress 
+                                            || v.ServiceMilestoneAttribute.AwaitingApproval, 
+                                            if(v.Service_Request_Case.TTI_Customer_Delivery_Method__c=='Pickup from Service Agent',true,false),true)}" 
+                                      aura:id="DeliveryAddress" 
+                                      value="{!v.Service_Request_Case.TTI_Freight_Out_Delivery_Address__c}"/>
+                </div>
+                    </aura:if>
+            </div>
+            <aura:if isTrue="{!v.userType.Account.Allow_Delivery_to_Customers__c==true}">
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-02">Suburb</label>
+                    <ui:inputText disabled="{!if(v.ServiceMilestoneAttribute.New 
+                                            || v.ServiceMilestoneAttribute.InProgress 
+                                            || v.ServiceMilestoneAttribute.AwaitingApproval, 
+                                            if(v.Service_Request_Case.TTI_Customer_Delivery_Method__c=='Pickup from Service Agent',true,false),true)}" 
+                                      aura:id="Suburb" 
+                                      value="{!v.Service_Request_Case.TTI_Freight_Out_Delivery_Suburb__c}"/>
+                </div>
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-02">Postcode</label>
+                    <ui:inputText disabled="{!if(v.ServiceMilestoneAttribute.New 
+                                            || v.ServiceMilestoneAttribute.InProgress 
+                                            || v.ServiceMilestoneAttribute.AwaitingApproval, 
+                                            if(v.Service_Request_Case.TTI_Customer_Delivery_Method__c=='Pickup from Service Agent',true,false),true)}" 
+                                      aura:id="Postcode" 
+                                      value="{!v.Service_Request_Case.TTI_Freight_Out_Delivery_Postcode__c}"/>
+                </div>
+            </div>
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-02">State</label>
+                    <ui:inputText disabled="{!if(v.ServiceMilestoneAttribute.New 
+                                            || v.ServiceMilestoneAttribute.InProgress 
+                                            || v.ServiceMilestoneAttribute.AwaitingApproval, 
+                                            if(v.Service_Request_Case.TTI_Customer_Delivery_Method__c=='Pickup from Service Agent',true,false),true)}" 
+                                      aura:id="State" 
+                                      value="{!v.Service_Request_Case.TTI_Freight_Out_Delivery_State__c}"/>
+                </div>
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-02">Country</label>
+                    <ui:inputSelect disabled="{!if(v.ServiceMilestoneAttribute.New 
+                                            || v.ServiceMilestoneAttribute.InProgress 
+                                            || v.ServiceMilestoneAttribute.AwaitingApproval, 
+                                            if(v.Service_Request_Case.TTI_Customer_Delivery_Method__c=='Pickup from Service Agent',true,false),true)}" 
+                                      aura:id="Country" 
+                                      value="{!v.Service_Request_Case.TTI_Freight_Out_Delivery_Country__c}">
+                        <ui:inputSelectOption text="" 
+                                              label="None"/>
+                        <ui:inputSelectOption text="Australia" 
+                                              label="Australia"/>
+                        <ui:inputSelectOption text="New Zealand" 
+                                              label="New Zealand"/>
+                    </ui:inputSelect>
+                </div>
+            </div>
+                </aura:if>
+            <div class="slds-form-element__row">
+                <aura:if isTrue="{!if(v.Service_Request_Case.Claim_Type__c =='Non-Warranty' ,true ,false )}">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" for="input-02">Purchase Order Reference</label>
+                        <ui:inputText disabled="{!!v.ServiceMilestoneAttribute.InProgress}" value="{!v.Service_Request_Case.Purchase_Order_Reference__c}" />
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!if(v.Service_Request_Case.Claim_Type__c =='Non-Warranty' ,true ,false )}">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" for="input-02">Payment Reference</label>
+                        <ui:inputText disabled="{!!v.ServiceMilestoneAttribute.InProgress}" value="{!v.Service_Request_Case.Payment_Reference__c}" />
+                    </div>
+                </aura:if>
+            </div>
+            <div class="slds-form-element__row">
+                <aura:if isTrue="{! !v.userType.Account.Internal_Service_Agent__c
+                                 &amp;&amp; v.Service_Request_Case.Claim_Type__c == 'Warranty'
+                                 &amp;&amp; (v.ServiceMilestoneAttribute.AwaitingInvoiceApproval
+                                 || v.ServiceMilestoneAttribute.InProgress || v.ServiceMilestoneAttribute.Completed)}">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" for="input-02"> Total Sundry Expenses incl. GST</label>
+                        <ui:inputText value="{!v.Service_Request_Case.Total_Sundry_Expenses__c}" />
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!v.userType.Account.Allow_Delivery_to_Customers__c==true}">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-02">Tracking Info</label>
+                    <ui:outputURL value="{!v.Service_Request_Case.TTI_Freight_out_tracking_url__c}" label="Tracking Info" />
+                </div>
+                </aura:if>
+            </div>
+            <aura:if isTrue="{! !v.userType.Account.Internal_Service_Agent__c
+                             &amp;&amp; v.Service_Request_Case.Claim_Type__c == 'Warranty'
+                             &amp;&amp; (v.ServiceMilestoneAttribute.AwaitingInvoiceApproval
+                             || v.ServiceMilestoneAttribute.InProgress || v.ServiceMilestoneAttribute.Completed)}">
+                <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" for="input-02">Sundry Expense Reason</label>
+                        <ui:inputTextArea value="{!v.Service_Request_Case.Sundry_Expense_Reason__c}" />
+                    </div>
+                </div>
+            </aura:if>
+        </div>
+    </fieldset>
+</aura:component>

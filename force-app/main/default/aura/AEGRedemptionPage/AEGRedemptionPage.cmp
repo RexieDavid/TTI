@@ -1,0 +1,184 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global" controller="AEGRedemptionController">
+    <!-- String attributes -->
+    <aura:attribute type="String" name="PageName" default="AEGRedemptionPage" />
+    
+    <!-- Object attributes -->
+    <aura:attribute name="siteSettings" type="Object"/>
+
+    <!-- Event handlers -->
+    <aura:registerEvent name="navigate" type="c:NavigateEvent" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="c:NavigateEvent" action="{!c.handleNavigate}" />
+
+    <!-- Notification library -->
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+
+    <div aura:id="mainDiv">
+        <div class="slds-grid slds-wrap slds-p-top_xx-large">
+            <div class="slds-col slds-size_1-of-1 slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-1 slds-large-size_2-of-3 slds-grid slds-grid_align-center slds-p-top_small">
+                    <div class="slds-size_10-of-12 slds-grid slds-wrap">
+                        <div class="slds-size_1-of-1">
+                            <div class="div--background-color-brand">
+                                <div class="slds-align_absolute-center">
+                                    <div class="slds-text-title_caps slds-text-align_center">
+                                        <div class="slds-text-heading_large slds-text-color_inverse">
+                                            Register and Redeem
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-size_1-of-1 slds-grid slds-wrap slds-grid_align-spread">
+                            <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-1 slds-large-size_2-of-5 slds-grid slds-wrap slds-p-top_small slds-grid_align-center">
+                                <div class="slds-size_3-of-5 slds-large-size_1-of-1 slds-box slds-box_x-small slds-grid border-color_orange">
+                                    <div class="slds-col slds-size_1-of-8 slds-align_absolute-center div--margin-top-0" >
+                                        <span class="slds-icon_container">
+                                            <lightning:icon class="span__lightning-icon" 
+                                                            iconName="action:share_thanks" 
+                                                            size="small" 
+                                                            alternativeText="share_thanks" />
+                                        </span>                                     
+                                    </div>
+                                    <div class="slds-col slds-size_6-of-8 slds-box slds-box_x-small slds-text-align_center border-color_orange">
+                                        Register your purchased product and redeem bonus
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-8 slds-align_absolute-center div--margin-top-0" >
+                                        <span class="slds-icon_container">
+                                            <lightning:icon class="span__lightning-icon" 
+                                                            iconName="utility:chevronright" 
+                                                            size="small" 
+                                                            alternativeText="chevronright" />
+                                        </span>                                     
+                                    </div>
+                                </div>   
+                                <div class="slds-size_1-of-1 slds-align_absolute-center slds-hide_large">
+                                    <lightning:button variant="brand" 
+                                                      label="REGISTER NOW" 
+                                                      onclick="{!c.navigateToToolbag}" 
+                                                      class="div__lightning-button" />
+                                </div>                               
+                            </div>
+
+                            <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-1 slds-large-size_2-of-5 slds-grid slds-wrap slds-p-top_small slds-grid_align-center">              
+                                <div class="slds-size_3-of-5 slds-large-size_1-of-1 slds-box slds-box_x-small slds-grid border-color_orange">
+                                    <div class="slds-col slds-size_1-of-8 slds-align_absolute-center div--margin-top-0" >
+                                        <span class="slds-icon_container">
+                                            <lightning:icon class="span__lightning-icon" 
+                                                            iconName="action:share_thanks" 
+                                                            size="small" 
+                                                            alternativeText="share_thanks" />
+                                        </span>                                     
+                                    </div>
+                                    <div class="slds-col slds-size_6-of-8 slds-box slds-box_x-small slds-text-align_center border-color_orange">
+                                        View unclaimed redemptions for registered products
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-8 slds-align_absolute-center div--margin-top-0" >
+                                        <span class="slds-icon_container">
+                                            <lightning:icon class="span__lightning-icon" 
+                                                            iconName="utility:chevronright" 
+                                                            size="small" 
+                                                            alternativeText="chevronright" />
+                                        </span>                                     
+                                    </div>
+                                </div>   
+                                <div class="slds-size_1-of-1 slds-align_absolute-center slds-hide_large">
+                                    <lightning:button variant="brand" 
+                                                      label="CLAIM NOW" 
+                                                      onclick="{!c.navigateToActivePromotions}" 
+                                                      class="div__lightning-button" />
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-1 slds-large-size_1-of-3 slds-grid slds-grid_align-center slds-p-top_small">
+                    <div class="slds-size_11-of-12 slds-small-size_10-of-12 slds-grid slds-wrap">
+                        <div class="slds-size_1-of-1">
+                            <div class="div--background-color-brand">
+                                <div class="slds-align_absolute-center">
+                                    <div class="slds-text-title_caps slds-text-align_center">
+                                        <div class="slds-text-heading_large slds-text-color_inverse">
+                                            My Redemptions
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>     
+                        <div class="slds-size_1-of-1 slds-grid slds-grid_align-center slds-p-top_small slds-wrap">
+                            <div class="slds-size_3-of-5 slds-large-size_8-of-12 slds-box slds-box_x-small slds-grid border-color_orange">
+                                <div class="slds-col slds-size_1-of-8 slds-align_absolute-center div--margin-top-0" >
+                                    <span class="slds-icon_container">
+                                        <lightning:icon class="span__lightning-icon" 
+                                                            iconName="action:share_thanks" 
+                                                            size="small" 
+                                                            alternativeText="share_thanks" />
+                                    </span>                                     
+                                </div>
+                                <div class="slds-col slds-size_6-of-8 slds-box slds-box_x-small slds-text-align_center border-color_orange">
+                                    View and track redemptions
+                                </div>
+                                <div class="slds-col slds-size_1-of-8 slds-align_absolute-center div--margin-top-0" >
+                                    <span class="slds-icon_container">
+                                        <lightning:icon class="span__lightning-icon" 
+                                                        iconName="utility:chevronright" 
+                                                        size="small" 
+                                                        alternativeText="chevronright" />
+                                    </span>                                     
+                                </div>
+                            </div>   
+                            <div class="slds-size_1-of-1 slds-align_absolute-center slds-hide_large">
+                                <lightning:button variant="brand" 
+                                                  label="VIEW NOW" 
+                                                  onclick="{!c.navigateToRedemptionList}" 
+                                                  class="div__lightning-button" />
+                            </div> 
+                        </div>                     
+                    </div>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-grid slds-wrap slds-show_large">
+                <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-1 slds-large-size_2-of-3 slds-grid slds-grid_align-center slds-p-top_small">
+                    <div class="slds-size_10-of-12 slds-grid slds-wrap">
+                        <div class="slds-size_1-of-1 slds-grid slds-wrap slds-grid_align-spread">
+                            <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-1 slds-large-size_2-of-5 slds-grid slds-wrap slds-p-top_small slds-grid_align-center">
+                                <div class="slds-size_1-of-1 slds-align_absolute-center">
+                                    <lightning:button variant="brand" 
+                                                      label="REGISTER NOW" 
+                                                      onclick="{!c.navigateToToolbag}" 
+                                                      class="div__lightning-button" />
+                                </div>                               
+                            </div>
+
+                            <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-1 slds-large-size_2-of-5 slds-grid slds-wrap slds-p-top_small slds-grid_align-center">  
+                                <div class="slds-size_1-of-1 slds-align_absolute-center">
+                                    <lightning:button variant="brand" 
+                                                      label="CLAIM NOW" 
+                                                      onclick="{!c.navigateToActivePromotions}" 
+                                                      class="div__lightning-button" />
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-1 slds-large-size_1-of-3 slds-grid slds-grid_align-center slds-p-top_small">
+                    <div class="slds-size_11-of-12 slds-small-size_10-of-12 slds-grid slds-wrap">   
+                        <div class="slds-size_1-of-1 slds-grid slds-grid_align-center slds-p-top_small slds-wrap"> 
+                            <div class="slds-size_1-of-1 slds-align_absolute-center">
+                                <lightning:button variant="brand" 
+                                                  label="VIEW NOW" 
+                                                  onclick="{!c.navigateToRedemptionList}" 
+                                                  class="div__lightning-button" />
+                            </div> 
+                        </div>                     
+                    </div>
+                </div>
+            </div>
+            <div class="slds-col slds-size_12-of-12 slds-p-vertical_x-large">
+                <div class="slds-align_absolute-center">
+                    <img src="{!$Resource.AEG_RedemptionImage}" />
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

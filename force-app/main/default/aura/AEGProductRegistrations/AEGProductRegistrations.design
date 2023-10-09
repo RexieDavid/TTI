@@ -1,0 +1,5 @@
+<design:component>
+    <design:attribute name="redemptionPopupHeader" label="Redemption Popup Header" />
+    <design:attribute name="limitedRedemptionPopupHeader" label="Limited Redemption Popup Header" />
+    <design:attribute name="countryCode" label="Country" required="true" default="AU" datasource="AU,NZ"/>
+</design:component>

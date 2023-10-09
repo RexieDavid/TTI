@@ -1,0 +1,25 @@
+<aura:component
+    implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+    access="global" controller="AgCommunityFooterController">
+
+    <aura:attribute name="countryCode" type="String" />
+    <aura:attribute name="value" type="String" />
+    <aura:attribute name="safetyInformationLink" type="String" />
+    <!-- initialize on load -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <footer id="footer" role="contentinfo">
+        <div class="app-footer__secondary">
+            <p>
+                {!v.value}
+            </p>
+            <p class="legal">
+                <strong>
+                    <a href="{!v.safetyInformationLink}" class="legal">
+                        Important Safety Information
+                    </a>
+                </strong>
+            </p>
+        </div>
+    </footer>
+</aura:component>

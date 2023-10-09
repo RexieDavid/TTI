@@ -1,0 +1,6 @@
+<aura:event type="APPLICATION" description="To pass address from predictivesearch" >
+ 	<aura:attribute name="sObject" type="object" />
+    <aura:attribute name="selectedObjectApiName" type="string" />
+    <aura:attribute name="objectIndexInList" type="integer" />
+    <aura:attribute name="SobjectLabel" type="string" />
+</aura:event>

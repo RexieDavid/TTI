@@ -1,0 +1,6 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="TrainingManagement">
+	<aura:attribute type="String" name="TrainingManagementFlowName" default="Training_Management" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    
+    <lightning:flow aura:id="offLocation" onstatuschange="{!c.handleStatusChange}" />
+</aura:component>

@@ -1,0 +1,136 @@
+<aura:component controller="TTI_PartsOrderedController">
+    <aura:attribute name="Service_Request_Case" type="Case"/>
+    <aura:attribute name="NonWarrantyLineItemsList" type="List"/>
+    <aura:attribute name="RetailChargesCustomSetting" type="List"/>
+    <aura:attribute name="NonWarrantyLineItemsListToDelete" type="List"/>
+    <aura:attribute name="ServiceMilestoneAttribute" type="Object" />
+    <aura:attribute name="userType" type="Object" />
+    <aura:attribute name="disableTable" type="Boolean" default="false"/>
+    <aura:handler name="init" action="{!c.populateNonWarrantyLineItemsMethod}" value="{!this}" />
+    <aura:method name="populateNonWarrantyLineItems" action="{!c.populateNonWarrantyLineItemsMethod}"/>
+    
+    <div class="slds-table_edit_container slds-is-relative">
+        <legend class="slds-form-element__label slds-text-heading_medium slds-m-top_medium 
+                       slds-m-bottom_medium" 
+                onclick="{!c.toggleSection}"
+                style="background:#f9f9fa;cursor:pointer;width:100%">
+            <div class="slds-float--left ">
+                <lightning:icon aura:id="section" iconName="utility:chevronright" size="x-small" alternativeText="Indicates add"/>
+                <lightning:icon class="slds-hide" aura:id="section" iconName="utility:chevrondown" size="x-small" alternativeText="Indicates dash"/>
+            </div>
+            <span class="slds-m-left_medium">
+                <b><u>Retail Charges</u></b>
+            </span>
+        </legend>
+        <table aura:id="section" class="slds-hide slds-table slds-table_bordered slds-table_resizable-cols slds-table_fixed-layout slds-no-cell-focus slds-table_edit" role="grid" style="width: 66.75rem;">
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                            <span class="slds-truncate">
+                                <b>Line Item Description</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                            <span class="slds-truncate" >
+                                <b>Quantity</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                            <span class="slds-truncate" >
+                                <b>Unit Cost</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" 
+                        style="width:10%"
+                        class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                            <span class="slds-truncate" >
+                                <b>Total Cost</b>
+                            </span>
+                        </a>
+                    </th>
+                    
+                </tr>
+                
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.NonWarrantyLineItemsList}" var="objNonWarranty" indexVar="index">
+                    <tr class="slds-hint-parent">
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate" style="margin-top:-9%">
+                                    <lightning:select value="{!objNonWarranty.Line_Item_Description__c}" 
+                                                      disabled="{!v.disableTable}"
+                                                      class="{!index}"
+                                                      onchange="{!c.LineItemDescriptionChange}">
+                                    	<option value="Labour">Labour</option>
+                                        <option value="Delivery Charges">Delivery Charges</option>
+                                        <option value="Sundry">Sundry</option>
+                                        <option value="Diagnosis Fee">Diagnosis Fee</option>
+                                    </lightning:select>
+                                    
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate" >
+                                    <ui:inputNumber class="rightAlignText"
+                                                    value="{!objNonWarranty.Quantity__c}"
+                                                    updateOn="keyup"
+                                                    disabled="{!v.disableTable}"
+                                                    labelClass="{!index}"
+                                                    change="{!c.quanityChanged}"/>
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate" >
+                                    <ui:inputText class="rightAlignText"
+                                                  value="{!objNonWarranty.Unit_List_Price__c}"
+                                                      updateOn="keyup"
+                                                      disabled="{!v.disableTable || objNonWarranty.customSettingFound}"
+                                                      labelClass="{!index}"
+                                                      change="{!c.quanityChanged}"/>
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate" style="margin:auto">
+                                    <ui:outputText class="rightAlignText"
+                                                   value="{!objNonWarranty.Total_List_Price__c}"/>
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <ui:button label="Remove" class="slds-button_destructive" 
+                                           labelClass="{!index}"
+                                           disabled="{!v.disableTable}"
+                                           press="{!c.RemoveRow}"/>
+                            </span>
+                        </td>
+                    </tr>
+                </aura:iteration>
+                <tr class="slds-hint-parent">
+                    <td colspan="4"></td>
+                    <td class="slds-cell-edit" role="gridcell">
+                        <span class="slds-grid slds-grid_align-spread">
+                            <ui:button label="Add"
+                                       disabled="{!if(v.disableTable || v.ServiceMilestoneAttribute.Closed , true , false)}"
+                                       class="slds-button_brand" press="{!c.addRow}"/>
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</aura:component>

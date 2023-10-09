@@ -1,0 +1,98 @@
+<aura:component controller="TTI_ServiceRequestController">
+    <aura:attribute name="Service_Request_Case" type="Case"/>
+    <aura:attribute name="userType" type="Object" />
+    <aura:attribute name="approval" type="ProcessInstanceStep" />
+    <aura:attribute name="NonWarrantyLineItemsList" type="List"/>
+    <aura:attribute name="ServiceMilestoneAttribute" type="Object" />
+    <aura:attribute name="claimTypeFlag" type="Boolean" default="true" />
+    <aura:attribute name="hasComments" type="Boolean" default="false" />
+    <aura:handler name="change" value="{!v.Service_Request_Case.Claim_Type__c}" action="{!c.claimTypeChanged}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    
+    <fieldset>
+        <legend class="slds-form-element__label slds-text-heading_medium slds-m-top_medium 
+                       slds-m-bottom_medium" 
+                onclick="{!c.toggleSection}"
+                style="background:#f9f9fa;cursor:pointer;width:100%">
+            <div class="slds-float--left ">
+                <lightning:icon aura:id="section" class="slds-hide" iconName="utility:chevronright" size="x-small" alternativeText="Indicates add"/>
+                <lightning:icon aura:id="section" iconName="utility:chevrondown" size="x-small" alternativeText="Indicates dash"/>
+            </div>
+            <span class="slds-m-left_medium">
+                <b><u>Service Request Details</u></b>
+            </span>
+        </legend>
+        <div aura:id="section"
+             class="slds-form-element__group slds-m-top_medium">
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label">Claim Number</label>
+                    <ui:inputText disabled="true" value="{!v.Service_Request_Case.CaseNumber}"/>
+                </div>
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label">Milestone</label>
+                    <ui:inputText disabled="true" value="{!v.Service_Request_Case.Service_Request_Milestone__c}"/>
+                </div>
+            </div>
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label">Owner</label>
+                    <ui:inputText disabled="true" value="{!v.Service_Request_Case.Owner.Name}"/>
+                    <aura:if isTrue="{!if(v.ServiceMilestoneAttribute.Closed,false,true)}">
+                        <a onclick="{!c.assignToMe}" class="{!if((v.ServiceMilestoneAttribute.AwaitingApproval || v.ServiceMilestoneAttribute.AwaitingInvoiceApproval), 'slds-hide','slds-show')}">Assign to me</a>
+                    </aura:if>
+                </div>
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label">Service Agent Job Number</label>
+                    <ui:inputText value="{!v.Service_Request_Case.TTI_Service_Agent_Job_Number__c}"/>
+                </div>
+            </div>
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" >Claim Type</label>
+                    <ui:inputSelect aura:id="claimType"
+                                    disabled="{!if(!v.ServiceMilestoneAttribute.New 
+                                              &amp;&amp; !v.ServiceMilestoneAttribute.AwaitingApproval,
+                                              true,
+                                              if(v.userType.Account.Internal_Service_Agent__c , 
+                                              false,true))}" 
+                                    value="{!v.Service_Request_Case.Claim_Type__c}"
+                                    change="{!c.setClaimType}">
+                        <ui:inputSelectOption text="Warranty" label="Warranty"/>    
+                        <ui:inputSelectOption text="Non-Warranty" label="Non-Warranty" />
+                    </ui:inputSelect>
+                </div>	
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" >Priority</label>
+                    <ui:inputText disabled="true" value="{!v.Service_Request_Case.Priority}"/>
+                </div>
+            </div>            
+            <div class="slds-form-element__row">
+                <aura:if isTrue="{!if(v.ServiceMilestoneAttribute.Closed,true,false)}">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" >Closed Reason</label>
+                        <ui:inputText disabled="true" 
+                                      value="{!v.Service_Request_Case.Closed_Reason__c}"/>
+                        
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!if(v.hasComments,true,false)}">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" >{!$Label.c.SP_Label_Notes}</label>
+                        <ui:inputText disabled="true" value="{!v.approval.Comments}"/>
+                    </div>
+                </aura:if>   
+            </div>
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" >Incoming Consignment Number</label>
+                    <ui:inputText disabled="true" 
+                                  value="{!v.Service_Request_Case.Freight_in_consignment_number__c}"/>
+                    
+                </div>
+            </div>                       
+        </div>
+    </fieldset>
+    <lightning:spinner aura:id="mySpinner" class="slds-hide" />
+</aura:component>

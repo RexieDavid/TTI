@@ -1,0 +1,27 @@
+.THIS .slds-input__button-counter--z-index {
+    z-index: 1;
+}
+
+.THIS .slds-input_counter:focus, 
+.THIS .slds-input_counter:active, 
+.THIS .slds-input_counter:focus-visible {
+    outline: none;
+    box-shadow: none;
+}
+
+.THIS .slds-input_counter:read-only {
+    /* Same with disabled */
+    border-color: rgb(201, 201, 201); 
+}
+
+.THIS .slds-input_counter {
+    z-index: 0;
+}
+
+.THIS .div-padding--0px {
+    padding: 0;
+}
+
+.THIS .div-padding--825rem {
+    padding: 0.825rem;
+}

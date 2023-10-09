@@ -1,0 +1,90 @@
+<aura:component controller="RySiteMifgs2019Controller">
+
+    <!-- <aura:attribute name="data" type="Object" />
+    <aura:attribute name="columns" type="List" />
+    <aura:attribute name="selectedRowsCount" type="Integer" default="0" />
+    <aura:attribute name="maxRowSelection" type="Integer" default="5" /> -->
+    
+    <aura:attribute name="personAccountId" type="String" />
+    <!-- <aura:attribute name="selectedSessionId" type="String" /> -->
+    <aura:attribute name="selectedSessionRecord" type="Map" />
+
+    <aura:attribute name="sessions" type="List" />
+    <aura:attribute name="mycolumns" type="List" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}"/>
+
+    <aura:registerEvent name="stateUpdated" type="c:RySiteMifgs2019StateUpdated" />
+    
+    <!-- SESSION MANAGEMENT PAGE -->
+
+    <div class="slds-grid slds-wrap">
+
+
+
+
+        <div id="haha" class="slds-col slds-size_1-of-1 slds-large-size_1-of-12">
+            <!-- <span>CONTAINER LEFT FILLER</span> -->
+        </div>
+        <div id="hehe" class="slds-col slds-size_1-of-1 slds-large-size_10-of-12 container">
+            <!-- CONTAINER MIDDLE -->
+
+            <div class="slds-col slds-size_1-of-1 slds-p-top_medium slds-p-bottom_xx-large logoparentcontainer">
+                <div class="logocontainer">
+                    <img src="{!$Resource.RYOBI_Brand_Logo}" /> 
+                </div>
+            </div>
+
+            <div class="slds-col slds-size_1-of-1 datadiv">
+                <span class="sectionheader">Choose a Session</span>
+                <hr />
+                <div class="slds-p-bottom_small">
+                    <span>
+                        <i><!-- TODO --></i>
+                    </span>
+                </div>
+                <div>
+                    
+
+                    <div style="height: auto" id="dtSessionsId">
+                        <!-- <h1>Selected Rows: {!v.selectedRowsCount}</h1>
+                        <lightning:datatable
+                            columns="{!v.columns}"
+                            data="{!v.data}"
+                            keyField="id"
+                            maxRowSelection="{!v.maxRowSelection}"
+                            onrowselection="{!c.updateSelectedText}"/> -->
+
+                        <lightning:datatable data="{!v.sessions}"
+                                             columns="{!v.mycolumns}"
+                                             keyField="id"
+                                             maxRowSelection="1"
+                                             onrowselection="{!c.onSessionSelected}" />
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="slds-col slds-size_1-of-1 slds-p-top_xx-large slds-p-bottom_xx-large datadiv submitButtonParentContainer">
+                <div class="submitButtonContainer">
+                    <lightning:button variant="brand" label="Submit" title="Submit" onclick="{!c.handleAttendSession}" class="submitButton" />
+                </div>
+                <div class="submitButtonContainer">
+                    <lightning:button variant="brand" label="Cancel" title="Cancel" onclick="{!c.handleCancelSessionSelection}" class="submitButton" />
+                </div>
+            </div>
+
+        </div>
+        <div id="hoho" class="slds-col slds-size_1-of-1 slds-large-size_1-of-12">
+            <!-- <span>CONTAINER RIGHT FILLER</span> -->
+        </div>
+
+
+
+        
+    </div>
+
+    <c:RySiteMifgs2019Modal aura:id="modal" />
+
+</aura:component>

@@ -1,0 +1,205 @@
+<aura:component implements="c:TTI_Constants" controller="TTI_SubmtClaimController">
+    <aura:attribute name="myId" type="String" default="4" />
+    <aura:attribute name="claim" type="Case" />
+    <aura:attribute name="newcustomer" type="Boolean" />
+    <aura:attribute name="SerialNumberWeek" type="String" />
+    <aura:attribute name="SerialNumberYear" type="String" />
+    <aura:attribute name="userType" type="String" />
+    <aura:attribute name="serialNumberLocated" type="Boolean" default="false" />
+    <aura:attribute name="selectedAssetObj" type="Object" />
+    <aura:attribute name="isNextButtonDisabled" type="Boolean" default="true"/>
+    <!-- Custom Labels -->
+    <aura:attribute name="errMandatoryField" type="String" default="{!$Label.c.SP_ERR_Mandatory_Field}" />
+    <aura:attribute name="errEnterSerialNumber" type="String" default="{!$Label.c.SP_ERR_Enter_Serial_Number}" />
+    <aura:attribute name="errEnterSerialNumberWeek" type="String" default="{!$Label.c.SP_ERR_Enter_Serial_Number_Week}" />
+    <aura:attribute name="errEnterSerialNumberYear" type="String" default="{!$Label.c.SP_ERR_Enter_Serial_Number_Year}" />
+    <aura:attribute name="errPurchaseDateMustInThePast" type="String" default="{!$Label.c.SP_ERR_Purchase_Date_Must_in_the_Past}" />
+    <aura:attribute name="errInvalidDate" type="String" default="{!$Label.c.SP_ERR_Invalid_Date}" />
+    <aura:attribute name="errInvalidSerialNumberWeek" type="String" default="{!$Label.c.SP_ERR_Invalid_Serial_Number_Week}" />
+    <aura:attribute name="errInvalidSerialNumberYear" type="String" default="{!$Label.c.SP_ERR_Invalid_Serial_Number_Year}" />
+    <aura:attribute name="errInvalidProduct" type="String" default="{!$Label.c.SP_ERR_Invalid_Product}" />
+    
+    <aura:attribute name="productQuery" type="string" />
+    <aura:attribute name="productFieldsToQuery" type="string" />
+    <aura:attribute name="serialNumberQuery" type="string" />
+    <aura:attribute name="isServiceAgent" type="boolean" default="false" />
+    <aura:attribute name="hasSerialNumber" type="boolean" default="false" />
+    <aura:attribute name="hasDisplayWeek" type="boolean" default="false"/>
+    <aura:attribute name="hasDisplayYear" type="boolean" default="false"/>
+    <aura:attribute name="numberNotFound" type="boolean" default="false"/>
+
+    <aura:handler name="getSelectedObjectFromSearch" event="c:TTI_PredectiveSearchEvent" action="{!c.getSobject}" />
+    <aura:handler name="ValueChangeOfSearch" event="c:TTI_PredectiveSearchChangeEvent" action="{!c.searchValueChanged}" />
+    <aura:handler name="disableNxtBtnEvt" event="c:TTI_DisableNextButtonEvent" action="{!c.disableNextButton}" />
+    <aura:handler event="c:TTI_SearchOrCreateCustomerEvent" action="{!c.getCustomerInformation}" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:registerEvent name="submitClaimEvent" type="c:TTI_SubmitClaimEvent" />
+
+    <aura:if isTrue="{!v.activeScreenId == v.myId}">
+        <div class="slds-align_absolute-center">
+            <div class="slds-form slds-form_horizontal">
+                <div class="slds-form-element slds-size_1-of-1">
+                    <label class="slds-form-element__label" for="input-id-01">
+                        <abbr class="slds-required" title="required">*</abbr>
+                        Brand
+                    </label>
+                    <div id="selectBrand" class="slds-form-element__control">
+                        <ui:inputSelect value="{!v.claim.Brand__c}" aura:id="brand" change="{!c.changebrand}" disabled="{!v.newcustomer}">
+                            <ui:inputSelectOption text="None" label="None" value="true"/>
+                            <ui:inputSelectOption text="Milwaukee" label="Milwaukee"/>
+                            <ui:inputSelectOption text="AEG" label="AEG"/>
+                            <ui:inputSelectOption text="Ryobi" label="Ryobi"/>
+                            <ui:inputSelectOption text="VAX" label="VAX"/>
+                            <ui:inputSelectOption text="Homelite" label="Homelite"/>
+                            <ui:inputSelectOption text="Dirt Devil" label="Dirt Devil"/>
+                            <ui:inputSelectOption text="Empire" label="Empire" />
+                            <ui:inputSelectOption text="Hart" label="Hart" />
+                            <ui:inputSelectOption text="Hoover" label="Hoover" />
+                            <ui:inputSelectOption text="Oreck" label="Oreck" />
+                            <ui:inputSelectOption text="Stilleto" label="Stilleto" />
+                            <ui:inputSelectOption text="Kango" label="Kango" />
+                            <ui:inputSelectOption text="Powerfit" label="Powerfit" />
+                            <ui:inputSelectOption text="Wurth" label="Wurth" />
+                        </ui:inputSelect>
+                    </div>
+                </div>
+                <div class="slds-form-element slds-size_1-of-1">
+                    <label class="slds-form-element__label" for="input-id-01">
+                        <abbr class="slds-required" title="required">*</abbr>
+                        Product
+                    </label>
+                    <div id="predictiveProduct" class="slds-form-element__control">
+                        <c:TTI_PredictiveSearch aura:id="product" 
+                                                ParentFieldsToQuery="{!v.productFieldsToQuery}"
+                                                SobjectName="Product2" 
+                                                SelectedItemName="{!v.claim.Product_Name__c.ProductCode}" 
+                                                whereQueryString="{!v.productQuery}"
+                                                dynamicValueObject="{!v.claim.Brand__c}" 
+                                                displayProdCode="true" 
+                                                ignoreDefaultNameSearch="true" 
+                                                showAddOn="true" />
+                    </div>
+                </div>
+                <div class="slds-form-element slds-size_1-of-1">
+                    <label class="slds-form-element__label" for="input-id-01">
+                        Serial Number
+                    </label>
+                    <div id="predictiveSerialNumber" class="slds-form-element__control">
+                        <aura:if isTrue="{!v.newcustomer}">
+                            <c:TTI_PredictiveSearch aura:id="serialnumber" 
+                                                    SelectedItemName="{!v.claim.Serial_Number__c}" 
+                                                    SobjectName="Asset" 
+                                                    whereQueryString="{!v.serialNumberQuery}" 
+                                                    ignoreDefaultNameSearch="true" 
+                                                    dynamicValueObject="{!v.claim.TTI_Customer_Contact__c.Id}" 
+                                                    dynamicValueObject2="{!v.claim.Product_Name__c.Id}" />
+                            <aura:set attribute="else">
+                                <ui:inputText 
+                                    aura:id="serialnumberText" 
+                                    disabled="{!v.claim.Serial_Number_not_found__c}" 
+                                    value="{!v.claim.Serial_Number__c}" 
+                                    blur="{!c.blurserialnumber}" />
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                </div>
+
+                <aura:if isTrue="{!v.hasSerialNumber}">
+                    <aura:if isTrue="{!v.hasDisplayWeek}">
+                        <div class="slds-form-element slds-size_1-of-1" aura:id="SerialNumberWeek_Id">
+                            <label class="slds-form-element__label">
+                                Serial Number Week
+                            </label>
+                            <div class="slds-form-element__control">
+                                <ui:inputPhone 
+                                        maxlength="2" 
+                                        disabled="{!v.numberNotFound}" 
+                                        value="{!v.SerialNumberWeek}" 
+                                        aura:id="SN_Week_Id" 
+                                        blur="{!c.blurSerialNumberWeek}" />
+                            </div>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.hasDisplayYear}">
+                        <div class="slds-form-element slds-size_1-of-1" aura:id="SerialNumberYear_Id">
+                            <label class="slds-form-element__label">
+                                Serial Number Year
+                            </label>
+                            <div class="slds-form-element__control">
+                                <ui:inputPhone 
+                                        maxlength="4" 
+                                        disabled="{!v.numberNotFound}" 
+                                        value="{!v.SerialNumberYear}" 
+                                        aura:id="SN_Year_Id" 
+                                        blur="{!c.blurSerialNumberYear}" />
+                            </div>
+                        </div>
+                    </aura:if>
+                </aura:if>
+                <fieldset class="slds-form-element">
+                    <legend class="slds-form-element__legend slds-form-element__label">
+                        Cannot locate Serial Number
+                    </legend>
+                    <div id="noSerialNumberTick" class="slds-form-element__control">
+                        <ui:inputCheckbox 
+                            value="{!v.claim.Serial_Number_not_found__c}" 
+                            aura:id="noserialnumber" 
+                            change="{!c.blurnoserialnumber}" />
+                    </div>
+                </fieldset>
+                <div class="slds-form-element slds-size_1-of-1">
+                    <label class="slds-form-element__label" for="input-id-01">
+                        <abbr class="slds-required" title="required">*</abbr>
+                        Purchase Date
+                    </label>
+                    <div id="inputPurchaseDate" class="slds-form-element__control">
+                        <ui:inputDate 
+                                value="{!v.claim.Purchase_Date__c}" 
+                                aura:id="purchasedate" 
+                                displayDatePicker="true" 
+                                disabled="{!v.serialNumberLocated}" 
+                                change="{!c.datechange}" />
+                    </div>
+                </div>
+                <div class="slds-form-element slds-size_1-of-1">
+                    <label class="slds-form-element__label" for="input-id-01">
+                        <abbr class="slds-required" title="required">*</abbr>
+                        Receipt Number
+                    </label>
+                    <div id="inputReceiptNumber" class="slds-form-element__control">
+                        <ui:inputText value="{!v.claim.Receipt_No__c}" aura:id="receiptnumber" blur="{!c.blurreceipt}" />
+                    </div>
+                </div>
+                <div class="slds-form-element slds-size_1-of-1">
+                    <label class="slds-form-element__label" for="input-id-01">
+                        Service Agent Job Number
+                    </label>
+                    <div id="inputJobNumber" class="slds-form-element__control">
+                        <ui:inputText value="{!v.claim.TTI_Service_Agent_Job_Number__c}" aura:id="jobnumber"/>
+                    </div>
+                </div>
+                <div class="slds-form-element slds-size_1-of-1">
+                    <label class="slds-form-element__label" for="input-id-01">
+                        <abbr class="slds-required" title="required">*</abbr>
+                        Fault Description
+                    </label>
+                    <div id="inputFault" class="slds-form-element__control">
+                        <ui:inputTextArea value="{!v.claim.Fault_Description__c}" aura:id="fault" blur="{!c.blurfault}" />
+                    </div>
+                </div>
+                <div id="btnActions" class="slds-form-element">
+                    <ui:button class="slds-button slds-button_brand" label="Previous" press="{!c.previous}" />
+                    <aura:if isTrue="{!v.isServiceAgent}">
+                        <ui:button class="slds-button slds-button_brand" label="Submit" press="{!c.submit}" />
+                        <aura:set attribute="else">
+                            &nbsp;
+                            <div class="slds-hide" style="display:inline" id="nextButton" aura:id="nextBtn">
+                                <ui:button class="slds-button slds-button_brand" label="Next" press="{!c.next}" disabled="{!v.isNextButtonDisabled}"/>
+                            </div>
+                        </aura:set>
+                    </aura:if>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+</aura:component>

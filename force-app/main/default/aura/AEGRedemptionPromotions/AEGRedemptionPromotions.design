@@ -1,0 +1,9 @@
+<design:component>
+    <design:attribute name="unclaimedRedemptionHeader" label="Unclaimed Redemption Header" />
+    <design:attribute name="unclaimedRedemptionSubHeader" label="Unclaimed Redemption Subheader" />
+    <design:attribute name="unclaimedRedemptionSubHeader2" label="Unclaimed Redemption 2nd Subheader" />
+    <design:attribute name="availableRedemptionHeader" label="Available Redemption Header" />
+    <design:attribute name="availableRedemptionSubHeader" label="Available Redemption Subheader" />
+    <design:attribute name="noRegProdMsg" label="No Registered Product Label" />
+    <design:attribute name="noActProdMsg" label="No Active Redemption Product Label" />
+</design:component>

@@ -1,0 +1,6 @@
+<aura:event type="APPLICATION">
+    <aura:attribute name="OpenModal" type="Boolean"/>
+    <aura:attribute name="question" type="String"/>
+    <aura:attribute name="buttonNames" type="List" />
+    <aura:attribute name="functionToRunObject" type="Object" />
+</aura:event>

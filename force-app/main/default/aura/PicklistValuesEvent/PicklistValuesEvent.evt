@@ -1,0 +1,5 @@
+<aura:event type="APPLICATION" description="Event template" >
+	<aura:attribute name="picklistValues" type="Object[]"/>
+	<aura:attribute name="objName" type="String"/>
+	<aura:attribute name="objField" type="String"/>
+</aura:event>

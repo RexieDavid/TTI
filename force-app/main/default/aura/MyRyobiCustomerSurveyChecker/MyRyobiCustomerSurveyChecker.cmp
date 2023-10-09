@@ -1,0 +1,7 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" 
+                access="global" controller="MyRyobiCustomerSurveyController">
+	<aura:attribute name="hasCustomerFinishedSurvey" type="Boolean" />
+	<aura:attribute name="currentUser" type="String" />
+    <aura:attribute name="surveyUrl" type="String" required="false" default="/customer-survey" />
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}" />
+</aura:component>

@@ -1,0 +1,59 @@
+<aura:component controller="TTI_PredictiveSearchController">
+    <aura:attribute name="SelectedItemName" type="String" />
+    <aura:attribute name="listObj" type="List" />
+    <aura:attribute name="ignoreDefaultNameSearch" type="Boolean" default="false" />
+    <aura:attribute name="whereQueryString" type="String" />
+    <aura:attribute name="displayProdCode" type="String" />
+    <aura:attribute name="ParentFieldsToQuery" type="String" />
+    <aura:attribute name="dynamicValueObject" type="String" />
+    <aura:attribute name="dynamicValueObject2" type="String" />
+    <aura:attribute name="SobjectName" type="String" />
+    <aura:attribute name="SobjectLabel" type="String" />
+    <aura:attribute name="objectIndexInList" type="String" />
+    <aura:attribute name="SelectedItemId" type="string" />
+    <aura:attribute name="SelectedItemObject" type="Object" />
+    <aura:attribute name="showAddOn" type="Boolean" />
+    <aura:attribute name="disabledFlag" type="Boolean" default="false" />
+    <aura:attribute name="hasResult" type="Boolean" default="false" />
+    <aura:attribute name="hasSelected" type="Boolean" default="false" />
+    <aura:attribute name="searchTimeout" type="Integer" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="c:TTI_ValidateServiceAgent" action="{!c.serviceAgentvalidation}" />
+    <aura:registerEvent name="getSelectedObjectFromSearch" type="c:TTI_PredectiveSearchEvent" />
+    <aura:registerEvent name="ValueChangeOfSearch" type="c:TTI_PredectiveSearchChangeEvent" />
+    <aura:registerEvent name="disableNxtBtnEvt" type="c:TTI_DisableNextButtonEvent" />
+    <ui:inputText aura:id="lookup" class="slds-input" updateOn="keyup" disabled="{!v.disabledFlag}" keydown="{!c.disableBtn}" keyup="{!c.doSearch}" value="{!v.SelectedItemName}" blur="{!c.getRecordJS}" />
+    <aura:if isTrue="{!v.ignoreDefaultNameSearch==true &amp;&amp; v.showAddOn==true}">
+        <span>
+            <ui:outputText value="{!v.SelectedItemObject.Name}"/>            
+        </span>
+    </aura:if>
+    <div style="z-index:1" aura:id="searchinprogressbox" class="slds-lookup__Custom slds-hide" role="listbox">
+        <ul aura:id="lookuplist-items" class="slds-lookup__list" role="presentation">
+            <li class="slds-lookup__item">
+                <span>Search In Progress....</span>
+            </li>
+        </ul>
+    </div>
+    <div style="z-index:1" aura:id="lookuplist" class="slds-lookup__Custom slds-hide" role="listbox">
+        <ul aura:id="lookuplist-items" class="slds-lookup__list" role="presentation">
+            <aura:iteration items="{!v.listObj}" var="objOptions" indexVar="objIndex">
+                <li class="slds-lookup__item">
+                    <a Id="{!objIndex}" role="option" onclick="{!c.select}">
+                        <aura:if isTrue="{!v.ignoreDefaultNameSearch}">
+                            <aura:if isTrue="{!v.displayProdCode}">
+                                {!objOptions.ProductCode}
+                                <aura:set attribute="else">
+                                    {!objOptions.FullSerialNumber__c}
+                                </aura:set>
+                            </aura:if>
+                            <aura:set attribute="else">
+                                {!objOptions.Name}
+                            </aura:set>
+                        </aura:if>
+                    </a>
+                </li>
+            </aura:iteration>
+        </ul>
+    </div>
+</aura:component>

@@ -1,0 +1,70 @@
+<aura:component implements="force:hasRecordId,force:hasSObjectName,force:lightningQuickActionWithoutHeader">
+    <aura:attribute type="String" name="headerTitle" default="{!$Label.c.Sales_Transaction_Modal_Header}" />
+    <aura:attribute type="String" name="recordId" />
+    <aura:attribute type="String" name="salesTransactionFlowName" default="Create_Sales_Transaction" />
+    <aura:attribute type="String" name="sObjectName" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <lightning:navigation aura:id="navService"/>
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+
+    <aura:html tag="style">
+        .cuf-content {
+            padding: 0 0rem !important;
+        }
+
+        .modal-body {
+            padding: 0 0rem !important;
+        }
+
+        div#customModalContent.slds-modal__content {
+            overflow-y: hidden !important;
+            height: unset !important;
+            max-height: unset !important;
+        }
+
+        .bottomBar {
+            padding-bottom: unset !important;
+            margin-top: unset !important;
+        }
+    </aura:html>
+
+    <aura:if isTrue="{!$Browser.formFactor != 'DESKTOP'}">
+        <aura:html tag="style">
+            .mobile {
+                position: relative;
+                margin: -1rem;
+                background: white;
+                height: 100vh;
+            }
+        </aura:html>
+
+        <div class="mobile">
+            <header>
+                <c:customPubFlowNavigation isDesktopView="false" title="{!v.headerTitle}" onclose="{!c.closeQuickAction}"/>
+            </header>
+            <lightning:flow aura:id="salesTransaction" onstatuschange="{!c.handleStatusChange}" />
+        </div>
+
+        <aura:set attribute="else">
+            <aura:html tag="style">
+                .forceChatterPublisherPresentationDesktop div#customModalContent.slds-modal__content {
+                    height: 23.75rem !important;
+                    overflow-y: hidden !important;
+                }
+            </aura:html>
+
+            <header class="slds-modal__header" aura:id="modal-header">
+                <h2 class="slds-modal__title slds-hyphenate">
+                    {!v.headerTitle}
+                </h2>
+            </header>
+            <div id="customModalContent" class="slds-modal__content">
+                <lightning:flow aura:id="salesTransaction" onstatuschange="{!c.handleStatusChange}" />
+            </div>
+            <footer>
+                <c:customPubFlowNavigation isDesktopView="true" onclose="{!c.closeQuickAction}" />
+            </footer>
+        </aura:set>
+    </aura:if>
+</aura:component>

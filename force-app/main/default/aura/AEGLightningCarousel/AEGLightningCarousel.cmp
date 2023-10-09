@@ -1,0 +1,93 @@
+<!--
+  @File Name          : AEGLightningCarousel.cmp
+  @Description        : 
+  @Author             : Kristopher Veraces
+  @Group              : 
+  @Last Modified By   : Kristopher Veraces
+  @Last Modified On   : 24/09/2019, 5:04:02 PM
+  @Modification Log   : 
+  Ver       Date            Author                  Modification
+  1.0    24/09/2019   Kristopher Veraces     Initial Version
+-->
+<aura:component>
+    <!-- String attributes -->
+    <aura:attribute name="redemptionItemId" type="String" />
+    <aura:attribute name="purchaseProductId" type="String" />
+    <aura:attribute name="typeClass" type="String" />
+    <aura:attribute type="String" name="redeemrequiredHelpText" default="{!$Label.c.AEG_Redeem_Required_Item_Help_Text}" />
+    <aura:attribute type="String" name="redeemHelpText" default="{!$Label.c.AEG_Redeem_Item_Help_Text}" />
+
+    <!-- Integer attribute -->
+    <aura:attribute name="slidesToShow" type="Integer" default="3" />
+    
+    <!-- Boolean attribute -->
+    <aura:attribute name="isChooseActive" type="Boolean" default="false" />
+    <aura:attribute name="isLoadCss" type="Boolean" default="true" />
+    <aura:attribute name="isLoaded" type="Boolean" default="false" />
+    <aura:attribute name="hasManyRequiredRedemptions" type="Boolean" default="false" />
+
+    <!-- Collection attributes -->
+    <aura:attribute name="objectList" type="List" />
+    <aura:attribute name="requiredObjectList" type="List" />
+
+    <ltng:require styles="{!join(',',
+                          $Resource.Slick + '/slick-1.8.1/slick/slick.min.css',
+                          $Resource.Slick + '/slick-1.8.1/slick/slick-theme.min.css')}" 
+                  scripts="{!join(',',
+                           $Resource.jquery,
+                           $Resource.Slick + '/slick-1.8.1/slick/slick.min.js')}"
+                  afterScriptsLoaded="{!c.afterScriptsLoaded}"/>
+
+    <!-- INC0039419 - Added by: KB - 06/26/23 -->
+    <div class="slds-modal__content"> 
+        <center>
+            <aura:if isTrue="{!v.hasManyRequiredRedemptions}">
+
+                <b><p class="requiredProducts" >You will automatically receive the following bonus item: 
+                    <aura:iteration items="{!v.requiredObjectList}" var="reqProd" >
+                        <option text="{!reqProd.Product__r.Name}" value="{!reqProd.id}" />
+                    </aura:iteration>
+                </p></b>
+                <br></br>
+                <span class="span--font-size">
+                    <b>{!v.redeemrequiredHelpText}</b>
+                </span>
+
+                <aura:set attribute="else">
+                    <span class="span--font-size">
+                        <b>{!v.redeemHelpText}</b>
+                    </span>
+                </aura:set>
+
+            </aura:if>
+        </center>
+    </div>
+
+    <div class="carousel-container slds-align_absolute-center" style="width: 90%;">
+        <aura:iteration items="{!v.objectList}" var="item">
+            <div data-id="{!item.dataId}" aura:id="carouselImages" class="slds-carousel__panel">
+                <div class="{!v.typeClass}" >
+                    <a href="javascript:void(0);" 
+                        data-id="{!item.dataId}" 
+                        onclick="{!c.chooseRedeemItem}" 
+                        class="{!item.initialClass}">
+                        <div class="slds-carousel__image categoryImage">
+                            <img src="{!item.imageURL}" />
+                        </div>
+                        <div class="slds-carousel__content">
+                            <h2 class="slds-carousel__content-title">{!item.title}</h2>
+                            <p>{!item.productName}</p>
+                        </div>
+                    </a>
+                </div>
+                <aura:if isTrue="{!not(empty(item.disclaimerMessage))}">
+                    <p class="disclaimer-message">
+                        <strong>
+                            {!item.disclaimerMessage}
+                        </strong>
+                    </p>
+                </aura:if>
+            </div>
+        </aura:iteration>
+    </div>
+</aura:component>

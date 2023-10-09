@@ -1,0 +1,283 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId"
+                access="global" controller="ProfileDetailCC">
+    
+    <!-- initialize on load -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <!-- User Variables -->
+    <aura:attribute name="user" type="Object"/>
+    <aura:attribute name="simpleUser" type="Object"/>
+    <aura:attribute name="userError" type="String"/>
+
+    <!-- User Variables -->
+    <aura:attribute name="account" type="Object"/>
+    <aura:attribute name="simpleAcc" type="Object"/>
+    <aura:attribute name="accountError" type="String"/>
+
+    <!-- Google Address Variables -->
+    <aura:attribute name="selectedOption" type="String"/>
+    <aura:attribute name="predictions" type="String[]"/>
+    <aura:attribute name="searchString" type="String"/>
+    <aura:attribute type="Boolean" name="contactEdit" default="false" />
+    <aura:attribute type="Boolean" name="disAddress" default="true" />
+
+    <!-- Component Variables -->
+    <aura:attribute name="isRecordLoaded" type="Boolean" default="false" />
+    <aura:attribute name="oldFormObj" type="Object"/>
+    <aura:attribute name="siteObj" type="Object"/>
+    <aura:attribute name="conctactLabels" type="List" />
+    <aura:attribute name="addressLabels" type="List" />
+    <aura:attribute name="site" type="Object" default="{!$Site}" />
+
+    <!-- Picklist Values -->
+    <aura:attribute name="professionOptions" type="Object[]" />
+    <aura:attribute name="titleOptions" type="Object[]" />
+    <aura:attribute name="employeeSizeOptions" type="Object[]" />
+    <aura:attribute name="customerTypeOptions" type="Object[]" />
+
+    <!-- Custom Label -->
+    <aura:attribute name="regexPhoneFormat" type="String" default="{!$Label.c.SP_REGEX_ANZ_Phone_Format}" />
+    <aura:attribute name="regexHomePhoneFormat" type="String" default="{!$Label.c.SP_REGEX_ANZ_Home_Phone_Format}" />
+    <aura:attribute name="regexEmailFormat" type="String" default="{!$Label.c.UTIL_REGEX_Email_Format}" />
+
+    <c:UtilityMethods aura:id="utilityMethods" />
+
+    <force:recordData aura:id="accRecordCreator" 
+        mode="EDIT"
+        recordId="{!v.simpleUser.AccountId}" 
+        targetRecord="{!v.account}"
+        targetFields="{!v.simpleAcc}"
+        targetError="{!v.accountError}"
+        fields="Id,
+                Profession__c,
+                Employee_Size__c,
+                Salutation,
+                FirstName,
+                LastName,
+                PersonMobilePhone,
+                PersonHomePhone,
+                PersonEmail,
+                Type,
+                PersonMailingStreet,
+                PersonMailingCity,
+                PersonMailingState,
+                PersonMailingPostalCode,
+                PersonMailingCountry,
+                Country__pc"
+        recordUpdated="{!c.handleAccUpdated}"
+    />
+
+    <force:recordData aura:id="userRecordCreator" 
+        mode="EDIT"
+        recordId="{!v.recordId}" 
+        targetRecord="{!v.user}"
+        targetFields="{!v.simpleUser}"
+        fields="Id,
+                AccountId,
+                Name,
+                Title,
+                FirstName,
+                LastName,
+                MobilePhone,
+                Phone,
+                Email,
+                Street,
+                City,
+                State,
+                Country,
+                PostalCode,
+                Username,
+                Customer_type__c"
+        targetError="{!v.userError}"
+        recordUpdated="{!c.handleRecordUpdated}" />
+
+        {!v.accountError}
+{!v.userError}
+        
+    <aura:if isTrue="{!v.isRecordLoaded}">
+        <lightning:layout class="globalBox2" multipleRows="true" >
+
+            <lightning:layoutItem size="12"> 
+                <lightning:layout multipleRows="true" horizontalAlign="center" >
+
+                    <lightning:layoutItem padding="around-small" size="12" smallDeviceSize="12" largeDeviceSize="6" >
+                        <lightning:card >
+                            <aura:set attribute="title">
+                                <div class="{!if(v.siteObj.siteLabel == 'myAEG' || v.siteObj.siteLabel == 'myAEGNZ', 'slds-box aegColor', 'slds-box ryobiColor')}" >
+                                    <h3 class="slds-tile__title slds-truncate slds-text-title_caps slds-text-color_inverse" title="Contact Details">Contact Details</h3>
+                                </div>
+                            </aura:set>
+
+                            <lightning:layout aura:id="conViewDetails" multipleRows="true" >
+                                <lightning:layoutItem padding="horizontal-large" size="12" >
+                                    <c:LightningField label="Name">
+                                        <p><lightning:formattedText value="{!v.simpleUser.Title}" />&nbsp;<lightning:formattedText value="{!v.simpleUser.Name}" /></p>
+                                    </c:LightningField>
+                                    <c:LightningField label="Mobile">
+                                        <p><lightning:formattedPhone value="{!v.simpleUser.MobilePhone}" /></p>
+                                    </c:LightningField>
+                                    <c:LightningField label="Phone">
+                                        <p><lightning:formattedPhone value="{!v.simpleUser.Phone}" /></p>
+                                    </c:LightningField>
+                                    <c:LightningField label="Email">
+                                        <p><lightning:formattedEmail  value="{!v.simpleUser.Email}" /></p>
+                                    </c:LightningField>
+
+                                    <aura:if isTrue="{!v.siteObj.siteLabel == 'myAEG' || v.siteObj.siteLabel == 'myAEGNZ'}" >
+                                        <c:LightningField label="Customer Type">
+                                            <p><lightning:formattedText value="{!v.simpleUser.Customer_type__c}" /></p>
+                                        </c:LightningField>
+                                        <c:LightningField label="Profession">
+                                            <p><lightning:formattedText value="{!v.simpleAcc.Profession__c}" /></p>
+                                        </c:LightningField>
+                                    </aura:if>
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                            
+                            <lightning:layout aura:id="conEditDetails" class="slds-hide" multipleRows="true" >                              
+                                <lightning:layoutItem padding="horizontal-large" size="12" >
+                                    <lightning:select aura:id="formField" label="Title" value="{!v.simpleUser.Title}">
+                                        <aura:iteration items="{!v.titleOptions}" var="item">
+                                            <option value="{!item.value}">
+                                                {!item.label}
+                                            </option>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                    <lightning:input aura:id="formField" name="firstName" label="First Name" value="{!v.simpleUser.FirstName}"/>
+                                    <lightning:input aura:id="formField" name="lastName" label="Last Name" value="{!v.simpleUser.LastName}" required="true" />
+                                    <lightning:input aura:id="formField" type="tel" label="Mobile" name="mobile" value="{!v.simpleUser.MobilePhone}" pattern="{!v.regexPhoneFormat}" required="true" />
+                                    <lightning:input aura:id="formField" type="tel" label="Phone" name="phone" value="{!v.simpleUser.Phone}" pattern="{!v.regexHomePhoneFormat}"/>
+                                    <lightning:input aura:id="formField" type="email" label="Email" name="email" value="{!v.simpleUser.Email}" pattern="{!v.regexEmailFormat}" required="true" />
+
+                                    <aura:if isTrue="{!v.siteObj.siteLabel == 'myAEG' || v.siteObj.siteLabel == 'myAEGNZ'}" >
+                                        <lightning:select aura:id="formField" label="Customer Type" value="{!v.simpleUser.Customer_type__c}" required="true" >
+                                            <aura:iteration items="{!v.customerTypeOptions}" var="item">
+                                                <option value="{!item.value}">
+                                                    {!item.label}
+                                                </option>
+                                            </aura:iteration>
+                                        </lightning:select>
+
+                                        <lightning:select aura:id="formField" label="Profession" value="{!v.simpleAcc.Profession__c}" required="true" >
+                                            <aura:iteration items="{!v.professionOptions}" var="item">
+                                                <option value="{!item.value}">
+                                                    {!item.label}
+                                                </option>
+                                            </aura:iteration>
+                                        </lightning:select>
+
+                                        <lightning:select aura:id="formField" label="Employee Size" value="{!v.simpleAcc.Employee_Size__c}">
+                                            <aura:iteration items="{!v.employeeSizeOptions}" var="item">
+                                                <option value="{!item.value}">
+                                                    {!item.label}
+                                                </option>
+                                            </aura:iteration>
+                                        </lightning:select>
+                                    </aura:if>
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                        </lightning:card>
+                    </lightning:layoutItem>
+
+                    <lightning:layoutItem padding="around-small" size="12" smallDeviceSize="12" largeDeviceSize="6" >
+                        <lightning:card >
+                            <aura:set attribute="title">
+                                <div class="{!if(v.siteObj.siteLabel == 'myAEG' || v.siteObj.siteLabel == 'myAEGNZ', 'slds-box aegColor', 'slds-box ryobiColor')}" >
+                                    <h3 class="slds-tile__title slds-truncate slds-text-title_caps slds-text-color_inverse" title="Address">Address</h3>
+                                </div>
+                            </aura:set>
+
+                            <lightning:layout aura:id="shipViewDetails" multipleRows="true" >
+                                <lightning:layoutItem padding="horizontal-large" size="12" >
+                                    <c:LightningField label="Street">
+                                        <p><lightning:formattedText value="{!v.simpleUser.Street}" /></p>
+                                    </c:LightningField>
+                                    <c:LightningField label="Suburb">
+                                        <p><lightning:formattedText value="{!v.simpleUser.City}" /></p>
+                                    </c:LightningField>
+                                    <c:LightningField label="State">
+                                        <p><lightning:formattedText value="{!v.simpleUser.State}" /></p>
+                                    </c:LightningField>
+                                    <c:LightningField label="PostalCode">
+                                        <p><lightning:formattedText value="{!v.simpleUser.PostalCode}" /></p>
+                                    </c:LightningField>
+                                    <c:LightningField label="Country">
+                                        <p><lightning:formattedText value="{!v.simpleUser.Country}" /></p>
+                                    </c:LightningField>
+                                </lightning:layoutItem>
+                            </lightning:layout>
+
+                            <lightning:layout aura:id="shipEditDetails" class="slds-hide" multipleRows="true" >
+                                <lightning:layoutItem padding="horizontal-large" size="12" >
+                                    <div class="slds-form-element">
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-combobox_container slds-has-inline-listbox">
+                                                <div class="slds-combobox slds-combobox-lookup slds-dropdown-trigger slds-dropdown-trigger_click " aura:id="searchLookup"
+                                                     aria-expanded="false" aria-haspopup="listbox" role="combobox">
+                                                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" aura:id="iconPosition">
+                                                        <ui:inputText aura:id="googleInput" updateOn="keyup" disabled="{!not(v.disAddress)}"
+                                                                      keyup="{!c.keyUpHandler}"
+                                                                      class="slds-input slds-combobox__input"
+                                                                      value="{!v.searchString}"
+                                                                      placeholder="Enter a location"/>
+                                                        <aura:if isTrue="{!empty(v.selectedOption)}">
+                                                            <span class="slds-icon_container slds-input__icon">
+                                                                <div class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default icon" >
+                                                                    <lightning:icon iconName="utility:checkin" size="x-small"/>
+                                                                </div>                                
+                                                            </span>   
+                                                            <aura:set attribute="else">
+                                                                <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" onclick="{!c.clear}">                                    
+                                                                    <div class="slds-button__icon">                                        
+                                                                        <lightning:icon iconName="utility:close" size="x-small"/>                                        
+                                                                    </div>                                    
+                                                                </button>                                
+                                                            </aura:set>                            
+                                                        </aura:if>                        
+                                                    </div>                    
+                                                    <div role="listbox"> 
+                                                        <ul class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid">
+                                                            <aura:iteration items="{!v.predictions}" var="option">
+                                                                <li class="slds-listbox__item" role="presentation" onclick="{!c.selectOption}" data-value="{!option.value}" data-record="{!option.label}">
+                                                                    <span class="slds-media slds-listbox__option slds-listbox__option_entity " role="option">
+                                                                        <span class="slds-media__body">                                            
+                                                                            <span class="slds-listbox__option-text slds-listbox__option-text_entity">{!option.label}</span>                                            
+                                                                        </span>                                        
+                                                                    </span>                                    
+                                                                </li>                                
+                                                            </aura:iteration>                            
+                                                        </ul>
+                                                    </div>                    
+                                                </div>    
+                                            </div>            
+                                        </div>        
+                                    </div>
+
+                                    <lightning:input type="checkbox" label="Address not found" value="{!v.disAddress}" onchange="{!c.onCheck}" />
+
+                                    <lightning:input aura:id="formField" name="Street" label="Street" value="{!v.simpleUser.Street}" required="true" disabled="{!v.disAddress}" />
+                                    <lightning:input aura:id="formField" name="City" label="Suburb" value="{!v.simpleUser.City}" required="true" disabled="{!v.disAddress}" />
+                                    <lightning:input aura:id="formField" name="State" label="State" value="{!v.simpleUser.State}" required="true" disabled="{!v.disAddress}" />
+                                    <lightning:input aura:id="formField" name="PostalCode" label="PostalCode" value="{!v.simpleUser.PostalCode}" required="true" disabled="{!v.disAddress}" />
+                                    <lightning:input aura:id="formField" name="Country" label="Country" value="{!v.simpleUser.Country}" required="true" disabled="{!v.disAddress}" />
+
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                        </lightning:card>
+                    </lightning:layoutItem>
+                </lightning:layout>
+
+            </lightning:layoutItem>
+            
+            <!-- FOOTER -->
+            <lightning:layoutItem class="slds-align_absolute-center" padding="around-large" flexibility="auto" size="12"> 
+                <div aura:id="conDetailsButtons" class="slds-button-group slds-align_absolute-center slds-hide" role="group">
+                    <lightning:button aura:id="saveBtn" variant="brand" label="Save" onclick="{!c.handleSaveRecord}" />
+                    <lightning:button aura:id="cancelBtn" variant="brand" label="Cancel" onclick="{!c.toggleView}" />
+                </div>
+                
+                <lightning:button aura:id="editBtn" variant="brand" label="Edit" onclick="{!c.toggleView}" />
+            </lightning:layoutItem>
+        </lightning:layout>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,205 @@
+<!-- add implements="forceCommunity:availableForAllPageTypes" to surface the component in community builder -->
+<aura:component implements="forceCommunity:availableForAllPageTypes" 
+                access="global" controller="LightningSelfRegisterController">
+
+    <ltng:require scripts="https://www.google.com/recaptcha/api.js" />
+    
+    <aura:attribute name="showError" type="Boolean" required="true" description="" default="false" access="private" />
+    <aura:attribute name="showSpinner" type="Boolean" required="true" description="" default="false" access="private" />
+    <aura:attribute name="errorMessage" type="String" required="false" description="" access="private" />
+    <aura:attribute name="extraFields" type="list" required="false" description="A field set name whose fields are desired for user registration" />
+    <aura:attribute name="title" type="String" required="true" default="" />
+    <aura:attribute name="titleList" type="String[]" required="false" default="['Mr.','Ms.','Mrs.']" />
+    <aura:attribute name="countryList" type="String[]" required="false" default="['Australia','New Zealand']" />
+    <aura:attribute name="postCodeNum" type="Integer" />
+    <aura:attribute name="mobileNum" type="String" />
+    <aura:attribute name="phone" type="String" required="false" default="" />
+    <aura:attribute name="subscribed" type="Boolean" required="false" default="False" />
+    <aura:attribute name="securityQuestion" type="String" required="false" default="securityQuestion" />
+    <aura:attribute name="securityQuestionList" type="String[]" required="false" default="What is your mother's maiden name?,Who was your childhood hero?,What was the name of your first school?,What was your childhood nickname?" />
+    <aura:attribute name="answer" type="String" required="true" default="" />
+    <aura:attribute name="terms" type="String" default='' />
+    <aura:attribute name="privacy" type="String" default='' />
+    <aura:attribute name="termsofuse" type="String" default='' />
+    <aura:attribute name="fieldType" type="Boolean" default='false' />
+    <aura:attribute name="isAustralia" type="Boolean" default="False"/>
+
+    <!-- Design Attributes -->
+    <aura:attribute name="startUrl" type="String" required="false" description="The url you go to after a successful login" />
+    <aura:attribute name="regConfirmUrl" type="String" required="true" />
+    <aura:attribute name="firstnameLabel" type="String" required="false" default="First Name" />
+    <aura:attribute name="lastnameLabel" type="String" required="false" default="Last Name" />
+    <aura:attribute name="emailLabel" type="String" required="false" default="Email" />
+    <aura:attribute name="passwordLabel" type="String" required="false" default="Create Password" />
+    <aura:attribute name="confirmPasswordLabel" type="String" required="false" default="Confirm Password" />
+    <aura:attribute name="submitButtonLabel" type="String" required="false" default="Sign Up" />
+    <aura:attribute name="includePasswordField" type="Boolean" required="false" default="false" description="Whether to include password" />
+    <aura:attribute name="extraFieldsFieldSet" type="String" required="false" description="A field set name whose fields are desired for user registration" />
+    <aura:attribute name="country" type="String" required="true" default="Australia" />
+    <!-- Community Portal Outages - 11/08/2022 - JAC -->
+    <aura:attribute name="showComponent" type="Boolean" />
+    <!-- Community Portal Outages End -->
+
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}" />
+    <aura:registerevent name="sitePropagatedStartUrl" type="c:setStartUrl" />
+    <aura:dependency resource="siteforce:registerQueryEventMap" type="EVENT" />
+    <aura:dependency resource="c:setStartUrl" type="EVENT" />
+    <aura:handler event="c:setStartUrl" action="{!c.setStartUrl}" />
+    <aura:handler name="change" value="{!v.mobileNum}" action="{!c.handleMobileChange}" />
+
+    <!-- Community Portal Outages - 11/08/2022 - JAC -->
+    <aura:if isTrue="{!v.showComponent}">
+    <!-- Community Portal Outages End -->
+        <div>
+            <div id="register-container">
+                <aura:if isTrue="{!v.showError}">
+                    <div>
+                        <div class="globalerrordisplay">
+                            <p>{!v.errorMessage}</p>
+                        </div>
+                    </div>
+                </aura:if>
+
+                <img id="logo" src="{!$Resource.MyRyobi_logo_New}"></img>
+                <h4>Sign up</h4>
+                <p>Your exclusive area to access RYOBI services.</p>
+
+                <div class="containerpadding slds-grid">
+                    <div class="slds-col">
+                        <!-- <span class="cstm-required">*Name:</span> -->
+                        <!-- <div>
+                            <ui:inputSelect aura:id="title" value="{!v.title}" class="form-field salutationfield">
+                                <aura:iteration items="{!v.titleList}" var="title">
+                                    <ui.inputSelectOption text="{!title}" label="{!title}" />
+                                </aura:iteration>
+                            </ui:inputSelect>
+                        </div> -->
+                    </div>
+                </div>
+
+                <div class="containerpadding slds-grid">
+                    <div class="slds-col">
+                        <ui:inputText value="" aura:id="firstname" placeholder="First name" keyup="{!c.onKeyUp}" class="form-field namefield" maxlength="40" />
+                    </div>
+                    <div class="slds-col">
+                        <ui:inputText value="" aura:id="lastname" placeholder="Last name" keyup="{!c.onKeyUp}" class="form-field namefield slds-float_right"  maxlength="40" />
+                    </div>
+                </div>
+                
+                <div class="containerpadding">
+                    <!-- <span id="sfdc_user" class="cstm-required">*Email: </span> -->
+                    <ui:inputEmail value="" aura:id="email" placeholder="Email address" keyup="{!c.onKeyUp}" class="form-field widthMax" maxlength="70" />
+                </div>
+
+                <div class="containerpadding slds-grid">
+                    <div class="slds-col">
+                        <!-- <span class="cstm-required">*Country: </span> -->
+                        <div>
+                            <ui:inputSelect aura:id="country" value="{!v.country}" class="form-field country">
+                                <aura:iteration items="{!v.countryList}" var="country">
+                                    <ui.inputSelectOption text="{!country}" label="{!country}" />
+                                </aura:iteration>
+                            </ui:inputSelect>
+                        </div>
+                    </div>
+                    <div class="slds-col">
+                        <!-- <span class="cstm-required postal">*Postcode: </span> -->
+                        <div>
+                            <ui:inputText class="form-field postal slds-float_right" value="{!v.postCodeNum}" placeholder="Postcode" aura:id="postCodeNum" maxlength="4" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="containerpadding slds-grid">
+                    <div class="slds-col">
+                        <!-- <span>Mobile: </span> -->
+                        <div>
+                            <ui:inputText value="{!v.mobileNum}" placeholder="Enter mobile" aura:id="mobileNum" class="form-field phone" maxlength="10" />
+                        </div>
+                    </div>
+                    <!-- <div class="slds-col">
+                        <span>Phone: </span>
+                        <div>
+                            <ui:inputText value="{!v.phone}" aura:id="phone" keyup="" class="form-field phone" />
+                        </div>
+                    </div> -->
+                </div>
+
+            <!-- <div class="containerpadding">
+                    <span class="cstm-required">*Security Question: </span>
+                    <ui:inputSelect aura:id="securityQuestion" value="{!v.securityQuestion}" class="form-field widthMax">
+                        <aura:iteration items="{!v.securityQuestionList}" var="securityQuestion">
+                            <ui.inputSelectOption text="{!securityQuestion}" label="{!securityQuestion}" />
+                        </aura:iteration>
+                    </ui:inputSelect>
+                </div>
+
+                <div class="containerpadding">
+                    <ui:inputText value="{!v.answer}" aura:id="answer" placeholder="Answer" class="form-field widthMax" />
+                </div> -->
+
+                <aura:iteration aura:id="extraFields" items="{!v.extraFields}" var="curField" indexVar="index">
+                    <div class="containerpadding">
+                        <span id="sfdc_user"></span>
+                        <aura:if isTrue="{!fieldType}">
+                            <ui:inputSelect aura:id="{!curField.fieldPath}" value="{!curField.value}" class="form-field">
+                                <aura:iteration items="{!curField.listOption}" var="pick">
+                                    <ui.inputSelectOption text="{!pick.optionName}" label="{!pick.optionName}"/>
+                                </aura:iteration>
+                            </ui:inputSelect>
+                            <aura:set attribute="else">
+                                <ui:inputText value="{!curField.value}" aura:id="{!curField.fieldPath}" placeholder="{!curField.label}" keyup="{!c.onKeyUp}"/>
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                </aura:iteration>
+
+                <div class="g-recaptcha containerpadding" data-sitekey="6LcGTjQUAAAAAFZBKkqcayDfJsLAy4GaNak54LaV"></div>
+
+                <div class="slds-form-element slds-m-top--small">
+                    <div class="slds-form-element__control containerpadding">
+                        <span class="slds-checkbox">
+                            <label class="slds-checkbox__label">
+                                <ui:inputCheckbox change="{!c.subscribe}"/>
+                                <span class="slds-checkbox--faux"></span>
+                                <span class="slds-form-element__label checkboxtext"> I agree to receive Email or SMS communications from RYOBI including DIY tips, tool tips and occasional special offers (opt out at any time).</span>
+                            </label>
+                        </span>
+                    </div>
+                </div>
+
+                <aura:if isTrue="{!v.includePasswordField}">
+                    <div id="sfdc_password_container">
+                        <span id="sfdc_lock" data-icon="c"></span>
+                        <ui:inputSecret value="" aura:id="password" placeholder="{!v.passwordLabel}" keyup="{!c.onKeyUp}"/>
+                    </div>
+                    <div id="sfdc_password_container">
+                        <span id="sfdc_lock" data-icon="c"></span>
+                        <ui:inputSecret value="" aura:id="confirmPassword" placeholder="{!v.confirmPasswordLabel}" keyup="{!c.onKeyUp}" />
+                    </div>
+                </aura:if>
+
+                <aura:if isTrue="{!v.showSpinner}">
+                    <div aura:id="registering" class="slds-align--absolute-center">
+                        <img src="{!$Resource.LoadingSpinner}" alt="registering" class="slds-avatar slds-avatar--large small-spinner" /> Creating account...
+                    </div>
+                </aura:if>
+
+                <button class="loginButton" type="button" name="submitButton" disabled="{!v.showSpinner}" onclick="{!c.handleSelfRegister}">{!v.submitButtonLabel} <img src="{!$Resource.Chevron_Circle_Right}" /></button>
+
+                <hr/>
+
+                <div class="slds-form-element containerpadding">
+                    <span>
+                        <label class="checkboxtext">By clicking sign up, you acknowledge that you have read and agree to 
+                            <a class="terms" href="{!v.terms}" target="_blank">Warranty Terms and Conditions, </a>
+                            <a class="terms" href="{!v.privacy}" target="_blank">Privacy Policy</a> and 
+                            <a class="terms" href="{!v.termsofuse}" target="_blank">Terms of use. </a>
+                        </label>
+                    </span>
+                </div>
+                <a href="./">Already have an account? <img src="{!$Resource.Chevron_Right}"/></a>
+            </div>
+        </div>
+    </aura:if>
+</aura:component>

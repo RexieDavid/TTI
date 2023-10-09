@@ -1,0 +1,162 @@
+.THIS #login-container {
+    border-radius: 12px;
+    background-color: var(--backgrounds-super-dark-grey-050505, #050505);
+    display: flex;
+    width: 510px;
+    padding: 64px 56px 48px 56px;
+    flex-direction: column;
+    justify-content: flex-end;
+    font-family: "Helvetica Now Var", Helvetica;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 171.429% */
+    letter-spacing: -0.14px;
+}
+
+.THIS a:hover {
+    cursor: pointer;
+    color: #D9E409;
+}
+
+.THIS .input-container {
+    border-radius: 8px;
+    border: 1.5px solid rgba(255, 255, 255, 0.20);
+    background: var(--backgrounds-super-dark-grey-050505, #050505);
+    display: flex;
+    flex: 1 1 auto;
+    padding: 10px 10px;
+    align-items: flex-start;
+    align-self: stretch;
+}
+
+.THIS .slds-input:focus {
+    box-shadow: none !important;
+}
+
+.THIS .div-width-100pct {
+    width: 100%;
+}
+
+.THIS .icon-padding {
+    display: none;
+}
+
+.THIS .input {
+    color: var(--monochrome-white-70, rgba(255, 255, 255, 0.80));
+
+    /* Paragraph/PM-R - 16 */
+    font-family: "Helvetica Now Var", Helvetica;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 26px; /* 162.5% */
+    letter-spacing: -0.16px;
+}
+
+.THIS .input input {
+    border: unset;
+    background-color: black;
+    color: var(--monochrome-white-70, rgba(255, 255, 255, 0.80));
+
+    /* Paragraph/PM-R - 16 */
+    font-family: "Helvetica Now Var", Helvetica;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 26px; /* 162.5% */
+    letter-spacing: -0.16px;
+}
+
+.THIS .margin-bottom-2pct {
+    margin-bottom: 2%;
+}
+
+.THIS .margin-top-2pct {
+    margin-top: 2%;
+}
+
+.THIS .loginButton {
+    display: flex;
+    padding: 15px 22px 15px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border-radius: 50px;
+    background: var(--ryobi-ryobi-hyper-green-d-9-e-409, #D9E409);
+    margin: 40px 0px 40px 0px;
+}
+
+.THIS #logo {
+    width: 118.639px;
+    height: 32px;
+    margin-bottom: 64px;
+}
+
+.THIS h4 {
+    color: var(--backgrounds-super-light-grey-f-9-f-9-f-9, #F9F9F9);
+    /* Heading/H4 - 40 Bold */
+    font-family: "Helvetica Now Var", Helvetica;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 48px; /* 120% */
+    letter-spacing: -0.4px;
+    padding-bottom: 16px;
+}
+
+.THIS p {
+    color: var(--monochrome-white-70, rgba(255, 255, 255, 0.80));
+    /* Paragraph/PS-M - 14 */
+    font-family: "Helvetica Now Var", Helvetica;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 171.429% */
+    letter-spacing: -0.14px;
+    margin-bottom: 24px;
+}
+.THIS ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: var(--monochrome-white-70, rgba(255, 255, 255, 0.80));
+    opacity: 1; /* Firefox */
+}
+  
+.THIS :-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: var(--monochrome-white-70, rgba(255, 255, 255, 0.80));
+}
+  
+.THIS ::-ms-input-placeholder { /* Microsoft Edge */
+    color: var(--monochrome-white-70, rgba(255, 255, 255, 0.80));
+}
+
+.THIS span, .THIS a {
+    color: var(--monochrome-white-70, rgba(255, 255, 255, 0.80));
+
+}
+.THIS hr {
+    opacity: 0.1;
+    background: #FFF;
+}
+
+.THIS .input-container:focus-within, .THIS .input-container:active {
+    box-shadow: 0px 0px 0px 2px #D3D813;  
+    border-color: 0px 0px 0px 2px #D3D813;
+
+}
+
+.THIS .loginButton:hover {
+    background-color: #e1f509;
+
+}
+
+.THIS .globalerrordisplay p {
+    color: red;
+}
+
+@media only screen and (max-width: 600px) {
+    .THIS #login-container {
+        width: fit-content;
+        padding: 32px 22px 48px 22px;
+    }
+
+}

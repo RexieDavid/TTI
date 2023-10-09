@@ -1,0 +1,13 @@
+.THIS .callToActionContainer {
+    margin: 0px;
+}
+
+.THIS .textSection {
+    height: 150px;
+    max-height: 180px;
+    padding-top: 20px;
+}
+.THIS .buttonSection {
+    height: 100px;
+    max-height: 100px;
+}

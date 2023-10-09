@@ -1,0 +1,124 @@
+<aura:component>
+    <aura:attribute name="serviceReqCase" type="Case" required="true" />
+    <aura:attribute name="countryRestrict" type="String" required="true" default="au" />
+    <aura:attribute name="isCaseUpdated" type="Boolean" required="true" default="false" />
+    <aura:attribute name="serviceAgentRec" type="Account"/>
+    <aura:attribute name="recordLoadError" type="String"/>
+    <aura:attribute name="hasRetailer" type="boolean" default="false" />
+    <aura:attribute name="isChangedToPickup" type="Boolean" required="true" default="false"/>
+    <aura:attribute name="senderContactNumber" type="String" />
+    <aura:attribute name="generalCstmrServLine" type="String" default="{!$Label.c.SP_TTI_General_Customer_Service_Line}" />
+    <aura:attribute name="hasFormError" type="boolean" default="false" />
+    
+    <aura:attribute
+        name="deliveryDropdownValues"
+        type="List"
+        default="[
+            {'label': 'Deliver', 'value': 'Deliver'},
+            {'label': 'Pickup from Service Agent', 'value': 'Pickup from Service Agent'}
+        ]"
+    />
+    <aura:attribute name="regexPhoneFormat" type="String" default="{!$Label.c.SP_REGEX_ANZ_RetailerPhone_Format}" />
+    <aura:attribute name="errPhoneNumberNotMatch" type="String" default="{!$Label.c.SP_ERR_AU_Landline_Format_Pattern_Mismatch}" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="change" value="{!v.serviceReqCase}" action="{!c.handleValueChange}" />
+
+    <force:recordData aura:id="recordLoader"
+        recordId="{!v.serviceReqCase.Service_Agent__c}"
+        fields="Name"
+        targetFields="{!v.serviceAgentRec}"
+        targetError="{!v.recordLoadError}"
+    />
+    
+    <lightning:layout multipleRows="true" >
+        <lightning:layoutItem class="slds-border_right" padding="around-small" size="12" 
+                smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" >
+
+            <div class="slds-form_horizontal slds-form">
+                <lightning:input label="Sender:" value="{! v.serviceAgentRec.Name }" readonly="true" />
+                <lightning:input label="Sender Contact Number:" value="{!v.senderContactNumber}" readonly="true" />
+                <c:googleAddressAutocomplete 
+                    label="Shipping From:" 
+                    filteredByCountries="au,nz" 
+                    onselect="{!c.handlePickupAddressChange}" 
+                    disabled="true" >
+                </c:googleAddressAutocomplete>
+            </div>
+            <lightning:inputAddress
+                streetLabel="Street"
+                cityLabel="Suburb"
+                countryLabel="Country"
+                provinceLabel="State"
+                postalCodeLabel="PostalCode"
+                street="{!v.serviceReqCase.TTI_Freight_Out_PickUp_Address__c}"
+                city="{!v.serviceReqCase.TTI_Freight_Out_Pickup_Suburb__c}"
+                country="{!v.serviceReqCase.TTI_Freight_Out_Pickup_Country__c}"
+                province="{!v.serviceReqCase.TTI_Freight_Out_Pickup_State__c}"
+                postalCode="{!v.serviceReqCase.TTI_Freight_Out_Pickup_Postcode__c}"
+                variant="label-hidden"
+                required="true"
+                disabled="true"
+            />
+        </lightning:layoutItem>
+        <lightning:layoutItem padding="around-small" size="12" smallDeviceSize="12" 
+                mediumDeviceSize="6" largeDeviceSize="6" >
+            <div class="slds-form_horizontal slds-form">
+                <lightning:combobox
+                    name="deliverPickup"
+                    id="deliverPickup"
+                    aura:id="deliverPickup"
+                    label="Pickup/Deliver"
+                    value="Deliver"
+                    options="{!v.deliveryDropdownValues}"
+                    onchange="{!c.handleDeliveryOptionChange}"
+                    disabled="{!v.serviceReqCase.Label_Url__c != null}"
+                />
+            </div>
+            <div class="slds-form_horizontal slds-form">
+                <lightning:input 
+                    label="Receiver:"
+                    value="{!v.serviceReqCase.FreightOutDeliverTo__c}" 
+                    disabled="{!v.isChangedToPickup}" 
+                />
+            </div>
+            <div class="slds-form_horizontal slds-form">
+                <lightning:input
+                    aura:id="receiverPhone"
+                    label="Receiver Contact Number:"
+                    value="{!v.serviceReqCase.SuppliedPhone}" 
+                    disabled="{!v.isChangedToPickup}"
+                    onchange="{!c.handleContactNumberChange}"
+                    maxlength="15"
+                    type="tel"
+                    pattern="{!v.regexPhoneFormat}"
+                    messageWhenPatternMismatch="{!v.errPhoneNumberNotMatch}"
+                />
+                <aura:if isTrue="{!!v.isChangedToPickup}">
+                    <c:googleAddressAutocomplete 
+                        label="Address Search:" 
+                        filteredByCountries="au,nz" 
+                        onselect="{!c.handleDeliveryAddressChange}" >
+                    </c:googleAddressAutocomplete>
+                </aura:if>
+            </div>
+            <lightning:inputAddress
+                aura:id="deliveryAddress"
+                streetLabel="Street"
+                cityLabel="Suburb"
+                countryLabel="Country"
+                provinceLabel="State"
+                postalCodeLabel="PostalCode"
+                street="{!v.serviceReqCase.TTI_Freight_Out_Delivery_Address__c}"
+                city="{!v.serviceReqCase.TTI_Freight_Out_Delivery_Suburb__c}"
+                country="{!v.serviceReqCase.TTI_Freight_Out_Delivery_Country__c}"
+                province="{!v.serviceReqCase.TTI_Freight_Out_Delivery_State__c}"
+                postalCode="{!v.serviceReqCase.TTI_Freight_Out_Delivery_Postcode__c}"
+                variant="label-hidden"
+                required="{!!v.isChangedToPickup}"
+                onchange="{!c.handleValueChange}"
+                disabled="{!v.isChangedToPickup}"
+            />
+        </lightning:layoutItem>
+    </lightning:layout>
+</aura:component>

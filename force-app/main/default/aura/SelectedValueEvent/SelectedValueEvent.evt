@@ -1,0 +1,3 @@
+<aura:event type="COMPONENT" description="by this event we are pass the selected value in the parent component">
+    <aura:attribute name="valueByEvent" type="Object" /> 
+</aura:event>

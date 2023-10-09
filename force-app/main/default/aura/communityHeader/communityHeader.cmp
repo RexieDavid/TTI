@@ -1,0 +1,23 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="CommunityHeader">
+    <!-- initialize on load -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!-- Custom Component -->
+    <aura:attribute name="Header" type="String"/>
+    <aura:attribute name="Title" type="String"/>
+    <aura:attribute name="ImageURL" type="String"/>
+    <!-- Design -->
+    <aura:attribute name="PageName" type="String"/>
+    <aura:attribute name="StaticHeader" type="String"/>
+    <aura:attribute name="StaticTitle" type="String"/>
+    <aura:attribute name="UseStatic" type="Boolean"/>
+    <aura:attribute name="HasImage" type="Boolean"/>
+    <aura:attribute name="subTitle" type="String"/>
+
+    <div class="slds-grid">
+        <div class="slds-float--left headerContent">
+            <p class="title">{!v.subTitle}</p>
+            <p class="heading">{!v.Header}</p>
+            <p class="subheading">{!v.Title}</p>
+        </div>
+    </div>
+</aura:component>

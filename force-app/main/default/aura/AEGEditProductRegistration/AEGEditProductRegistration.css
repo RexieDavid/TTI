@@ -1,0 +1,193 @@
+.THIS {
+    /* font-family: Montserrat;*/
+}
+
+.THIS .productKitTitle {
+    /* font-family: Montserrat;*/
+    font-weight: bold;
+}
+
+.THIS .productKitModel {
+    font-weight: 300;
+}
+
+.THIS .productImage {
+    width: 4rem;
+    height: 4rem;
+}
+
+.THIS .productTitle {
+    /*  font-family: Montserrat;*/
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.THIS .productModel {
+    font-size: 0.65rem;
+    font-weight: 300;
+    text-align: center;
+}
+
+.THIS .outputlabel {
+    /*font-family: Montserrat;*/
+    font-size: 0.8rem;
+    font-weight: 300;
+    text-align: center;
+}
+
+.THIS .serialLabel {
+    font-size: small;
+    text-align: left;
+}
+
+.THIS .serialInput {
+    min-height: 0;
+    width: 70%;
+    margin-left: 0.2em;
+}
+
+.THIS .dateInput {
+    min-height: 0;
+    width: 70%;
+    margin-left: 0.2em;
+}
+
+.THIS .whitespace {
+    height: 30px;
+}
+
+.THIS .hidden {
+    display: none;
+}
+
+.THIS .width30p {
+    width: 100px;
+}
+
+/*for file upload*/
+.THIS .notUploading {
+    visibility: hidden;
+}
+
+.THIS .uploading {
+    visibility: visible;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.THIS .small-spinner {
+    height: 20px;
+    width: 20px;
+}
+
+.THIS .file {
+    margin-bottom: 5px;
+    display: block;
+}
+
+.THIS .serial {
+    width: 10px;
+}
+.THIS .inputWidth {
+    max-width: 200px;
+}
+
+.THIS .inputWidthSerial {
+    max-width: 120px;
+}
+
+.THIS .inputWidthSerialSmall {
+    max-width: 100px;
+}
+.THIS .inputWidthSerialMedium {
+    max-width: 130px;
+}
+
+.THIS .inputWidthSerialLarge {
+    max-width: 180px;
+}
+.THIS .inputWidthSerialXLarge {
+    max-width: 250px;
+}
+
+.THIS .inputWidthWeek {
+    max-width: 50px;
+}
+.THIS .inputWidthYear {
+    max-width: 70px;
+}
+
+.THIS .progress1 {
+    width: 10%;
+}
+
+.THIS .progress2 {
+    width: 20%;
+}
+
+.THIS .progress3 {
+    width: 30%;
+}
+
+.THIS .progress4 {
+    width: 40%;
+}
+
+.THIS .progress5 {
+    width: 50%;
+}
+
+.THIS .progress6 {
+    width: 60%;
+}
+
+.THIS .progress7 {
+    width: 70%;
+}
+
+.THIS .progress8 {
+    width: 80%;
+}
+
+.THIS .progress9 {
+    width: 90%;
+}
+.THIS .progress10 {
+    width: 100%;
+}
+.THIS .helperImage {
+    height: 20px;
+    width: 20px;
+}
+
+.THIS .globalInput {
+    border: 2px solid #ccc;
+}
+
+.THIS .globalProductTitle {
+    background-color: #f48026;
+    padding: 5px 0 5px 5px;
+    text-transform: uppercase;
+    color: white;
+}
+
+.THIS .globalBoxInner {
+    padding: 5px 5px 5px 5px;
+}
+
+.THIS .globalProductItemButton {
+    background-color: #f48026;
+    border: none;
+    color: #fff;
+    height: 27px;
+    margin: 5px 5px 0 5px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100px;
+}
+
+.THIS .globalPromptTitle {
+    background-color: #f48026;
+    color: white;
+}

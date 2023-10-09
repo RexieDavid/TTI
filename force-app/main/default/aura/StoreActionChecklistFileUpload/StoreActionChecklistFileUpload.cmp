@@ -1,0 +1,38 @@
+<aura:component controller="StoreActionChecklistController"
+    implements="flexipage:availableForAllPageTypes,force:hasRecordId,lightning:availableForFlowScreens,force:appHostable"
+    access="global">
+
+    <aura:attribute name="filetype" type="List" default="['.png', '.jpg', '.jpeg', '.pdf', '.doc']" />
+    <aura:attribute name="multiple" type="Boolean" default="true" />
+    <aura:attribute name="disabled" type="Boolean" default="true" />
+    <aura:attribute name="items" type="String" />
+    <aura:attribute name="recordDetail" type="object" description="Details record" access="global" />
+    <aura:attribute name="recordIdFileUpload" type="String" />  
+    <aura:attribute name="showFinish" type="Boolean" default="false" />
+    <aura:registerEvent name="storeEvent" type="c:StoreActionChecklistFlowEvent"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.initializeFileUpload}" />
+    <aura:if isTrue="{!!v.showFinish}">
+        <lightning:flow aura:id="flowId" onstatuschange="{!c.handleStatusChange}"/>
+        <aura:set attribute="else">
+            <div>
+                File has been uploaded successfully!
+                <br/><br/>
+                Please click on <b>Finish</b> to proceed back to the record.
+            </div>
+        </aura:set>
+    </aura:if>     
+
+    <!-- <div>
+        <h3 class="slds-truncate" title="File Upload">
+            <strong>File Upload</strong>
+        </h3>
+        <div class="slds-col slds-text(doubledash)align_center">
+
+            <lightning:fileUpload label="Attach file" name="fileUploader" multiple="true" accept="{!v.filetype}" onuploadfinished="{!c.handleUploadFinished}" />
+        </div>
+    </div> -->
+    <!--<footer class="slds-docked-form-footer slds-modal__footer customFooter">
+        <button class="slds-button slds-button_neutral" onclick="{!c.closeQuickAction}">Close</button>
+    </footer>-->
+</aura:component>

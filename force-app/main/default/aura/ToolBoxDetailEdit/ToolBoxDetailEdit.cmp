@@ -1,0 +1,201 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" 
+                access="global" 
+                controller="ProductDetailCC">
+  	
+    <aura:attribute name="res" type="String" />
+    <aura:attribute name="asset" type="Asset" />
+    <aura:attribute name="assetImageURL" type="String" />
+    <aura:attribute name="assetProductCode" type="String" />
+    <aura:attribute name="locationList" type="String[]" />
+
+    <!-- for component variables -->
+    <aura:attribute name="serialNoP" type="String"/>
+    <aura:attribute name="purchaseDateP" type="String"/>
+    <aura:attribute name="registerDate" type="String"/>
+    <aura:attribute name="locationP" type="String"/>
+    <aura:attribute name="locationHolderP" type="String"/>
+    <aura:attribute name="attachmentLink" type="String"/>
+    <aura:attribute name="isBunningReceipt" type="String" default="Yes"/>
+    <aura:attribute name="hasFile" type="Boolean" default="false" />
+    <aura:attribute name="previousFile" type="String"/>
+    <aura:attribute name="warrantyResult" type="String"/>
+ 
+    
+    <aura:attribute name="serialWeek" type="String"/>
+    <aura:attribute name="serialYear" type="String"/>
+    <aura:attribute name="showSerialWeek" type="Boolean" default="false" />
+    <aura:attribute name="showSerialYear" type="Boolean" default="false" />
+    <aura:attribute name="allowNumbersOnly" type="Boolean" default="false"/>
+    <aura:attribute name="serialNumberLength" type="String"/>
+    <aura:attribute name="regExpressionValidator" type="String"/>
+       
+    <!-- for receiving navigation event from the selection page -->
+  	<aura:handler event="c:ToolBoxListEvent" action="{!c.handleNavigateFromSelectionEvent}"/>
+
+    <!-- for navigating to product selection page after confirmation -->
+	<aura:registerEvent name="navigate" type="c:ProductDetailConfirmEvent"/>
+    
+	<aura:attribute name="showError" type="Boolean" required="true" description="" default="false" access="private"/>
+    <aura:attribute name="errorMessage" type="String" required="false" description="" access="private"/>
+
+    <ltng:require scripts="{!join(',',$Resource.jquery,$Resource.DisableBackButton)}" 
+                  styles="{!join(',')}"
+                  afterScriptsLoaded="c.afterScriptsLoaded"/>
+    
+    <div id="promptDiv"  style="display: none;" >
+        <div tabindex="-1" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper" class="slds-modal slds-fade-in-open slds-modal--prompt">
+          <div class="slds-modal__container">
+            <div class="slds-modal__header slds-theme--success slds-theme--shade globalPromptTitle">
+              <h2 class="slds-text-heading--medium" id="prompt-heading-id">Update Successful</h2>
+            </div>
+            <div class="slds-modal__content slds-p-around--medium">
+                <p><center>Thank you for updating your product. <br/><br/> {!v.warrantyResult}</center></p>
+            </div>
+            <div class="slds-modal__footer slds-theme--default">
+            	<ui:button aura:id="successBtn" label="OK" press="{!c.goBackToSelection}"/>
+            </div>
+          </div>
+        </div>
+    	<div class="slds-backdrop slds-backdrop--open"></div>
+    </div>
+    <div id="mainDetailDiv" style="display: none;" > 
+		<div class="globalBox2">
+        <div class="slds-text-heading--medium globalProductTitle">
+            Update your product details         
+        </div>   
+
+        <!--PRODUCT DETAIL-->
+        <div class="globalBoxInner">    
+        <div id="productDetailDiv">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-text-align--center">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-3 slds-large-size--1-of-3">
+                            <span class="slds-image slds-image--card productKitImage">
+                                <img src="{!v.assetImageURL}" alt="{!v.asset.Name}" />
+                            </span>
+                        </div>
+                        <div class="slds-text-align--left slds-p-left--medium slds-size--1-of-1 slds-medium-size--2-of-3 slds-large-size--2-of-3">
+                            <div>
+                                <div class="productKitTitle slds-text-heading--medium ">{!v.asset.Name}</div>
+                                <div class="productKitModel slds-text-body--regular">MODEL# {!v.assetProductCode}</div>
+                            </div>
+                            <div class="slds-form-element slds-m-top--medium">
+                                <img height="42" width="42" class="helperImage" src="http://www.iconsdb.com/icons/preview/gray/info-2-xxl.png"></img>
+                                <label class="" style="padding-left: 5px; padding-right: 5px; font-family: Montserrat; font-size: .80rem; font-weight: 300;" for="serialNoP" data-aura-rendered-by="75:2;a"> Some changes may affect the warranty periods on this tool.</label> 
+                            </div>  
+                            <div class="slds-small-size--3-of-3 slds-medium-size--3-of-3 slds-large-size--3-of-3 slds-form--stacked slds-m-top--large">
+                                 <div class="slds-form-element inputWidth">
+                                    <label class="" style="font-family: Montserrat; font-size: .80rem; font-weight: 300;" for="purchaseDateP">Date of Purchase: </label>
+                                    <div class="slds-form-element__control">
+                                        <ui:inputDate aura:id="purchaseDateP" class="slds-input globalInput " value="{!v.purchaseDateP}" displayDatePicker="true" />
+                                    </div>
+                                </div>
+                                <div class="slds-form-element">
+                                    <label class="" style="font-family: Montserrat; font-size: .80rem; font-weight: 300;" for="location">Where was product purchased? </label>
+                                    <div class="slds-form-element__control slds-size-1-of-1 globalInput inputWidth">
+                                        <ui:inputSelect aura:id="locationSelectP" value="{!v.locationP}" change="{!c.onGroupP}">
+                                            <aura:iteration items="{!v.locationList}" var="location">
+                                                <ui.inputSelectOption text="{!location}" label="{!location}"/>	
+                                            </aura:iteration>
+                                        </ui:inputSelect>
+                                        <ui:inputtext aura:id="otherLocP" class="slds-input hidden" placeholder="Please specify" value="{!v.locationHolderP}"/>
+                                    </div>
+                                </div>
+                                <div class="slds-form-element slds-m-top--medium"> 
+                                     <img src="http://www.iconsdb.com/icons/preview/gray/info-2-xxl.png" height="20" width="20"></img>
+                                  	 <label class="" style="padding-left: 5px; padding-right: 5px; font-family: Montserrat; font-size: .80rem; font-weight: 300;" for="serialNoP">{!v.asset.HelpText__c}</label>
+                                 </div>
+                                 <div class="slds-form-element slds-clearfix" style="width:100%">
+                                     <div class="slds-float--left"> 
+                                         <label class="" style="font-family: Montserrat; font-size: .80rem; font-weight: 300;" for="serialNoP">* Serial #: </label>
+                                         <div>
+                                             <ui:inputText aura:id="serialNoP" class="slds-input inputWidth globalInput" placeholder="serial number" value="{!v.serialNoP}" maxlength="{!v.asset.Serial_Number_Length__c}"/>
+                                             <!--input  id="serialNoP" class="slds-input inputWidth" placeholder="" value="{!v.serialNoP}" size="{!v.serialNumberLength}" maxlength="{!v.serialNumberLength}" /-->
+                                         </div>
+                                     </div>
+                                     <aura:if isTrue="{!v.asset.Display_Week__c}">
+                                         <div class="slds-float--left" style="padding-left: 5px; padding-right: 5px;">
+                                             <label class="slds-form-element__label" for="serialNoP">Week:</label>
+                                             <div>
+                                                 <ui:inputText aura:id="serialWeek" class="slds-input inputWidthWeek" placeholder="" value="{!v.serialWeek}" maxlength="2"/>
+                                             </div>
+                                         </div>
+                                     </aura:if>
+                                     <aura:if isTrue="{!v.asset.Display_Year__c}">
+                                         <div class="slds-float--left">
+                                             <label class="slds-form-element__label" for="serialNoP">Year:</label>
+                                             <div>
+                                                 <ui:inputText aura:id="serialYear" class="slds-input inputWidthYear" placeholder="" value="{!v.serialYear}" maxlength="4"/>
+                                             </div>
+                                         </div>  	
+                                     </aura:if>
+                                </div>
+                                <div style="padding: 5px;">
+                                    <img src="{!v.asset.Helper_Image_URL__c}"></img>
+                                </div> 
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        	</div>
+            </div>
+        </div>
+        <div class="whitespace slds-size--1-of-1"/>
+        <div class="globalBox2">
+            <div class="slds-text-heading--medium globalProductTitle">
+            Upload a new receipt         
+             </div>
+            <div class="globalBoxInner">
+            <div class="slds-text-body--regular">
+                <label class="" style="font-family: Montserrat; font-size: .80rem; font-weight: 300;" for="location">
+                    Upload receipt as image or pdf. Date of purchase, location and model number must be clearly visible. For long receipts fold the receipt to display your RYOBI tool.
+                </label>
+             </div>
+            <div>
+                        <div class="slds-form-element slds-m-top--medium">
+                            <label class="" style="font-family: Montserrat; font-size: .80rem; font-weight: 300;" for="location">* Is this a Bunnings receipt?</label>
+                            <div class="slds-form-element__control">
+                                <ui:inputSelect aura:id="isBunningReceipt" value="{!v.isBunningReceipt}" class="width30p globalInput">
+                                    <ui.inputSelectOption text="Yes" label="Yes" value="true"/>
+                                    <ui.inputSelectOption text="No" label="No" value="false"/>
+                                </ui:inputSelect>
+                            </div>
+                        </div>
+                        <div class="container slds-m-top--medium">
+                            <!--<label class="slds-form-element__label" for="location">Your previously uploaded receipt is: <strong>{!v.previousFile}</strong></label-->
+                            <label class="" style="font-family: Montserrat; font-size: .80rem; font-weight: 300;" for="location">Your previously uploaded receipt is: <a href="{!v.attachmentLink}" target="_blank">{!v.previousFile}</a></label>                                                                                           
+                            <br />
+                            <label class="" style="font-family: Montserrat; font-size: .80rem; font-weight: 300;" for="location">Click here to upload a new receipt: </label>
+                            <input type="file" class="file slds-form-element__label" aura:id="file" onchange="{!c.fileUploaded}"/>                    
+                        </div>
+                        <div>
+                            <img id="receiptView" src="#" alt="receipt image" hidden="true" style="height:500px;width:500px;"/>
+                        </div>
+            </div>
+            </div>  
+        </div>
+        <div class="slds-m-bottom--small  whitespace slds-size--1-of-1"/>
+        <div class="slds-size--1-of-1 slds-align--absolute-center">
+            <div aura:id="uploading" class="notUploading">
+                <!--<img src="https://files.meilleurduchef.com/mdc/library2/img/ui/loading_43_400.gif" alt="uploading" class="slds-avatar slds-avatar-large" /> Uploading...-->
+                <img src="{!$Resource.LoadingSpinner}" alt="uploading" class="slds-avatar slds-avatar--large" /> Uploading...
+            </div>
+        </div>
+         <div class="slds-size--1-of-1 slds-align--absolute-center">
+
+             <!--div aura:id="errorDiv" class="globalerrordisplay"--><!--/div-->
+            <aura:renderIf isTrue="{!v.showError}">
+                    <div class="globalerrordisplay">
+                        <ui:outputRichText value="{!v.errorMessage}"/>
+                    </div>
+            </aura:renderIf>
+        </div>
+        <div class="slds-size--1-of-1 slds-align--absolute-center">
+        	<ui:button label="Back" press="{!c.goBackToSelection}" class="globalButton"/>
+            <ui:button label="Confirm" aura:id="confirmBtn" press="{!c.confirmAndEdit}" class="globalButton"/>
+        </div>
+    </div>
+</aura:component>

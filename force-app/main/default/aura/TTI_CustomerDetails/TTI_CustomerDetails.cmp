@@ -1,0 +1,69 @@
+<aura:component implements="c:TTI_Constants">
+    <aura:attribute name="Service_Request_Case" type="Case"/>
+    <aura:attribute name="ServiceMilestoneAttribute" type="Object" />
+    <aura:attribute name="hasRetailer" type="Boolean" />
+    <aura:attribute name="hasCustomer" type="Boolean" />
+    
+    <fieldset>
+        <legend class="slds-form-element__label slds-text-heading_medium slds-m-top_medium 
+                       slds-m-bottom_medium" 
+                onclick="{!c.toggleSection}"
+                style="background:#f9f9fa;cursor:pointer;width:100%">
+            <div class="slds-float--left ">
+                <lightning:icon aura:id="section" iconName="utility:chevronright" size="x-small" alternativeText="Indicates add"/>
+                <lightning:icon class="slds-hide" aura:id="section" iconName="utility:chevrondown" size="x-small" alternativeText="Indicates dash"/>
+            </div>
+            <span class="slds-m-left_medium">
+                <b><u>Customer Details</u></b>
+            </span>
+        </legend>
+        
+        <div aura:id="section" class="slds-hide slds-form-element__group">
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-01">Customer</label>
+                    <ui:inputText disabled="true" value="{!v.Service_Request_Case.TTI_Customer_Account__r.Name}"/>
+                </div>
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-02">Notification Opt in</label>
+                    <ui:inputCheckbox aura:id="notificationCheckbox" 
+                                      disabled="{!v.ServiceMilestoneAttribute.Closed}"
+                                      value="{!v.Service_Request_Case.TTI_Email_Notification_Opt_In__c}" />
+                    
+                </div>
+            </div>
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-01">Customer Mobile</label>
+                    <ui:inputPhone disabled="true" value="{!v.Service_Request_Case.TTI_Customer_Account__r.PersonMobilePhone}"/>
+                </div>
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-02">Notification Email Address</label>
+                    <aura:if isTrue="{!v.ServiceMilestoneAttribute.Closed}">
+                        <lightning:formattedEmail aura:id="notificationEmail" value="{!v.Service_Request_Case.SuppliedEmail}" />
+                        <aura:set attribute="else">
+                            <ui:inputEmail aura:id="notificationEmail" value="{!v.Service_Request_Case.SuppliedEmail}"/>
+                        </aura:set>
+                    </aura:if>
+                </div>
+            </div>
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-01">Customer Home Phone</label>
+                    <ui:inputPhone disabled="true" value="{!v.Service_Request_Case.TTI_Customer_Account__r.PersonHomePhone}"/>
+                </div>
+            </div>
+            <aura:if isTrue="{!if(v.hasCustomer &amp;&amp; 
+                             v.Service_Request_Case.Claim_Type__c == 'Non-Warranty',true,false)}">
+                <div class="slds-form-element__row">
+                    <label class="slds-form-element__label" for="input-02">Quote to Customer</label>
+                    	<ui:inputCheckbox disabled="{!if(!v.hasRetailer &amp;&amp; v.hasCustomer, true , false)}"	
+                                          value="{!v.Service_Request_Case.TTI_Quote_to_Customer__c}"
+                                          change="{!c.quoteToCustomerClicked}"/>
+                </div>
+            </aura:if>
+            
+        </div>
+    </fieldset>
+    
+</aura:component>

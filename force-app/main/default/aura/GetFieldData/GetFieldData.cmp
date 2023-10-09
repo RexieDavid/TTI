@@ -1,0 +1,32 @@
+<aura:component >
+    <aura:attribute name="record" type="Object" required="true" />
+    <aura:attribute name="dataTable" type="Boolean" required="true" />
+    <aura:attribute name="fieldType" type="String" required="true" />
+    <aura:attribute name="fieldApiName" type="String" required="true" />
+    <aura:attribute name="fieldLabel" type="String" />
+    <aura:attribute name="target" type="String" description="Target Component" />
+    <aura:attribute name="source" type="String" description="Source Div" />
+    <aura:attribute name="value" type="String" />
+    <aura:attribute name="isID" type="Boolean" default="false" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <aura:registerEvent name="navigate" type="c:NavigateEvent"/>
+
+    <aura:renderIf isTrue="{!v.dataTable == true}" >
+    	<td data-label="{!v.fieldLabel}">
+            <div class="slds-truncate" title="{!v.value}">
+            	<aura:renderIf isTrue="{!v.isID == true}" >
+            		<ui:outputURL aura:Id="outputURL" label="{!v.value}" click="{!c.handleNavigateEvent}" />
+
+            		<aura:set attribute="else" >
+                        <aura:unescapedHtml value="{!v.value}" />            			
+            		</aura:set>
+            	</aura:renderIf>            	
+            </div>
+        </td>
+
+    	<aura:set attribute="else" >
+    		<ui:outputText aura:Id="outputTextId" />
+    	</aura:set>
+    </aura:renderIf>
+</aura:component>

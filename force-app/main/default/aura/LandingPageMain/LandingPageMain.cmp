@@ -1,0 +1,171 @@
+<!--
+  @File Name          : LandingPageMain.cmp
+  @Description        : 
+  @Author             : Paula Cruz
+  @Group              : 
+  @Last Modified By   : Rex Egoc
+  @Last Modified On   : 03/02/2020, 1:32:30 PM
+  @Modification Log   : 
+  Ver       Date            Author                  Modification
+  1.0    15/11/2019   Paula Cruz                    Initial Version
+  1.1....03/02/2020...Rex Egoc......................Clean up
+-->
+<aura:component implements="forceCommunity:availableForAllPageTypes" 
+                access="global"
+                controller="RYLoginSurveyModalController">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <aura:attribute name="userCountry" type="String"/>
+    <aura:attribute name="warrantyURL" type="String"/>
+    <aura:attribute name="promotionsURL" type="String"/>
+    <aura:attribute name="userId" type="String"/>
+    <aura:attribute name="isGuest" type="Boolean"/>
+    <aura:attribute name="hasCustomerFinishedSurvey" type="Boolean" default="false"/>
+    <aura:attribute name="submitButtonLabel" type="String" default="Submit"/>
+    <aura:attribute name="dismissButtonLabel" type="String" default="Dismiss"/>
+    <aura:attribute name="homeUrl" type="String" default="/"/>
+    <aura:attribute name="country" type="String" default="AU"/>
+    <aura:attribute name="currentUser" type="User" default="{}"/>
+    <aura:attribute name="baseURL" type="String" default=""/>
+
+    <!-- design attribute  -->
+    <aura:attribute name="firstPageSubheader" type="String"></aura:attribute>
+    <aura:attribute name="secondPageSubheader" type="String"></aura:attribute>
+    <aura:attribute name="localBunningsSearchPlaceholder" type="String"></aura:attribute>
+
+    <div>
+        <h4><img src="{!$Resource.Vector}" alt="" /> EXCLUSIVE ACCESS</h4>
+        <h2>Benefits</h2>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-grid--pull-padded">
+
+        <div class="slds-p-horizontal--small slds-size--1-of-2 slds-medium-size--1-of-3 slds-large-size--1-of-4 callToActionContainer">
+            <div>
+                <img src="{!$Resource.Register_Tool}"/>
+                <h3>Register tool</h3>
+                    
+            </div>
+            <div class="textSection">
+                {!$Label.c.RegisterToolText}
+            </div>
+            <div class="buttonSection">
+                <button class ="viewButton" type="button" name="Register tool" onclick="{!c.navigateToRegisterProduct}">Register tool</button>
+            </div>
+        </div>
+
+        <div class="slds-p-horizontal--small slds-size--1-of-2 slds-medium-size--1-of-3 slds-large-size--1-of-4 callToActionContainer">
+            <div>
+                <img src="{!$Resource.Extended_Warranty}"/>
+                <h3>Extended warranty</h3>
+                    
+            </div>
+            <div class="textSection">
+                 {!$Label.c.RyobiLandingiconWarrantyText}
+            </div>
+            <div class="buttonSection">
+                <button class ="viewButton" type="button" name="The details" onclick="{!c.navigateToToolbag}">The details</button>
+            </div>
+        </div>
+
+        <div class="slds-p-horizontal--small slds-size--1-of-2 slds-medium-size--1-of-3 slds-large-size--1-of-4 callToActionContainer">
+            <div>
+                <img src="{!$Resource.My_Toolbag}"/>
+                <h3>My Toolbag</h3>
+                    
+            </div>
+            <div class="textSection">
+                {!$Label.c.RyobiLandingicontoolbagText}
+            </div>
+            <div class="buttonSection">
+                <button class ="viewButton" type="button" name="view my toolbag" onclick="{!c.navigateToToolbag}">View my Toolbag</button>
+            </div>
+        </div>
+
+        <div class="slds-p-horizontal--small slds-size--1-of-2 slds-medium-size--1-of-3 slds-large-size--1-of-4 callToActionContainer">
+            <div>
+                <img src="{!$Resource.Promotions}"/>
+                <h3>Promotions and competitions</h3>
+                    
+            </div>
+            <div class="textSection">
+                {!$Label.c.RyobiLandingiconPromoText}
+            </div>
+            <div class="buttonSection">
+                <a href="{!v.promotionsURL}" target="_blank">
+                    <button class ="viewButton" type="button" name="I'm interested">I'm interested</button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-grid--pull-padded">
+        <div class="slds-p-horizontal--small slds-size--1-of-2 slds-medium-size--1-of-3 slds-large-size--1-of-4 callToActionContainer">
+            <div>
+                <img src="{!$Resource.Maintenance}"/>
+                <h3>Maintenance tips and assembly/how-to-advice</h3>
+                    
+            </div>
+            <div class="textSection">
+                {!$Label.c.MaintenanceText}
+            </div>
+            <div class="buttonSection">
+                <button class ="viewButton" type="button" name="Send me tips" onclick="{!c.navigateToProfile}">Send me tips</button>
+            </div>
+        </div>
+
+        <div class="slds-p-horizontal--small slds-size--1-of-2 slds-medium-size--1-of-3 slds-large-size--1-of-4 callToActionContainer">
+            <div>
+                <img src="{!$Resource.New_Product}"/>
+                <h3>New product pre-release notifications</h3>
+                    
+            </div>
+            <div class="textSection">
+                {!$Label.c.New_Product_Notifications}
+            </div>
+            <div class="buttonSection">
+                <button class ="viewButton" type="button" name="Stay up-to-date" onclick="{!c.navigateToProfile}">Stay up-to-date</button>
+            </div>
+        </div>
+
+        <div class="slds-p-horizontal--small slds-size--1-of-2 slds-medium-size--1-of-3 slds-large-size--1-of-4 callToActionContainer">
+            <div>
+                <img src="{!$Resource.Tailored_Communications}"/>
+                <h3>Tailored communications and content</h3>
+                    
+            </div>
+            <div class="textSection">
+                {!$Label.c.Tailored_communications_and_content}
+            </div>
+            <div class="buttonSection">
+                <button class ="viewButton" type="button" name="Sign up" onclick="{!c.navigateToProfile}">Sign up</button>
+            </div>
+        </div>
+        <div class="slds-p-horizontal--small slds-size--1-of-2 slds-medium-size--1-of-3 slds-large-size--1-of-4 callToActionContainer">
+            <div>
+                <img src="{!$Resource.Surprise_and_Delights}"/>
+                <h3>Surprise and delights</h3>
+                    
+            </div>
+            <div class="textSection">
+                {!$Label.c.Surprise_and_delights}
+            </div>
+            <div class="buttonSection">
+                    <button class ="viewButton" type="button" name="Count me in" onclick="{!c.navigateToProfile}">Count me in</button>
+            </div>
+        </div>
+    </div>
+
+    <div>
+
+    </div>
+
+   <!-- <c:ryLoginSurveyModal
+            firstPageSubheader="{!v.firstPageSubheader}"
+            secondPageSubheader="{!v.secondPageSubheader}"
+            localBunningsSearchPlaceholder="{!v.localBunningsSearchPlaceholder}"
+    />-->
+</aura:component>

@@ -1,0 +1,93 @@
+<aura:component>
+    <aura:attribute name="shipment" type="Object" />
+    
+    <lightning:layout multipleRows="true" >
+        <lightning:layoutItem padding="around-small" size="12" >
+            <lightning:layout multipleRows="false">
+                <lightning:layoutItem padding="around-small" size="6" >
+                    <dl class="slds-list_horizontal slds-wrap">
+                      <dt class="slds-item_label slds-text-color_weak slds-truncate shipmentLabels" title="Shipment ID:">Shipment ID:</dt>
+                      <dd class="slds-item_detail slds-truncate" title="{! v.shipment.shipment_id }">{! v.shipment.shipment_id }</dd>
+                      <dt class="slds-item_label slds-text-color_weak slds-truncate shipmentLabels" title="Shipment Reference:">Shipment Reference:</dt>
+                      <dd class="slds-item_detail slds-truncate" title="{! v.shipment.shipment_reference }">{! v.shipment.shipment_reference }</dd>
+                      <dt class="slds-item_label slds-text-color_weak slds-truncate shipmentLabels" title="Shipment Creation Date:">Shipment Creation Date:</dt>
+                      <dd class="slds-item_detail slds-truncate" >
+                          <lightning:formattedDateTime value="{! v.shipment.shipment_creation_date }" year="numeric" month="2-digit" day="2-digit" hour="2-digit"
+                                 minute="2-digit" hour12="false"/>
+                      </dd>
+                    </dl>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="6" >
+                    <dl class="slds-list_horizontal slds-wrap">
+                      <dt class="slds-item_label slds-text-color_weak slds-truncate shipmentLabels" title="Customer Reference:">Customer Reference:</dt>
+                      <dd class="slds-item_detail slds-truncate" title="{! v.shipment.customer_reference_1 }">{! v.shipment.customer_reference_1 }</dd>
+                      <dt class="slds-item_label slds-text-color_weak slds-truncate shipmentLabels" title="Dangerous Goods:">Dangerous Goods:</dt>
+                      <dd class="slds-item_detail slds-truncate" title="{! v.shipment.items[0].contains_dangerous_goods }">{! v.shipment.items[0].contains_dangerous_goods }</dd>
+                      <dt class="slds-item_label slds-text-color_weak slds-truncate shipmentLabels" title="Item Reference:">Item Reference:</dt>
+                      <dd class="slds-item_detail slds-truncate" title="{! v.shipment.items[0].item_reference }">{! v.shipment.items[0].item_reference }</dd>
+                    </dl>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </lightning:layoutItem>
+        <lightning:layoutItem class="slds-border_top" padding="around-small" size="12" >
+            <lightning:layout multipleRows="false">
+                <lightning:layoutItem padding="around-small" size="6" >
+                    <p><lightning:formattedText value="From:" /></p>
+                    <lightning:card>
+                        <aura:set attribute="title">
+                            {! v.shipment.from_Z.name }
+                        </aura:set>
+
+                        <aura:set attribute="footer">
+
+                        </aura:set>
+
+                        <p class="slds-p-left_medium">
+                            <lightning:formattedAddress
+                                street="{! v.shipment.from_Z.lines[0] }"
+                                city="{! v.shipment.from_Z.suburb }"
+                                country="{! v.shipment.from_Z.country }"
+                                province="{! v.shipment.from_Z.state }"
+                                postalCode="{! v.shipment.from_Z.postcode }"
+                            />
+                        </p>
+                        <p class="slds-p-left_medium slds-p-top_medium">
+                            <lightning:formattedEmail value="{! v.shipment.from_Z.email }" />
+                        </p>
+                        <p class="slds-p-left_medium">
+                            <lightning:formattedPhone value="{! v.shipment.from_Z.phone }" ></lightning:formattedPhone>
+                        </p>
+                    </lightning:card>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="6" >
+                    <p><lightning:formattedText value="To:" /></p>
+                    <lightning:card>
+                        <aura:set attribute="title">
+                            {! v.shipment.to.name }
+                        </aura:set>
+
+                        <aura:set attribute="footer">
+
+                        </aura:set>
+
+                        <p class="slds-p-left_medium">
+                            <lightning:formattedAddress
+                                street="{! v.shipment.to.lines[0] }"
+                                city="{! v.shipment.to.suburb }"
+                                country="{! v.shipment.to.country }"
+                                province="{! v.shipment.to.state }"
+                                postalCode="{! v.shipment.to.postcode }"
+                            />
+                        </p>
+                        <p class="slds-p-left_medium slds-p-top_medium">
+                            <lightning:formattedEmail value="{! v.shipment.to.email }" />
+                        </p>
+                        <p class="slds-p-left_medium">
+                            <lightning:formattedPhone value="{! v.shipment.to.phone }" ></lightning:formattedPhone>
+                        </p>
+                    </lightning:card>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </lightning:layoutItem>
+    </lightning:layout>
+</aura:component>

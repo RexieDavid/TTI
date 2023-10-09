@@ -1,0 +1,424 @@
+<aura:component
+    implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+    access="global" controller="ToolBoxListCC">
+
+    <aura:attribute name="allAsset" type="Asset[]" />
+    <aura:attribute name="currentList" type="Asset[]" />
+    <aura:attribute name="assetList" type="Asset[]" />
+    <aura:attribute name="selectedIndex" type="String" />
+    <aura:attribute name="removeReasonList" type="String[]" />
+    <aura:attribute name="removeReason" type="String" />
+    <aura:attribute name="removeComment" type="String" />
+    <aura:attribute name="removeErrorMeassage" type="String" />
+    <aura:attribute name="attachmentLink" type="String" />
+    <aura:attribute name="attachmentLinkMap" type="Map" default="{}" />
+
+    <!-- variables for search, sorting and pagination -->
+    <aura:attribute type="String" name="tempView" />
+    <aura:attribute type="String" name="toolbagView" default="tile" />
+    <aura:attribute type="Integer" name="pageNumber" default="1" />
+    <aura:attribute type="Integer" name="maxPage" default="1" />
+    <aura:attribute type="String" name="sortField" />
+    <aura:attribute type="Boolean" name="sortAsc" />
+    <aura:attribute type="String" name="searchTxt" />
+    <aura:handler name="change" value="{!v.pageNumber}" action="{!c.renderPage}" />
+    <aura:handler name="change" value="{!v.searchTxt}" action="{!c.searchFor}" />
+
+    <aura:attribute name="siteSettings" type="Object" />
+
+    <!-- initialize on load -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <!-- for navigating to product detail page after selection -->
+    <aura:registerEvent name="navigate" type="c:ToolBoxListEvent" />
+
+    <!-- for receving navigation back event from detail page -->
+    <aura:handler event="c:ProductDetailConfirmEvent" action="{!c.handleNavigateFromDetailPage}" />
+
+    <div aura:id="successDiv" class="slds-hide">
+        <div tabindex="-1" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper"
+            class="slds-modal slds-fade-in-open slds-modal--prompt">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header slds-theme--success slds-theme--shade globalPromptTitle">
+                    <h2 class="slds-text-heading--medium" id="prompt-heading-id">Removed Successful</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around--medium">
+                    <p>
+                        <center>{!v.siteSettings.ToolbagRemoveSuccessMsg__c}</center>
+                    </p>
+                </div>
+                <div class="slds-modal__footer slds-theme--default">
+                    <ui:button label="Okay" class="globalProductItemButton" press="{!c.successDone}" />
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </div>
+    <div aura:id="errorDiv" class="slds-hide">
+        <div tabindex="-1" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper"
+            class="slds-modal slds-fade-in-open slds-modal--prompt">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header slds-theme--success slds-theme--shade">
+                    <h2 class="slds-text-heading--medium" id="prompt-heading-id">Remove Error</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around--medium">
+                    <p>
+                        <center>{!v.removeErrorMeassage}</center>
+                    </p>
+                </div>
+                <div class="slds-modal__footer slds-theme--default">
+                    <ui:button label="Okay" press="{!c.errorDone}" />
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </div>
+    <div aura:id="removeDiv" class="slds-hide">
+        <div tabindex="-1" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper"
+            class="slds-modal slds-fade-in-open slds-modal--prompt">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header slds-theme--shade globalPromptTitle">
+                    <h2 class="slds-text-heading--medium" id="prompt-heading-id">Wait! Don't remove it.</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around--medium">
+                    <p>Tell us more:</p>
+                    <ui:inputSelect aura:id="removeReason" value="{!v.removeReason}" class="globalInput">
+                        <aura:iteration items="{!v.removeReasonList}" var="reason">
+                            <ui.inputSelectOption text="{!reason}" label="{!reason}" />
+                        </aura:iteration>
+                    </ui:inputSelect>
+                    <p>Other comments:</p>
+                    <ui:inputTextArea aura:id="removeComments" value="{!v.removeComment}" placeholder="" rows="4"
+                        class="globalInput" />
+                </div>
+                <div class="slds-modal__footer slds-theme--default">
+                    <lightning:button class="button globalProductItemButton" label="Back" onclick="{! c.cancelRemove }">
+                    </lightning:button>
+                    <lightning:button class="button globalProductItemButton" label="Remove"
+                        onclick="{! c.confirmRemove }"></lightning:button>
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </div>
+    <div aura:id="ImageDisplay" class="slds-hide">
+        <div tabindex="-1" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper"
+            class="slds-modal slds-fade-in-open slds-modal--prompt">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header slds-theme--shade globalPromptTitle">
+                    <h2 class="slds-text-heading--medium" id="prompt-heading-id">View Receipt</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around--medium">
+                    <p>
+                        <a href="{!v.attachmentLink}" target="_newwindow">Click here</a> to open full image in a new
+                        window.
+                    </p>
+                    <br />
+                    <center>
+                        <img src="{!v.attachmentLink}" class="receiptImage"></img>
+                    </center>
+                </div>
+                <div class="slds-modal__footer slds-theme--default">
+                    <lightning:button class="button globalProductItemButton" label="Close" value="{!assetIndex}"
+                        onclick="{!c.hideReceipt}" />
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </div>
+
+    <div class="div--width-30px div--margin-btm-10px">
+        <button type="button" id="btn-ChangeView" class="slds-hide" onclick="{!c.changeView}" />
+
+        <a href="javascript: document.getElementById('btn-ChangeView').click();"
+            class="{! v.toolbagView == 'tile' ? 'slds-show' : 'slds-hide' }">
+            <span class="slds-icon_container themeColor">
+                <c:svg class="slds-icon"
+                    xlinkHref="{!$Resource.SLDS252 + '/icons/standard-sprite/svg/symbols.svg#lead_list'}" />
+            </span>
+        </a>
+
+        <a href="javascript: document.getElementById('btn-ChangeView').click();"
+            class="{! v.toolbagView == 'list' ? 'slds-show' : 'slds-hide' }">
+            <span class="slds-icon_container themeColor">
+                <c:svg class="slds-icon"
+                    xlinkHref="{!$Resource.SLDS252 + '/icons/standard-sprite/svg/symbols.svg#apps'}" />
+            </span>
+        </a>
+    </div>
+
+    <div aura:id="list-view" class="{! v.toolbagView == 'list' ? 'slds-show' : 'slds-hide'}">
+        <div class="slds-form-element">
+            <label class="slds-form-element__label" for="combobox-unique-id-2">Search</label>
+            <div class="div--display-flex">
+                <div class="slds-form-element__control slds-size--1-of-3">
+                    <div class="slds-combobox_container slds-has-inline-listbox">
+                        <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-combobox-lookup"
+                            aria-expanded="false" aria-haspopup="listbox" role="combobox">
+                            <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                                role="none">
+                                <ui:inputText class="slds-input slds-combobox__input" aura:id="searchTxtBox"
+                                    placeholder="Search Tool" value="{!v.searchTxt}" updateOn="keyup" />
+                                <span
+                                    class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                                    <lightning:icon iconName="utility:search" size="xx-small" />
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="#" onclick="{!c.navigateToRegisterProduct}"
+                    class="{!('div--margin-left-5px ' + (v.toolbagView == 'list' ? 'slds-show' : 'slds-hide'))}"
+                    title="Add new Tool">
+                    <span class="slds-icon_container slds-icon_container--circle themeColor">
+                        <c:svg class="slds-icon slds-icon_x-small"
+                            xlinkHref="{!$Resource.SLDS252 + '/icons/action-sprite/svg/symbols.svg#new'}" />
+                    </span>
+                </a>
+            </div>
+        </div>
+        <br />
+        <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+            <thead>
+                <tr class="slds-text-title--caps">
+                    <th scope="row" class="slds-is-sortable pointer" width="7%">
+                        <div onclick="{!c.sortColumn}" class="slds-truncate" title="Product Code"
+                            id="field-Product2.ProductCode">
+                            Product Code
+                            <aura:if isTrue="{!v.sortField=='Product2.ProductCode'}">
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        &#8593;
+                                        <aura:set attribute="else">
+                                            &#8595;
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </aura:if>
+                        </div>
+                    </th>
+                    <th scope="row" class="slds-is-sortable pointer" width="25%">
+                        <div onclick="{!c.sortColumn}" class="slds-truncate" title="Tool"
+                            id="field-Product2.Customer_Facing_Name__c">
+                            Tool
+                            <aura:if isTrue="{!v.sortField=='Product2.Customer_Facing_Name__c'}">
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        &#8593;
+                                        <aura:set attribute="else">
+                                            &#8595;
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </aura:if>
+                        </div>
+                    </th>
+                    <th scope="row" class="slds-is-sortable pointer" width="8%">
+                        <div class="slds-truncate" title="Purchased Date" id="field-PurchaseDate"
+                            onclick="{!c.sortColumn}">
+                            Purchased Date
+                            <aura:if isTrue="{!v.sortField=='PurchaseDate'}">
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        &#8593;
+                                        <aura:set attribute="else">
+                                            &#8595;
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </aura:if>
+                        </div>
+                    </th>
+                    <th scope="row">
+                        <div class="slds-truncate" title="Serial Number">
+                            Serial Number
+                        </div>
+                    </th>
+                    <th scope="row" class="slds-is-sortable pointer">
+                        <div class="slds-truncate" title="Total Warranty (Years)" id="field-Total_Warranty_Years__c"
+                            onclick="{!c.sortColumn}">
+                            Warranty Period
+                            <aura:if isTrue="{!v.sortField=='Total_Warranty_Years__c'}">
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        &#8593;
+                                        <aura:set attribute="else">
+                                            &#8595;
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </aura:if>
+                        </div>
+                    </th>
+                    <th scope="row" class="slds-is-sortable pointer" width="25%">
+                        <div class="slds-truncate" title="Part of" id="field-KitProduct__r.Customer_Facing_Name__c"
+                            onclick="{!c.sortColumn}">
+                            Part of
+                            <aura:if isTrue="{!v.sortField=='KitProduct__r.Customer_Facing_Name__c'}">
+                                <span>
+                                    <aura:if isTrue="{!v.sortAsc}">
+                                        &#8593;
+                                        <aura:set attribute="else">
+                                            &#8595;
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </aura:if>
+                        </div>
+                    </th>
+                    <th scope="col" width="15%">
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.currentList}" var="asset" indexVar="assetIndex">
+                    <tr>
+                        <td data-label="Product Code">
+                            <div class="slds-truncate" title="{!asset.Product2.ProductCode}">
+                                <a
+                                    href="{!'javascript: document.getElementById(\'btn-edit-'+ assetIndex + '\').click();'}">
+                                    <span class="slds-text-link"
+                                        data-value="{!assetIndex}">{!asset.Product2.ProductCode}</span>
+                                </a>
+                                <button type="button" class="slds-hide" id="{!'btn-edit-' + assetIndex}"
+                                    onclick="{!c.editAssetBtn}" value="{!assetIndex}" />
+                            </div>
+                        </td>
+                        <td data-label="Tool">
+                            <div class="slds-truncate" title="{!asset.Product2.Customer_Facing_Name__c}">
+                                {!asset.Product2.Customer_Facing_Name__c}
+                            </div>
+                        </td>
+                        <td data-label="Purchased Date">
+                            <div class="slds-truncate slds-align_absolute-center" title="{!asset.PurchaseDate}">
+                                {!asset.PurchaseDate}
+                            </div>
+                        </td>
+                        <td data-label="Serial Number">
+                            <div class="slds-truncate" title="{!asset.FullSerialNumber__c}">
+                                {!asset.FullSerialNumber__c}
+                            </div>
+                        </td>
+                        <td data-label="Total Warranty (Years)">
+                            <div class="slds-truncate slds-align_absolute-center"
+                                title="{!asset.Total_Warranty_Years__c}">
+                                {!asset.Total_Warranty_Years__c}
+                            </div>
+                        </td>
+                        <td data-label="Part of">
+                            <!--slds-align_absolute-center slds-float_right-->
+                            <div class="slds-truncate" title="{!asset.KitProduct__r.Customer_Facing_Name__c}">
+                                {!asset.KitProduct__r.Customer_Facing_Name__c}
+                            </div>
+                        </td>
+                        <td data-label="Action buttons">
+                            <a href="{!'javascript: document.getElementById(\'btn-del-'+ assetIndex + '\').click();'}"
+                                class="action-button--margin-right">
+                                <span class="slds-icon_container slds-icon_container--circle span-bg-color--gray">
+                                    <c:svg class="slds-icon slds-icon--small"
+                                        xlinkHref="{!$Resource.SLDS252 + '/icons/action-sprite/svg/symbols.svg#delete'}" />
+                                </span>
+                            </a>
+                            <a href="{!'javascript: document.getElementById(\'btn-rec-'+ assetIndex + '\').click();'}"
+                                class="action-button--margin-left">
+                                <span class="slds-icon_container slds-icon_container--circle span-bg-color--gray">
+                                    <c:svg class="slds-icon slds-icon--small"
+                                        xlinkHref="{!$Resource.SLDS252 + '/icons/action-sprite/svg/symbols.svg#google_news'}" />
+                                </span>
+                            </a>
+
+                            <button type="button" class="slds-hide" id="{!'btn-del-' + assetIndex}"
+                                onclick="{!c.removeAssetBtn}" value="{!assetIndex}" />
+                            <button type="button" class="slds-hide" id="{!'btn-rec-' + assetIndex}"
+                                onclick="{!c.displayReceiptBtn}" value="{!assetIndex}" />
+                        </td>
+                    </tr>
+                </aura:iteration>
+            </tbody>
+        </table>
+        <br />
+        <c:Pagination currentPageNumber="{!v.pageNumber}" maxPageNumber="{!v.maxPage}" />
+    </div>
+    <br />
+
+    <div aura:id="toolBoxDetailDiv"
+        class="{! v.toolbagView == 'tile' ? 'slds-grid slds-wrap slds-grid--pull-padded' : 'slds-hide'}">
+        <div class="slds-p-horizontal--small slds-size--1-of-2 slds-medium-size--1-of-2 slds-large-size--1-of-3">
+            <div class="fullCardheight">
+                <a href="#" onclick="{!c.navigateToRegisterProduct}">
+                    <button class="fullSize">
+                        <div>
+                            <CENTER><img src="{!v.siteSettings.AEGToolbagAddNewIcon__c}" title="" class="" /></CENTER>
+                        </div>
+                    </button>
+                </a>
+            </div>
+
+        </div>
+        <!-- ASSET LIST -->
+
+        <aura:iteration items="{!v.assetList}" var="asset" indexVar="assetIndex">
+            <div class="slds-p-horizontal--small slds-size--1-of-2 slds-medium-size--1-of-2 slds-large-size--1-of-3">
+                <div class="globalProductItemBox">
+                    <img src="{!asset.Product2.Image_URL__c}" title="ONE+ Hammer Drill G4 Thumbnail"
+                        class="categoryImage" />
+                    <div class="globalProductItemBlurb globalProductItemBody">
+                        <p title="{!asset.Name}">{!asset.Product2.Customer_Facing_Name__c}</p>
+                        <p class="productDetailsList">#{!asset.Product2.ProductCode}</p>
+                        <p class="productDetailsList">Registered: {!asset.Registered_Date_Formula__c}</p>
+                        <p class="productDetailsList">Purchased: {!asset.PurchaseDate}</p>
+                        <p class="productDetailsList">Serial: {!asset.FullSerialNumber__c }</p>
+                        <aura:renderIf isTrue="{!asset.Total_Warranty_Years__c == 0}">
+                            <p class="productDetailsList">
+                                Warranty: 
+                                <a href="{!v.siteSettings.Warranty_URL__c}"
+                                   target="_blank">
+                                   N/A
+                                </a>
+                            </p>
+
+                            <aura:set attribute="else">
+                                <p class="productDetailsList">Standard Warranty:
+                                    <aura:renderIf isTrue="{!asset.Standard_Warranty_Months__c == 0}">
+                                        <a href="{!v.siteSettings.Warranty_URL__c}" class="legalStrong" target="_blank">
+                                            N/A</a>
+                                        <aura:set attribute="else">
+                                            {!asset.Standard_Warranty_Months__c/12} years
+                                        </aura:set>
+                                    </aura:renderIf>
+                                </p>
+                                <p class="productDetailsList">Extended Warranty:
+                                    <aura:renderIf isTrue="{!asset.Extended_Warranty_Months__c == 0}">
+                                        <a href="{!v.siteSettings.Warranty_URL__c}" class="legalStrong" target="_blank">
+                                            N/A</a>
+                                        <aura:set attribute="else">
+                                            {!asset.Extended_Warranty_Months__c/12} years
+                                        </aura:set>
+                                    </aura:renderIf>
+                                </p>
+                            </aura:set>
+                        </aura:renderIf>
+                        <aura:renderIf isTrue="{!asset.KitProduct__r.Customer_Facing_Name__c  != null}">
+                            <div>
+                                <p class="productDetailsList">
+                                    Part of: {!asset.KitProduct__r.Customer_Facing_Name__c }
+                                </p>
+                            </div>
+                        </aura:renderIf>
+                        <br />
+                        <div class="slds-align_absolute-center slds-show">
+                            <lightning:button class="button globalProductItemButton" label="Edit" value="{!assetIndex}"
+                                onclick="{! c.editAsset }"></lightning:button>
+                            <lightning:button class="button globalProductItemButton" label="Remove"
+                                value="{!assetIndex}" onclick="{! c.removeAsset }">Remove</lightning:button>
+                            <lightning:button class="button globalProductItemButton" label="Receipt"
+                                value="{!assetIndex}" onclick="{!c.displayReceipt}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aura:iteration>
+        <!-- ASSET LIST -->
+    </div>
+</aura:component>

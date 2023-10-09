@@ -1,0 +1,1 @@
+public class TTIException extends Exception{}

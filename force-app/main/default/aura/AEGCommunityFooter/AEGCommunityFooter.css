@@ -1,0 +1,11 @@
+.THIS .app-footer__secondary {
+    background-color: #3f3e3e;
+    color: #ffffff;
+    font-size: 0.75em;
+    padding: 15px 0px 15px 15px;
+}
+
+.THIS a .legal {
+    color: #42b3ee;
+    text-decoration: none;
+}

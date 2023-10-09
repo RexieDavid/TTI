@@ -1,0 +1,71 @@
+<aura:component controller="TTI_ServiceRequestController">
+    
+    <aura:attribute name="Service_Request_Case" type="Case"/>
+    <aura:attribute name="ServiceMilestoneAttribute" type="Object" />
+    
+    <fieldset>
+        
+        <legend class="slds-form-element__label slds-text-heading_medium slds-m-top_medium 
+                       slds-m-bottom_medium" 
+                onclick="{!c.toggleSection}"
+                style="background:#f9f9fa;cursor:pointer;width:100%">
+            <div class="slds-float--left ">
+                <lightning:icon aura:id="section" iconName="utility:chevronright" size="x-small" alternativeText="Indicates add"/>
+                <lightning:icon class="slds-hide" aura:id="section" iconName="utility:chevrondown" size="x-small" alternativeText="Indicates dash"/>
+            </div>
+            <span class="slds-m-left_medium">
+                <b><u>Asset Information</u></b>
+            </span>
+        </legend>
+        <div aura:id="section" class="slds-hide slds-form-element__group">
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-01">Brand</label>
+                    <ui:inputText disabled="true" value="{!v.Service_Request_Case.Brand__c}"/>
+                </div>
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-02">Purchase Date</label>
+                    <ui:inputDate disabled="true" value="{!v.Service_Request_Case.Purchase_Date__c}" />
+                </div>
+            </div>
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-01">Product</label>
+                    <ui:inputText disabled="true" value="{!v.Service_Request_Case.Asset.Name}"/>
+                </div>
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-02">
+                        Receipt Number
+                        <aura:if isTrue="{!v.Service_Request_Case.Asset.Receipt__c != null}">
+                            <a>
+                                <span onclick="{!c.openReceipt}">
+                                    Open File
+                                    <lightning:icon iconName="utility:download" size="xx-small"/>
+                                </span>
+                            </a>
+                        </aura:if>
+                    </label>
+                    <ui:inputText disabled="true" value="{!v.Service_Request_Case.Receipt_No__c}"/>
+                </div>
+            </div>
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-01">Serial Number</label>
+                    <ui:inputText disabled="true" value="{!v.Service_Request_Case.Serial_Number__c}"/>
+                </div>
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-01">Serial Number not found</label>
+                    <ui:outputCheckbox value="{!v.Service_Request_Case.Serial_Number_not_found__c}" />
+                </div>
+            </div>
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-02">Fault Description</label>
+                    <ui:inputTextArea disabled="true" value="{!v.Service_Request_Case.Fault_Description__c}"/>
+                </div>
+                
+            </div>
+            
+        </div>
+    </fieldset>
+</aura:component>

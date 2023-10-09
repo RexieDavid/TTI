@@ -1,0 +1,276 @@
+<aura:component
+        implements="forceCommunity:availableForAllPageTypes,force:appHostable,flexipage:availableForAllPageTypes,c:TTI_Constants,force:hasRecordId,forceCommunity:themeLayout"
+        access="global" controller="TTI_SearchController">
+    
+    <!-- Deprecated -->
+    <aura:attribute name="claimNumber" type="String" />    
+    <!-- String attributes -->
+    <aura:attribute type="String" name="caseNumberFromSubmitClaim" /> 
+    
+    <!-- Boolean -->
+    <aura:attribute name="isDateRangeRequired" type="Boolean" default="false" />
+    <aura:attribute name="isRendered" type="Boolean" default="true" />
+
+    <!-- Object/Collection attributes -->
+    <aura:attribute name="searchObj" type="Object" />
+    <aura:attribute name="serviceReqCaseList" type="List" />
+    <aura:attribute name="serviceRequest" type="Aura.Component[]" />
+    <aura:attribute name="caseNumber" type="String" />
+    <aura:attribute name="showServiceReqCmp" type="Boolean" default="false" />
+    <aura:attribute name="currDate" type="Date" />
+
+    <!-- Event handlers -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="getSelectedObjectFromSearch" event="c:TTI_PredectiveSearchEvent"
+        action="{!c.populatePredictiveFields}" />
+    <aura:method name="openServiceRequestPage" action="{!c.searchClicked}" />
+    
+    <div class="slds-form slds-form_horizontal" aura:id="searchClaimBlock">
+        <div class="slds-form-element slds-align_absolute-center">
+            <p>Searching for service claims that are allocated to you requires only one of the below search criteria to
+                be provided.<br />
+                If you would like to search for an unallocated claim, you must specify at least values for two fields
+                Claim Number, Last Name, Email, Mobile Number, Retailer, Product, Consignment Number, Only display open
+                claims. </p>
+        </div>
+    </div>
+    
+    <!-- CREATE NEW EXPENSE -->
+    <div aria-labelledby="searchForm" aura:id="searchClaimBlock" class="slds-m-top_large">
+        <!-- BOXED AREA -->
+        <!-- CREATE NEW EXPENSE FORM -->
+        <form class="slds-form_compound" onkeyup="{!c.formPress}">
+            <div class="slds-form-element__row">
+                <div class="slds-size_1-of-2 slds-form-element">
+                    <lightning:input aura:id="ClaimNumber" label="Claim Number" name="ClaimNumber"
+                    value="{!v.searchObj.claimNumber}" />
+                </div>
+                <div class="slds-size_1-of-2 slds-form-element">
+                    <label class="slds-form-element__label" for="input-id-01">Retailer</label>
+                    <div class="slds-form-element__control">
+                        <c:TTI_PredictiveSearch SobjectName="Account"
+                            SobjectLabel="Retailer"
+                            whereQueryString="RecordType.Name='Commercial' AND Type='Retailer' AND Record_Status__c='Active'"/>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element__row">
+                <div class="slds-size_1-of-2 slds-form-element">
+                    <lightning:input aura:id="LastName" label="Last Name" name="LastName"
+                    value="{!v.searchObj.lastName}" />
+                </div>
+                <div class="slds-size_1-of-2 slds-form-element">
+                    <label class="slds-form-element__label" for="input-id-01">Product</label>
+                    <div class="slds-form-element__control">
+                        <c:TTI_PredictiveSearch SobjectName="Product2" SobjectLabel="Product"
+                            whereQueryString="Kit__c = FALSE AND Spare_Part__c = FALSE AND IsActive=true AND ProductCode LIKE :searchString"
+                            displayProdCode="true" ignoreDefaultNameSearch="true" />
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element__row">
+                <div class="slds-size_1-of-2 slds-form-element">
+                    <lightning:input aura:id="Email" label="Email" name="Email" value="{!v.searchObj.email}" />
+                </div>
+                <div class="slds-size_1-of-2 slds-form-element">
+                    <lightning:input aura:id="ConsignmentNumber" label="Incoming Consignment Number"
+                        name="ConsignmentNumber" value="{!v.searchObj.consignmentNumber}" />
+                </div>
+            </div>
+            <div class="slds-form-element__row">
+                <div class="slds-size_1-of-2 slds-form-element">
+                    <lightning:input aura:id="MobileNumber" label="Mobile Number" name="MobileNumber"
+                        value="{!v.searchObj.mobile}" />
+                </div>
+                <div class="slds-size_1-of-2 slds-form-element">
+                    <lightning:input aura:id="JobNumber" label="Job Number" name="JobNumber"
+                        value="{!v.searchObj.jobNumber}" />
+                </div>
+            </div>
+            
+            <div class="slds-form-element__row">
+                <br>
+                </br>
+            </div>
+            <aura:if isTrue="{!v.isRendered}">
+                <div class="slds-form-element__row">
+                    <h1>Custom Date Range </h1>
+                </div>
+                <div class="slds-form-element__row">
+                    <div class="slds-size_1-of-2 slds-form-element">
+                        <lightning:input 
+                            type="date" 
+                            aura:id="dateRange" 
+                            onchange="{!c.validateDate}" 
+                            label="From" 
+                            name="fromdate"
+                            value="{!v.searchObj.fromDate}" 
+                            max="{!v.currDate}"
+                            messageWhenRangeOverflow="Date can not be in future"
+                            required="{!v.isDateRangeRequired}" />
+                    </div>
+                    <div class="slds-size_1-of-2 slds-form-element">
+                        <lightning:input 
+                            type="date" 
+                            aura:id="dateRange" 
+                            onchange="{!c.validateDate}" 
+                            label="To" 
+                            name="todate"
+                            value="{!v.searchObj.toDate}" 
+                            max="{!v.currDate}" 
+                            messageWhenRangeOverflow="Date can not be in future" 
+                            required="{!v.isDateRangeRequired}" />
+                    </div>
+                </div>
+            </aura:if>
+            <div class="slds-form-element__row">
+                <div class="slds-size_1-of-2 slds-form-element">
+                    <lightning:input type="checkbox" aura:id="displayOpenClaims" label="Only display open claims"
+                        name="displayOpenClaims" checked="{!v.searchObj.displayOpenClaims}" />
+                </div>
+            </div>
+            <div class="slds-form-element slds-align_absolute-center slds-m-top_x-large">
+                <ui:button class="slds-button slds-button_brand" label="Search" press="{!c.searchClicked}" />
+                <ui:button class="slds-button slds-button_destructive" label="Cancel" press="{!c.cancelClicked}" />
+            </div>
+            <div class="slds-form-element slds-align_absolute-center slds-m-top_x-large">
+                <ui:inputDefaultError aura:id="errorBox" />
+            </div>
+        </form>
+        <!-- / CREATE NEW EXPENSE FORM -->
+    </div>
+    <!-- / CREATE NEW EXPENSE -->
+    
+    <div class="slds-table_edit_container slds-is-relative slds-hide" aura:id="table">
+        <legend class="legendMargin slds-form-element__label slds-text-heading_medium" >
+            <b><u>Matching Service Request Cases</u></b>
+        </legend>
+        
+        <table
+            class="tableWidth slds-table slds-table_bordered slds-table_resizable-cols slds-table_fixed-layout slds-no-cell-focus slds-table_edit"
+            role="grid" >
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Case Number" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                           tabindex="-1">
+                            <span class="slds-truncate" title="Case Number">
+                                <b>Case Number</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Customer Account" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                           tabindex="-1">
+                            <span class="slds-truncate" title="Customer Account">
+                                <b>Customer Account</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Retailer Account" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                           tabindex="-1">
+                            <span class="slds-truncate" title="Retailer Account">
+                                <b>Retailer Account</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Brand" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                           tabindex="-1">
+                            <span class="slds-truncate" title="Brand">
+                                <b>Brand</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Product" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                           tabindex="-1">
+                            <span class="slds-truncate" title="Product">
+                                <b>Product</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Serial Number" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                           tabindex="-1">
+                            <span class="slds-truncate" title="Serial Number">
+                                <b>Serial Number</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Service Request Milestone" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button"
+                           tabindex="-1">
+                            <span class="slds-truncate" title="Service Request Milestone">
+                                <b>Service Request Milestone</b>
+                            </span>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.serviceReqCaseList}" var="objServiceReqCase" indexVar="index">
+                    <tr class="slds-hint-parent">
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <a>
+                                    <span class="slds-truncate" data-index="{!index}"
+                                          onclick="{!c.caseNumberClicked}">
+                                        {!objServiceReqCase.CaseNumber}
+                                    </span>
+                                </a>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate">
+                                    {!objServiceReqCase.TTI_Customer_Account__r.Name}
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate">
+                                    {!objServiceReqCase.Retailer_Account__r.Name}
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate">
+                                    {!objServiceReqCase.Brand__c}
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate">
+                                    {!objServiceReqCase.Product_Name__r.Name}
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate">
+                                    {!objServiceReqCase.Serial_Number__c}
+                                </span>
+                            </span>
+                        </td>
+                        <td class="slds-cell-edit" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                {!objServiceReqCase.Service_Request_Milestone__c}
+                            </span>
+                        </td>
+                    </tr>
+                </aura:iteration>
+            </tbody>
+        </table>
+    </div>
+    
+    <aura:if isTrue="{!v.showServiceReqCmp}">
+        <c:spServiceRequest caseNumber="{!v.caseNumber}" />
+    </aura:if>
+    
+    <lightning:spinner aura:id="mySpinner" class="slds-hide" />
+</aura:component>

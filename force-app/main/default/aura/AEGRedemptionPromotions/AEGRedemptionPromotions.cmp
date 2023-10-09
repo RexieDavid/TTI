@@ -1,0 +1,227 @@
+<aura:component 
+    implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" 
+    access="global" 
+    controller="AEGRedemptionController">
+    <!-- String attributes -->
+    <aura:attribute type="String" name="pageName" default="AEGRedemptionPromotions" />
+    <aura:attribute type="String" name="availableRedemptionHeader" />
+    <aura:attribute type="String" name="availableRedemptionSubHeader" />
+    <aura:attribute type="String" name="unclaimedRedemptionHeader" />
+    <aura:attribute type="String" name="unclaimedRedemptionSubHeader" />
+    <aura:attribute type="String" name="unclaimedRedemptionSubHeader2" />
+    <aura:attribute type="String" name="noRegProdMsg" />
+    <aura:attribute type="String" name="noActProdMsg" />
+
+    <!-- Collection attributes -->
+    <aura:attribute type="List" name="activePromotions" />
+    <aura:attribute type="List" name="availablePromotions" />
+
+    <!-- Boolean Attributes -->
+    <aura:attribute type="Boolean" name="isLoadCarousel" default="false"/>
+    <aura:attribute type="Boolean" name="isCarouselLoaded" default="false" />
+    <aura:attribute type="Boolean" name="isCssLoaded" default="false" />
+
+    <!-- Object attributes -->
+    <aura:attribute type="Object" name="selectedPromo" />
+    <aura:attribute type="Object" name="payload" />
+    
+    <!-- Handlers -->
+    <aura:handler event="c:NavigateEvent" action="{!c.handleNavigate}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="change" value="{!v.isCarouselLoaded}" action="{!c.slick}" />
+    <aura:registerEvent name="navigate" type="c:NavigateEvent"/>
+    <!-- Notification library -->
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+
+    <div aura:id="activePromotionDiv" class="slds-hide slds-p-vertical_x-large" >
+        <aura:if isTrue="{!not(v.isCssLoaded)}">
+            <lightning:spinner alternativeText="Loading" size="medium"/>
+        </aura:if>
+
+        <div class="slds-grid slds-wrap" >
+            <div class="slds-col slds-size_1-of-1 slds-grid slds-wrap slds-p-vertical_x-large div--bg-color-black div--border-radius">
+                <div class="slds-size_1-of-1">
+                    <div class="slds-align_absolute-center" >
+                        <div class="slds-text-title_caps slds-text-align_center">
+                            <div class="slds-text-heading_large slds-text-color_inverse" >
+                                {!v.unclaimedRedemptionHeader}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-size_1-of-1">
+                    <div class="slds-align_absolute-center" >
+                        <div class="slds-text-body_regular slds-text-color_inverse slds-m-around_small slds-text-align_center">
+                            <aura:unescapedHtml value="{!v.unclaimedRedemptionSubHeader}" />
+                        </div>
+                    </div>
+                </div>
+                <aura:if isTrue="{!v.unclaimedRedemptionSubHeader2}" >
+                    <div class="slds-size_1-of-1">
+                        <div class="slds-align_absolute-center" >
+                            <div class="slds-text-body_regular slds-text-color_inverse slds-m-around_small slds-text-align_center">
+                                <aura:unescapedHtml value="{!v.unclaimedRedemptionSubHeader2}" />
+                            </div>
+                        </div>
+                    </div>
+                </aura:if>
+            </div>
+
+            <aura:if isTrue="{!not(empty(v.availablePromotions))}" >
+                <div class="slds-col slds-size_12-of-12 slds-grid slds-wrap slds-p-bottom_small slds-show_medium" >
+                    <div class="slds-col slds-size_5-of-12 slds-grid slds-wrap div--bg-color-brand" >
+                        <div class="slds-align_absolute-center" >
+                            <div class="slds-text-title_caps slds-text-align_center">
+                                <div class="slds-text-heading_large slds-text-color_inverse" >
+                                    Purchase
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_5-of-12 slds-grid slds-wrap div--bg-color-brand">
+                        <div class="slds-align_absolute-center" >
+                            <div class="slds-text-title_caps slds-text-align_center">
+                                <div class="slds-text-heading_large slds-text-color_inverse" >
+                                    Receive
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12 div--bg-color-brand">
+                        <div class="slds-align_absolute-center" >
+                            <div class="slds-text-title_caps slds-text-align_center">
+                                <div class="slds-text-heading_large slds-text-color_inverse" >
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <aura:iteration items="{!v.availablePromotions}" var="promo" >
+                    <!-- Consolidated view -->
+                    <div class="slds-grid slds-wrap slds-p-vertical_x-large div--border-bottom div-full-width">
+                        <div class="slds-size_1-of-1 slds-medium-size_5-of-12 slds-large-size_5-of-12 slds-p-around_medium div--align-self-center">
+                            <article class="slds-tile slds-media div--display-block">
+                                <c:AgProductCarousel 
+                                    aura:id="purchasedProductCarousel" 
+                                    objectList="{!promo.purchasedItems}" 
+                                />
+                            </article>
+                        </div>
+                        <div class="slds-size_1-of-1 slds-medium-size_5-of-12 slds-large-size_5-of-12">
+                            <article class="slds-tile slds-media div--display-block">
+                                <aura:if isTrue="{!v.isLoadCarousel}">
+                                    <!--SCTASK0023019 - Updated the carousel to show all items - 10/26/2022-JAC -->
+                                    <c:AgProductCarousel
+                                    aura:id="redeemableProductCarousel" 
+                                    objectList="{!promo.redeemableItems[0].items}" />
+
+                                    <!-- <c:AEGLightningCarousel objectList="{!promo.redeemableItems}" 
+                                                        slidesToShow="2" 
+                                                        redemptionItemId="{!promo.custom.redemptionItemId}"
+                                                        isChooseActive="true"
+                                                        purchaseProductId="{!promo.custom.purchasedProductId}"
+                                                        typeClass="active"
+                                                        isLoadCss="false"
+                                                        isLoaded="{!v.isCarouselLoaded}"/> -->
+                                    <!--End SCTASK0023019 10/26/2022-JAC -->
+                                </aura:if>
+                            </article>
+                        </div>
+                        <div class="slds-wrap slds-size_1-of-1 slds-medium-size_2-of-12 slds-large-size_2-of-12 slds-align_absolute-center slds-p-around_small" >
+                            <div class="slds-size_1-of-1 slds-align_absolute-center slds-p-bottom_x-small">
+                                <!--SCTASK0023019 - Updated the button to include data-id to be retrieved when the button is clicked - 10/26/2022-JAC -->
+                                <a 
+                                    href="javascript:void(0);" 
+                                    name="{!promo.campaign.Id}" 
+                                    data-id="{!promo.custom.redemptionItemId}" class="slds-align_absolute-center div__lightning-button"
+                                    onclick="{!c.navigateToCreateRedemption}">Redeem
+                                </a>
+
+                                <!-- <lightning:button name="{!promo.campaign.Id}" 
+                                                  variant="brand" 
+                                                  label="Redeem" 
+                                                  onclick="{!c.navigateToCreateRedemption}" 
+                                                  class="slds-align_absolute-center div__lightning-button" /> -->
+                                <!--End SCTASK0023019 10/26/2022-JAC -->    
+                            </div>
+                            <div class="slds-size_1-of-1 slds-align_absolute-center slds-text-align_center div--color-red">
+                                Available until {!promo.campaign.custom.validUntil}
+                            </div>
+                        </div>
+                    </div>
+                </aura:iteration>
+
+                <aura:set attribute="else" >
+                    <div class="slds-col slds-size_12-of-12 slds-grid slds-wrap slds-p-vertical_x-large" >
+                        <div class="slds-align_absolute-center" >
+                            <div class="slds-text-align_center">
+                                <div class="slds-text-heading_medium" >
+                                    <i>{!v.noRegProdMsg}</i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aura:set>
+            </aura:if>
+
+            <div class="slds-col slds-size_12-of-12 slds-grid slds-wrap slds-p-vertical_x-large div--bg-color-black">
+                <div class="slds-size_1-of-1">
+                    <div class="slds-align_absolute-center" >
+                        <div class="slds-text-title_caps slds-text-align_center">
+                            <div class="slds-text-heading_large slds-text-color_inverse" >
+                                {!v.availableRedemptionHeader}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-size_1-of-1">
+                    <div class="slds-align_absolute-center" >
+                        <div class="slds-text-body_regular slds-text-color_inverse slds-m-around_small slds-text-align_center">
+                            <aura:unescapedHtml value="{!v.availableRedemptionSubHeader}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <aura:if isTrue="{!not(empty(v.activePromotions))}" >
+                <aura:iteration items="{!v.activePromotions}" var="promo" >
+                    <!-- Consolidated View -->
+                    <div class="slds-grid slds-wrap slds-p-vertical_x-large div--border-bottom div-full-width">
+                        <div class="slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-p-around_medium div--align-self-center">
+                            <article class="slds-tile slds-media div--display-block">
+                                <c:AgProductCarousel 
+                                    aura:id="purchasedProductCarousel" 
+                                    objectList="{!promo.purchasedItems}" 
+                                />
+                            </article>
+                        </div>
+                        <div class="slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
+                            <article class="slds-tile slds-media div--display-block">
+                                <aura:if isTrue="{!v.isLoadCarousel}">
+                                    <c:AEGLightningCarousel objectList="{!promo.redeemableItems}" 
+                                                            slidesToShow="2" 
+                                                            typeClass="inActive" 
+                                                            isLoadCss="false" 
+                                                            isLoaded="{!v.isCarouselLoaded}"/>
+                                </aura:if>
+                            </article>
+                        </div>
+                    </div>
+                </aura:iteration>
+                <aura:set attribute="else" >
+                    <div class="slds-col slds-size_12-of-12 slds-grid slds-wrap slds-p-vertical_x-large" >
+                        <div class="slds-align_absolute-center" >
+                            <div class="slds-text-align_center">
+                                <div class="slds-text-heading_medium">
+                                    <i>{!v.noActProdMsg}</i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aura:set>
+            </aura:if>
+        </div>
+    </div>
+</aura:component>

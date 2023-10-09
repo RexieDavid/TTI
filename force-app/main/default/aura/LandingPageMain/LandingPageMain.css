@@ -1,0 +1,531 @@
+.THIS {
+    margin: 0px 135px;
+}
+
+.THIS .callToActionContainer {
+    margin: 0px;
+}
+
+.THIS .textSection {
+    max-height: 180px;
+    padding: 20px 0px 20px 0px;
+
+}
+
+.THIS .buttonSection {
+    height: 100px;
+    max-height: 100px;
+}
+
+ .THIS .slds-modal {
+    font-family: Helvetica, Arial, sans-serif;
+    display: block;
+    box-sizing: border-box;
+}
+
+.THIS .modal-banner {
+    max-width: 150px;
+    padding: 10px 10px;
+    width: 100%;
+}
+
+.THIS .modal-banner-container {
+    background-color: black;
+    width: 100%;
+    max-height: 150px;
+}
+
+ .THIS .slds-modal__container {
+    min-width: 80% !important;
+    min-height: 80% !important;
+}
+
+.THIS .selected-rows {
+    background-color: #CCCB2B !important;
+    color: #FFFFFF !important;
+}
+
+.THIS .part-main {
+    float: left;
+    padding: 15px;
+}
+
+.THIS .part-4 {
+    width: 30.76%;
+}
+
+.THIS .part-5 {
+    width: 38.45%;
+}
+
+.THIS .col-main {
+    float: left;
+    padding: 15px;
+    padding-top: 0;
+    padding-bottom: 0;
+    vertical-align: middle;
+    border: 1px solid white;
+    height: 20px;
+}
+
+.THIS .col-12 {
+    width: 100%;
+}
+
+.THIS .row::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.THIS .image-header {
+    position: relative;
+}
+
+.THIS .introduction {
+    font-size: 10px;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+.THIS .greet {
+    font-size: 10px;
+    font-weight: normal;
+    height: 15%;
+    margin-bottom: 8%;
+}
+
+.THIS .greetings-section {
+    font-size: 11px;
+    font-weight: normal;
+}
+
+.THIS .q-section {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.THIS .min-max-section {
+    font-size: 7px;
+    padding-top: 0;
+}
+
+.THIS .min {
+    text-align: left;
+}
+
+.THIS .max {
+    text-align: right;
+}
+
+.THIS .scale-section {
+    text-align: center;
+    font-size: 12px;
+}
+
+.THIS .ratings {
+    background-color: white;
+    padding: 0px;
+    margin-right: 3px;
+    margin-top: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50px;
+    color: black;
+    font-weight: normal;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    text-align: center;
+    font-size: 10px;
+}
+
+.THIS .circles-section {
+    text-align: center;
+    height: 30px;
+}
+
+.THIS .q1-circles,
+.THIS .q2-circles {
+    border: solid 1.4px black;
+    background-color: white;
+    padding: 0px;
+    margin-right: 3px;
+    margin-top: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50px;
+    color: #ffffff;
+    font-weight: bold;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    text-align: center;
+}
+
+.THIS .q1-circles span,
+.THIS .q2-circles span {
+    margin-top: 10px;
+    display: block;
+}
+
+.THIS .submit-button {
+    background: black;
+    color: white;
+    width: 100px;
+    font-size: 13px;
+}
+
+.THIS h2 {
+    font-family: "Helvetica Now Var", Helvetica;
+    font-size: 48px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 56px; /* 116.667% */
+    letter-spacing: -0.48px;
+    padding-top: 20px;
+    padding-bottom: 48px;
+}
+
+.THIS h3 {
+    font-family: "Helvetica Now Var", Helvetica;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 32px; /* 133.333% */
+    letter-spacing: -0.24px;
+    padding-top: 32px;
+}
+
+.THIS h4 {
+    font-family: "Helvetica Now Var", Helvetica;
+    display: flex;
+    padding-right: 0px;
+    padding-top: 80px;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.THIS .viewButton {
+    display: flex;
+    padding: 15px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 50px;
+    background-color: black;
+    color: #F5F5F5;
+}
+
+@media only screen and (min-width: 768px) {
+
+    .THIS .part-4 {
+        width: 30.76%; 
+        float: left; 
+        padding: 14px;
+    }
+    
+    .THIS .part-5 {
+        width: 38.45%; 
+        float: left; 
+        padding: 14px;
+    }
+
+    .THIS .q2 {
+        padding-top: 4%;
+        padding-bottom: 4%;
+    }
+
+    .THIS .row::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+
+    .THIS .introduction {
+        font-size: 14px;
+        margin-top: 2%;
+        margin-bottom: 0%;
+    }
+
+    .THIS .greet {
+        font-size: 14px;
+        font-weight: normal;
+        height: 15%;
+        margin-top: 2%;
+    }
+
+    .THIS .greetings-section {
+        padding-top: 0;
+        padding-bottom: 0;
+        font-size: 14px;
+        font-weight: normal;
+    }
+
+    .THIS .q-section {
+        font-size: 15px;
+        font-weight: bold;
+        height: 5%;
+    }
+
+    .THIS .min-max-section {
+        font-size: 11px;
+        padding-top: 3%;
+    }
+
+    .THIS .scale-section {
+        text-align: center;
+        font-size: 12px;
+    }
+
+    .THIS .ratings {
+        background-color: white;
+        padding: 0px;
+        margin-right: 3.5px !important;
+        margin-top: 0;
+        width: 30px;
+        height: 30px;
+        border-radius: 50px;
+        color: black;
+        font-weight: normal;
+        display: inline-block;
+        vertical-align: middle;
+        position: relative;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .THIS .circles-section {
+        padding-top: 1%;
+        text-align: center;
+        height: 30px;
+    }
+
+    .THIS .q1-circles,
+    .THIS .q2-circles {
+        border: solid 1.4px black !important;
+        background-color: white !important;
+        padding: 0px !important;
+        margin-right: 8px !important;
+        margin-top: 0 !important;
+        width: 25px !important;
+        height: 25px !important;
+        border-radius: 50px !important;
+        color: #ffffff !important;
+        font-weight: bold !important;
+        display: inline-block !important;
+        vertical-align: middle !important;
+        position: relative !important;
+        text-align: center !important;
+    }
+
+    .THIS .submit-button {
+        background: black;
+        color: white;
+        width: 150px;
+    }
+
+    .THIS .q1-circles span,
+    .THIS .q2-circles span {
+        margin-top: 8px;
+        display: block;
+    }
+
+    .THIS .selected-rows {
+        background-color: #cccb2b !important;
+        color: #ffffff !important;
+    }
+
+}
+
+@media only screen and (min-width: 1200px) {
+    .THIS .slds-p-horizontal_x-small {
+        padding-left: 2%;
+        padding-right: 2%;
+    }
+    
+    .THIS .part-4 {
+        width: 30.76%;
+        float: left;
+        padding: 14px;
+    }
+
+    .THIS .part-5 {
+        width: 38.45%;
+        float: left;
+        padding: 14px;
+    }
+
+    .THIS .q1 {
+        padding-top: 2%;
+        padding-bottom: 2%;
+    }
+
+    .THIS .q2 {
+        padding-top: 0;
+    }
+
+    .THIS .row::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+
+    .THIS .introduction {
+        font-size: 15px;
+        margin-top: 2%;
+        margin-bottom: 0%;
+    }
+
+    .THIS .greet {
+        font-size: 15px;
+        font-weight: normal;
+        height: 3%;
+        margin-top: 2%;
+    }
+
+    .THIS .greetings-section {
+        padding-top: 0;
+        padding-bottom: 0;
+        font-size: 15px;
+        font-weight: normal;
+        height: 75px;
+    }
+
+    .THIS .q-section {
+        font-size: 16px;
+        font-weight: bold;
+        height: 5%;
+    }
+
+    .THIS .min-max-section {
+        font-size: 13px;
+        padding-top: 1%;
+    }
+
+    .THIS .min {
+        padding-left: 12%;
+    }
+
+    .THIS .max {
+        padding-right: 12%;
+    }
+
+    .THIS .scale-section {
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .THIS .ratings {
+        background-color: white;
+        padding: 0px;
+        margin-right: 9px !important;
+        margin-top: 0;
+        width: 40px;
+        height: 40px;
+        border-radius: 50px;
+        color: black;
+        font-weight: normal;
+        display: inline-block;
+        vertical-align: middle;
+        position: relative;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .THIS .circles-section {
+        padding-top: 1%;
+        text-align: center;
+        height: 50px;
+    }
+
+    .THIS .q1-circles,
+    .THIS .q2-circles {
+        border: solid 1.5px black !important;
+        background-color: white !important;
+        padding: 0px !important;
+        margin-right: 14px !important;
+        margin-top: 0 !important;
+        width: 35px !important;
+        height: 35px !important;
+        border-radius: 50px !important;
+        color: #ffffff !important;
+        font-weight: bold !important;
+        display: inline-block !important;
+        vertical-align: middle !important;
+        position: relative !important;
+        text-align: center !important;
+    }
+
+    .THIS .submit-button {
+        background: black;
+        color: white;
+        width: 150px;
+    }
+
+    .THIS .q1-circles span,
+    .THIS .q2-circles span {
+        margin-top: 8px;
+        display: block;
+    }
+    
+    .THIS .selected-rows {
+        background-color: #cccb2b !important;
+        color: #ffffff !important;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .THIS {
+        margin: 32px 0;
+    }
+
+    .THIS h4 {
+        padding-top: 20px;
+        justify-content: center;
+
+    }
+    .THIS h2 {
+        display: flex;
+        justify-content: center;
+
+    }
+    
+    .THIS .callToActionContainer {
+        width: -webkit-fill-available;
+        text-align: -webkit-center;
+    }
+
+    .THIS .footerContainer {
+        width: -webkit-fill-available;
+    }
+
+    .THIS .footerMain {
+        display: grid;
+        align-items: center;
+    }
+
+    .THIS .footerLinks {
+        display: grid;
+        justify-content: left;
+
+    }
+    .THIS .footerLinks a {
+        padding: 32px 0px 0px 12px;
+    }
+
+    .THIS .socialButtonSection {
+        padding-top: 25px;
+
+    }
+
+    .THIS .socialButtonSection a{
+        display: inline;
+        padding: 0px 5px 0px 10px;
+    }
+
+    .THIS .footerContact {
+        padding-top: 170px;
+    }
+
+}

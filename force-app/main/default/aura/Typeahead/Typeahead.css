@@ -1,0 +1,141 @@
+.THIS .cstm-required {
+    color: black;
+    font-size: 14px;
+    text-align: center; 
+}
+
+.THIS .form-field {
+    border: 1px solid #c9b7a2;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    border-color: #CCC;
+    padding: 6px;
+    color: black;
+    font-weight: 400;
+    width: 100%;
+}
+
+.THIS .form-field:focus {
+    background: #fff;
+    color: black;
+}
+
+.THIS  input {
+    margin-left: -2px;
+    margin-top: 3px;
+    border: 0px solid transparent;
+    width: 70%;
+    -webkit-appearance: none;
+    font-size: 14px;
+}
+
+/*Message*/
+.THIS .slds-lookup__item--label {
+    font-size: 14px;
+    font-weight: 500;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 0.3rem 0.8rem; 
+}
+
+/*Lookup Results Main Container*/
+.THIS .slds-lookup__menu {
+    width: 100%; 
+    margin-left: 0;
+    border: 1px solid #b4d5fe;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/*Lookup Results Container*/ 
+.THIS .slds-lookup__list {
+    max-height: calc((((1.5 * 0.8125rem) + (1.5 * 0.75rem) - 0.25rem) + (0.25rem * 2)) * 8);
+    overflow-y: auto; 
+    font-size: 14px;
+    padding: 0rem 0.8rem;
+    margin: 0;
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/*Label and Lookup Container*/
+.THIS .slds-lookup {
+    position: relative;
+    width: 100%;
+}
+
+/*Lookup Field*/
+.THIS .slds-lookup__search-input {
+    width: 100%;
+    border: 1px solid #ccc;
+    height: 14px;
+}
+
+/*Lookup Label*/
+.THIS .slds-form-element__label {
+    padding-right: 0;
+    margin-left: 0;
+}
+
+.THIS .slds-pill-container {
+    display: -ms-flexbox;
+    display: flex;
+    min-height: calc(1.875rem + 2px);
+    padding: 0.125rem;
+    border: 1px solid #c9b7a2;
+    border-radius: 0.25rem;
+    background-color: white;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/*Lookup field box*/
+.THIS .slds-input {
+    height: 14px;
+}
+
+/*Lookup field focus*/
+.THIS .slds-input:focus {
+    outline: 0;
+    border-color: #b4d5fe;
+    background-color: white;
+    box-shadow: 0 0 2px #1589ee; 
+    height: 14px;
+}
+
+/*Lookup field focus*/
+.THIS .slds-input:active {
+    outline: 0;
+    border-color: #b4d5fe;
+    background-color: white;
+    box-shadow: 0 0 2px #1589ee; 
+    height: 14px;
+}
+
+/*Lookup, field item selected*/
+.THIS .slds-pill {
+    width: 100%;
+    height: 14px;
+}
+
+.THIS .slds-form-element__control {
+    clear: left;
+    position: relative;
+    display: block;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+}

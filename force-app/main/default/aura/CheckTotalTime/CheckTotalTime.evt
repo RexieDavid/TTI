@@ -1,0 +1,3 @@
+<aura:event type="APPLICATION" description="Time Event Fired" >
+    <aura:attribute name="firedFrom" type="String" />
+</aura:event>

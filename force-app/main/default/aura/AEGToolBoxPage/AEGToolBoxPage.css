@@ -1,0 +1,164 @@
+@media (min-width: 64em) {
+    .THIS .imageThumb {
+        height: 338px;
+    }
+}
+
+@media (min-width: 48em) {
+    .THIS .imageThumb {
+        height: 340px;
+    }
+}
+
+.THIS .productDetailsList {
+    font-size: 0.7em;
+    word-wrap: break-word;
+}
+
+.THIS .categoryImage {
+    margin: auto;
+    display: block;
+    height: auto;
+    width: auto;
+    max-width: 150px;
+    max-height: 150px;
+}
+
+@media screen and (max-width: 320px) {
+    .THIS .categoryImage {
+        margin: auto;
+        display: block;
+        height: auto;
+        width: auto;
+        max-width: 99%;
+        max-height: 99%;
+    }
+}
+
+.THIS .imageTitle {
+    padding: 0.5rem;
+}
+
+.THIS .imageThumb {
+    height: 350px;
+}
+
+.THIS .assetDetail th {
+    font-size: 11px;
+    padding: 0.2rem;
+}
+
+.THIS .btnStyle {
+    width: 48%;
+}
+
+.THIS .fullCardheight {
+    height: 357px;
+}
+
+.THIS .fullSize {
+    height: 100%;
+    width: 100%;
+    -webkit-appearance: none;
+
+    border: none;
+    color: white;
+    padding-bottom: 14px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    /* border: 2px solid #F48026; */
+    border-radius: 5px;
+}
+
+.THIS .addProductItemInverse {
+    color: #4e4e4e;
+}
+
+.THIS .globalInput {
+    border: 2px solid #ccc;
+}
+
+.THIS .receiptImage {
+    max-width: 100%;
+}
+
+.THIS .globalProductItemButton {
+    background-color: #f48026;
+    border: none;
+    color: #fff !important;
+    height: 27px;
+    margin: 5px 5px 0 5px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100px;
+    line-height: initial;
+    font-weight: initial;
+}
+
+.THIS .globalProductItemBox {
+    background-color: #ffffff;
+    border: 2px solid #555;
+    margin-bottom: 5px;
+    padding-top: 1px;
+    border-radius: 5px;
+}
+
+.THIS .globalProductItemBody {
+    background-color: #555555;
+    color: #fff;
+    position: relative;
+}
+
+.THIS .globalProductItemBlurb {
+    padding: 1em 0.75em;
+    text-align: center;
+}
+
+.THIS .globalPromptTitle {
+    background-color: #f48026;
+    color: white;
+}
+
+.THIS .pointer {
+    cursor: pointer;
+}
+
+.THIS .themeColor {
+    background-color: #F48026;
+}
+
+.THIS .span-bg-color--gray {
+    background-color: #57595C;
+}
+
+.THIS .action-button--margin-left {
+    margin: 0px 0px 0px 2.5px
+}
+
+.THIS .action-button--margin-right {
+    margin: 0px 2.5px 0px 0px
+}
+
+.THIS .div--display-flex {
+    display: flex;
+}
+
+.THIS .div--margin-left-5px {
+    margin-left: 5px;
+}
+
+.THIS .div--width-30px {
+    width: 30px;
+}
+
+.THIS .div--margin-btm-10px {
+    margin-bottom: 10px;
+}

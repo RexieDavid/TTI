@@ -1,0 +1,23 @@
+.THIS .promoBtn {
+	width: 70%;
+    height: 50%;
+    cursor: pointer;
+}
+
+.THIS .icon-text_orange {
+	fill: #F48026;
+}
+
+.THIS .border-color_orange {
+	border-color: #F48026;
+}
+
+.THIS .globalProductItemButton2 {
+    background-color: #f48026;
+    border: none;
+    color: #fff;
+    height: 27px;
+    margin: 5px 5px 0 5px;
+    text-align: center;
+    text-transform: uppercase;
+}

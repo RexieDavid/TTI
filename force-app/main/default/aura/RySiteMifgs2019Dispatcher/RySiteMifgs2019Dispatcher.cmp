@@ -1,0 +1,24 @@
+<aura:component>
+
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}" />
+    <aura:handler name="stateUpdated" event="c:RySiteMifgs2019StateUpdated" action="{!c.handleStateUpdatedEvent}" />
+
+    <aura:attribute name="isSegmentationSectionShown" type="Boolean" default="false" />
+    <aura:attribute name="isSessionMgmtSectionShown" type="Boolean" default="false" />
+    <aura:attribute name="personAccountId" type="String" />
+
+    <aura:if isTrue="{!v.isSegmentationSectionShown}">
+        <c:RySiteMifgs2019Segmentation attendee="{'sobjectType' : 'Account'}" />
+    </aura:if>
+
+    <aura:if isTrue="{!v.isSessionMgmtSectionShown}">
+        <c:RySiteMifgs2019SessionMgmt personAccountId="{!v.personAccountId}" />
+    </aura:if>
+
+    <!-- <button onclick="{!c.showSnackbar}">Show Snackbar</button> -->
+    <aura:attribute name="openSnacks" type="Boolean" />
+    <!-- <aura:if isTrue="{!v.asdf}"> -->
+        <c:RySiteMifgs2019Snackbar openthesnacks="{!v.openSnacks}" />
+    <!-- </aura:if> -->
+
+</aura:component>

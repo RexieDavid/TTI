@@ -1,0 +1,18 @@
+<aura:component>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    <aura:attribute name="execCreateShipment" type="Boolean" default="false" />
+    <aura:attribute name="labelFormat" type="String" required="true" default="PDF" />
+    <aura:attribute name="serviceReqCase" type="Case" required="true" />
+    <aura:attribute name="isCaseUpdated" type="Boolean" required="true" default="false" />
+    <aura:attribute name="isChangedToPickup" type="Boolean" required="true" default="false"/>
+    <aura:attribute name="hasFormError" type="Boolean" required="true" default="false" />
+    
+    <lightning:button name="cancel" label="Cancel" onclick="{!c.handleCancel}"/>
+    <aura:if isTrue="{!v.isChangedToPickup}">
+        <lightning:button name="ok" label="Save" variant="brand" value="Save" onclick="{!c.handleSave}"/>
+        <aura:set attribute="else">
+            <lightning:button name="ok" label="Request PDF Label" variant="brand" value="PDF" onclick="{!c.handleOK}"/>
+            <lightning:button name="ok" label="Request Zebra Label" variant="brand" value="ZPL" onclick="{!c.handleOK}"/>
+        </aura:set>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,11 @@
+.THIS .hidelabel .slds-form-element__label{
+    display:none;
+}
+.THIS .slds-spinner_container {
+    position: fixed;
+}
+@media (max-width: 600px) {
+    .THIS .cstm-width {
+        min-width: 190px;
+    }
+}

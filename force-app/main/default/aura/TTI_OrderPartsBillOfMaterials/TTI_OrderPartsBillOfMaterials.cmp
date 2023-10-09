@@ -1,0 +1,219 @@
+<aura:component controller="TTI_OrderPartsFromBillController">
+    <aura:attribute name="Service_Request_Case" type="Case" />
+    <aura:attribute name="ProductParts" type="List" />
+    <aura:attribute name="ProductPartsWrapper" type="List" />
+    <aura:attribute name="SOHRAGStatusList" type="Object[]" />
+    <aura:attribute name="userType" type="Object" />
+    <aura:attribute name="FaultCodePicklistValuesActive" type="Boolean" default="false" />
+    <aura:attribute name="FaultCodePicklistValues" type="List" />
+    <aura:attribute name="FaultCodePicklistValuesMap" type="Map" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:method name="populateFaultCodes" action="{!c.populateFaultCodesMethod}" />
+    <aura:method name="populateProdParts" action="{!c.populateProdPartsMethod}" />
+    <aura:attribute name="ServiceMilestoneAttribute" type="Object" />
+
+    <!-- Francis C. Nasalita - [SP-840] - 2018/11/13 - START -->
+        <aura:registerEvent name="FaultCodeChangeEvent" type="c:SP_FaultCodeChangeEvent" />
+        <aura:handler name="change" value="{!v.Service_Request_Case.Fault_Codes__c}" action="{!c.faultCodeChanged}" />
+    <!-- [SP-840] - 2018/11/13 - END -->
+
+    <div class="slds-table_edit_container slds-is-relative">
+        <legend class="slds-form-element__label slds-text-heading_medium slds-m-top_medium 
+                       slds-m-bottom_medium" onclick="{!c.toggleSection}" style="background:#f9f9fa;cursor:pointer">
+            <div class="slds-float--left ">
+                <lightning:icon aura:id="section" class="slds-hide" iconName="utility:chevronright" size="x-small" alternativeText="Indicates add" />
+                <lightning:icon aura:id="section" iconName="utility:chevrondown" size="x-small" alternativeText="Indicates dash" />
+            </div>
+            <span class="slds-m-left_medium">
+                <b><u>Diagnosis and Order Tool Parts </u></b>
+                <aura:if isTrue="{!v.Service_Request_Case.Product_Name__r.Technical_Drawing_URL__c !=null}">
+                    <a target="_blank" href="{!v.Service_Request_Case.Product_Name__r.Technical_Drawing_URL__c}">
+                        <lightning:icon iconName="custom:custom19" size="small" class="slds-m-left_medium" />
+                    </a>
+                </aura:if>
+            </span>
+        </legend>
+        <table aura:id="section" class="slds-table slds-table_bordered slds-table_resizable-cols slds-table_fixed-layout slds-no-cell-focus slds-table_edit" role="grid" style="width: 75rem;">
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <th style="width:6%" aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                            <span class="slds-truncate" >
+                                <b>Select</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                            <span class="slds-truncate" >
+                                <b>SKU</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th style="width:40%" aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                            <span class="slds-truncate" >
+                                <b>Description</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                            <span class="slds-truncate" >
+                                <b>Availability</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th style="width:8%" aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                            <span class="slds-truncate" >
+                                <b>Quantity</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                            <span class="slds-truncate" >
+                                <b>List Price</b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                            <span class="slds-truncate" >
+                                <b>My Stock
+                                <lightning:icon iconName="utility:info" 
+                                         size="xx-small" 
+                                         title="Only available if stock availability is limited. Please tick if part is available in your own stock holdings.Your stock will be replenished when available."/>
+                    
+                                </b>
+                            </span>
+                        </a>
+                    </th>
+                    <th aria-sort="none" class="slds-is-sortable slds-is-resizable" aria-label="Order Nbr" scope="col">
+                        <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                            <span class="slds-truncate" >
+                                <b>Bin</b>
+                            </span>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.ProductPartsWrapper}" var="objProductParts" indexVar="index">
+                    <!-- 
+                     - FNasalita Sept. 11,2018
+                     - [SAL-429] [SP-831] - Disabled products that are discontinued
+                     - START
+                    -->
+                    <tr class="slds-hint-parent" style="{!if(objProductParts.isDiscontinuedProduct,'background-color: darkgray;','')}">
+                        <td class="{!if(objProductParts.isDiscontinuedProduct,'','slds-cell-edit')}" role="gridcell">
+
+                            <span class="slds-grid slds-grid_align-spread">
+                                <ui:inputCheckbox aura:id="partsOrderedSelectCheckboxId" 
+                                                  labelClass="{!index}" disabled="{!if(objProductParts.isDiscontinuedProduct,true,false)}"/>
+                            </span>
+                        </td>
+                        <td class="{!if(objProductParts.isDiscontinuedProduct,'','slds-cell-edit')}" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate" >
+                                    {!objProductParts.ProdPart.ProductPart__r.ProductCode}
+                                </span>
+                            </span>
+                        </td>
+                        <td class="{!if(objProductParts.isDiscontinuedProduct,'','slds-cell-edit')}" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate" >
+                                    {!objProductParts.ProdPart.ProductPart__r.Name}
+                                </span>
+                            </span>
+                        </td>
+                        <td class="{!if(objProductParts.isDiscontinuedProduct,'','slds-cell-edit')}" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate" >
+                                    <lightning:icon iconName="utility:record"
+                                                    class="{!objProductParts.ProdPart.status}"/>
+                                </span>
+                            </span>
+                        </td>
+                        <td class="{!if(objProductParts.isDiscontinuedProduct,'','slds-cell-edit')}" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate" >
+                                    <ui:inputNumber class="rightAlignText"
+                                                    value="{!objProductParts.ProdPart.Quantity__c}"
+                                                    labelClass="{!index}"
+                                                    updateOn="keyup"
+                                                    change="{!c.quantityChanged}" 
+                                                    disabled="{!if(objProductParts.isDiscontinuedProduct,true,false)}"/>
+                                </span>
+                            </span>
+                        </td>
+                        <td class="{!if(objProductParts.isDiscontinuedProduct,'','slds-cell-edit')}" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate slds-align_absolute-center" >
+                                    <aura:if isTrue="{!v.Service_Request_Case.Claim_Type__c =='Non-Warranty'}">
+                                    <ui:outputText class="rightAlignText" value="{!objProductParts.ProdPart.ListPrice}"/>
+                                    </aura:if>
+                                </span>
+                            </span>
+                        </td>
+                        <td class="{!if(objProductParts.isDiscontinuedProduct,'','slds-cell-edit')}" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate slds-align_absolute-center" >
+                                    <ui:inputCheckbox value="{!objProductParts.ProdPart.NotInStock}"
+                                                      disabled="{!if(objProductParts.isDiscontinuedProduct,true,false)}"/>
+                                </span>
+                            </span>
+                        </td>
+                        <td class="{!if(objProductParts.isDiscontinuedProduct,'','slds-cell-edit')}" role="gridcell">
+                            <span class="slds-grid slds-grid_align-spread">
+                                <span class="slds-truncate" >
+                                    <ui:outputText value="{!
+                                        if(v.userType.Account.Internal_Service_Agent__c==false,'',
+                                            if(v.userType.Account.Delivery_Country__c=='Australia' &amp;&amp; v.userType.Account.Delivery_State__c == 'NSW',
+                                                objProductParts.ProdPart.ProductPart__r.BP05_Bin__c,
+                                                if(v.userType.Account.Delivery_Country__c=='New Zealand' &amp;&amp; v.userType.Account.Delivery_State__c == 'AKL',
+                                                objProductParts.ProdPart.ProductPart__r.NZ02_Bin__c,
+                                                objProductParts.ProdPart.ProductPart__r.BP06_Bin__c
+                                                )
+                                            )
+                                        )
+                                    }"/>
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                    <!-- 
+                     - FNasalita Sept. 11,2018
+                     - [SAL-429] - Disabled products that are discontinued
+                     - END
+                    -->
+                </aura:iteration>
+            </tbody>
+        </table>
+        <div class="slds-form-element__row slds-m-top_large">
+            <div class="slds-form-element slds-size_1-of-2">
+                <label class="slds-form-element__label" for="input-02">
+                    Fault Diagnosis Comments
+                    <lightning:icon iconName="utility:info" size="xx-small" title="Please detail the fault found and the steps required to rectify." />
+                </label>
+                <ui:inputTextArea disabled="{!if(v.ServiceMilestoneAttribute.Closed , true , false)}" value="{!v.Service_Request_Case.TTI_Service_Agent_Comments__c}" />
+            </div>
+            <div class="slds-form-element slds-size_1-of-2">
+                <label class="slds-form-element__label" for="input-02">
+                    Fault Codes
+                    <lightning:icon iconName="utility:info" size="xx-small" title="Please select primary cause of failure" />
+                </label>
+                <aura:if isTrue="{!v.FaultCodePicklistValuesActive}">
+                    <ui:inputSelect disabled="{! if(v.ServiceMilestoneAttribute.New ||
+                                              v.ServiceMilestoneAttribute.AwaitingApproval ||
+                                              v.ServiceMilestoneAttribute.InProgress,false,true)}" multiple="true" class="multiple" aura:id="InputSelectMultiple" value="{!v.Service_Request_Case.Fault_Codes__c}">
+                        <aura:iteration items="{!v.FaultCodePicklistValues}" var="objectFaultCodePicklist">
+                            <ui:inputSelectOption text="{!objectFaultCodePicklist}" label="{!objectFaultCodePicklist}" />
+                        </aura:iteration>
+                    </ui:inputSelect>
+                </aura:if>
+            </div>
+        </div>
+    </div>
+</aura:component>

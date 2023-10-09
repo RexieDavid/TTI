@@ -1,0 +1,503 @@
+<aura:component
+    implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+    access="global" controller="ProductDetailCC">
+
+    <aura:attribute name="res" type="String" />
+    <aura:attribute name="asset" type="Asset" />
+    <aura:attribute name="assetImageURL" type="String" />
+    <aura:attribute name="assetProductCode" type="String" />
+    <aura:attribute name="individualAssetList" type="Asset[]" />
+
+    <aura:attribute name="statusMessage" type="String" default="jacob" />
+    <aura:attribute name="statusProgress" type="String" default="" />
+    <aura:attribute name="locationList" type="String[]" />
+    <aura:attribute name="showError" type="Boolean" required="true" description="" default="false" access="private" />
+    <aura:attribute name="errorMessage" type="String" required="false" description="" access="private" />
+
+    <aura:attribute name="serialHelperText" type="String" default="" />
+    <aura:attribute name="serialHelperImageURL" type="String" default="" />
+
+    <!-- for component variables -->
+    <aura:attribute name="serialNoP" type="String" />
+    <aura:attribute name="purchaseDateP" type="String" />
+    <aura:attribute name="purchaseDateK" type="String" />
+    <aura:attribute name="locationP" type="String" />
+    <aura:attribute name="locationK" type="String" />
+    <aura:attribute name="locationHolderP" type="String" />
+    <aura:attribute name="locationHolderK" type="String" />
+    <aura:attribute name="isBunningReceipt" type="String" default="Yes" />
+    <aura:attribute name="hasFile" type="Boolean" default="false" />
+    <aura:attribute name="warrantyResult" type="String" />
+
+    <aura:attribute name="serialWeek" type="String" />
+    <aura:attribute name="xserialWeek" type="String" />
+
+    <aura:attribute name="serialYear" type="String" />
+    <aura:attribute name="showSerialWeek" type="Boolean" default="false" />
+    <aura:attribute name="showSerialYear" type="Boolean" default="false" />
+    <aura:attribute name="allowNumbersOnly" type="Boolean" default="false" />
+    <aura:attribute name="serialNumberLength" type="String" default="2" />
+    <aura:attribute name="regExpressionValidator" type="String" />
+    <aura:attribute name="serialHelpText" type="String" />
+    <aura:attribute name="serialHelpImage" type="String" />
+
+    <aura:attribute name="assetmap" type="Map" />
+
+    <aura:attribute name="siteSettings" type="Object" />
+    <aura:attribute name="userCountry" type="String" />
+    <aura:attribute name="warrantyURL" type="String" />
+    <aura:attribute name="assetIsSerialNumberOptional" type="Boolean" />
+
+    <c:GoogleAnalytics aura:id="ga" />
+
+    <!-- for receiving navigation event from the selection page -->
+    <aura:handler event="c:WarrantyProductSelectionEvent" action="{!c.handleNavigateFromSelectionEvent}" />
+
+
+    <!-- for navigating to product selection page after confirmation -->
+    <aura:registerEvent name="navigate" type="c:ProductDetailConfirmEvent" />
+
+    <ltng:require scripts="{!join(',',$Resource.jquery,$Resource.select2 + '/select2/js/select2.full.min.js',
+                                      $Resource.DisableBackButton)}"
+        styles="{!join(',',$Resource.select2 + '/select2/css/select2.min.css')}" />
+
+    <div id="redemptionDiv" style="display: none;">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header slds-theme--shade globalPromptTitle">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                        title="Close" onclick="{!c.navigateToCreateRedemption}">
+                        <span class="slds-icon_container">
+                            <c:svg class="slds-icon"
+                                xlinkHref="{!$Resource.SLDS252 + '/icons/utility-sprite/svg/symbols.svg#close'}" />
+                        </span>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">You have purchased Ryobi
+                        tools that have a BONUS offer available via redemption!</h2>
+                </header>
+                <footer class="slds-modal__footer slds-theme--default">
+                    <center>
+                        <lightning:button aura:id="redeemNowBtn" variant="brand" label="Redeem"
+                            onclick="{!c.navigateToCreateRedemption}"
+                            class="slds-align_absolute-center globalProductItemButton" />
+                    </center>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+
+    <div id="promptDiv" style="display: none;">
+        <div tabindex="-1" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper"
+            class="slds-modal slds-fade-in-open slds-modal--prompt">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header slds-theme--shade globalPromptTitle">
+                    <h2 class="slds-text-heading--medium" id="prompt-heading-id">Registration Successful</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around--medium" data-cypressid="thankYouRegMsg">
+                    <p>Thank you for registering your product. <br /><br /> {!v.warrantyResult}
+                        <br /><br />You can find details of the {!v.siteSettings.Brand} warranty <a
+                            href="{!v.warrantyURL}" target="_newwindow" style="text-decoration:underline;">here.</a>
+                    </p>
+                </div>
+                <div class="slds-modal__footer slds-theme--default" data-cypressid="okBtn">
+                    <a href="#" onclick="{!c.navigateToToolbag}"
+                        class="slds-button slds-button--neutral globalProductItemButton">OK</a>
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </div>
+
+    <div id="SerialHelperInfo" style="display: none;">
+        <div tabindex="-1" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper"
+            class="slds-modal slds-fade-in-open slds-modal--prompt">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header slds-theme--shade globalPromptTitle">
+                    <h2 class="slds-text-heading--medium" id="prompt-heading-id">Serial Number Help</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around--medium">
+                    <p>
+                        <img src="{!v.siteSettings.HelperIcon__c}" class="helperImage"></img>
+                        {!v.serialHelperText}
+                    </p>
+                    <BR />
+                    <center>
+                        <img src="{!v.serialHelperImageURL}"></img>
+                    </center>
+                </div>
+                <div class="slds-modal__footer slds-theme--default">
+                    <lightning:button class="button globalProductItemButton" label="OK" value="{!assetIndex}"
+                        onclick="{!c.hideSerialHelper}" />
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </div>
+
+    <div id="uploadingnew" style="display: none;">
+        <div tabindex="-1" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper"
+            class="slds-modal slds-fade-in-open slds-modal--prompt">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header slds-theme--shade globalPromptTitle">
+                    <!-- RDAVID 1/9/23 INC0030635 -->
+                    <h2 class="slds-text-heading--medium" id="prompt-heading-id">Registering</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around--medium">
+                    <img src="{!$Resource.LoadingSpinner}" alt="uploading" class="slds-avatar slds-avatar--large" />
+                    <label class="slds-form-element__label">{!v.statusMessage}</label>
+                    <div class="slds-progress-bar slds-progress-bar_large" aria-valuemin="0" aria-valuemax="100"
+                        aria-valuenow="10" role="progressbar">
+                        <span id="progressbar" class="slds-progress-bar__value progress0">
+                            <span class="slds-assistive-text">Progress: 10%</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="slds-modal__footer slds-theme--default">
+
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </div>
+
+    <div id="mainDetailDiv" style="display: none;">
+        <div class="globalBox2">
+            <div class="slds-text-heading--medium globalProductTitle">
+                Enter your product details
+            </div>
+            <div class="globalBoxInner">
+                <div id="productDetailDiv">
+                    <!--PRODUCT DETAIL-->
+                    <div class="">
+                        <div>
+                            <div class="slds-text-align--center">
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-p-horizontal--small assetImageContainer">
+                                        <span class="slds-image slds-image--card productKitImage">
+                                            <img src="{!v.assetImageURL}" alt="{!v.asset.Name}" />
+                                        </span>
+                                    </div>
+                                    <div class="productContainer">
+                                        <div>
+                                            <div class="productKitTitle slds-text-heading--medium ">{!v.asset.Name}
+                                            </div>
+                                            <div class="slds-text-body--regular">MODEL# {!v.assetProductCode}</div>
+
+                                        </div>
+                                        <div
+                                            class="slds-small-size--3-of-3 slds-medium-size--3-of-3 slds-large-size--3-of-3 slds-form--stacked slds-m-top--large ">
+                                            <div class="slds-form-element">
+                                                <div class="slds-form-element__control" data-cypressid="dateOfPurchase">
+                                                    <ui:inputDate aura:id="purchaseDateP" label="Date of purchase" class="slds-input globalInput"
+                                                        value="{!v.purchaseDateP}" displayDatePicker="true"
+                                                        required="true" />
+                                                </div>
+                                            </div>
+                                            <!--TODO: -->
+                                            <!-- <div class="slds-form-element">
+                                                    <label class="outputlabel" for="location">* Purchased from? </label>
+                                                    <div class="slds-form-element__control slds-size-1-of-1 inputWidth" data-cypressid="purchasedFrom">
+                                                        ui:inputSelect aura:id="locationSelectP" value="{!v.locationP}"  change="{!c.onGroupP}"
+                                                        <ui:inputSelect aura:id="locationSelectP" value="{!v.locationP}" class="inputWidth globalInput" >
+                                                            <aura:iteration items="{!v.locationList}" var="location">
+                                                                <ui.inputSelectOption text="{!location}" label="{!location}"/>  
+                                                            </aura:iteration>
+                                                        </ui:inputSelect>
+                                                        <aura:if isTrue="{!v.locationP == 'Others'}">
+                                                            <ui:inputtext aura:id="otherLocP" class="slds-input" placeholder="Please specify" value="{!v.locationHolderP}"/>
+                                                        </aura:if>
+                                                        
+                                                    </div>
+                                                </div><-->
+                                            <div class="serialContainer" style="width:100%">
+
+
+                                                <div class="slds-float--left">
+                                                    <div data-cypressid="serialNo" class="serialNo">
+                                                        <ui:inputText aura:id="serialNoP"
+                                                                class="slds-input globalInput"
+                                                                placeholder="Serial number" value="{!v.serialNoP}" maxlength="{!v.asset.Serial_Number_Length__c}"/>
+                                                        <aura:if isTrue="{!v.asset.Display_Week__c}">
+                                                            <ui:inputText aura:id="serialWeek"
+                                                                class="slds-input inputWidthWeek globalInput"
+                                                                placeholder="W" value="{!v.serialWeek}" maxlength="2" />
+                                                        </aura:if>
+                                                        <aura:if isTrue="{!v.asset.Display_Year__c}">
+                                                            <ui:inputText aura:id="serialYear"
+                                                                class="slds-input inputWidthYear globalInput"
+                                                                placeholder="Y" value="{!v.serialYear}" maxlength="4" />
+                                                        </aura:if>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div>
+                                                <label class="outputlabel" for="serialNoP">{!v.asset.HelpText__c} For
+                                                    Serial Number Help:
+                                                    <lightning:formattedUrl value="{!$Label.c.For_Serial_Number_Help}"
+                                                        label="Click Here" target="_blank" class="hyperLinkUnderline" />
+                                                </label>
+                                            </div>
+
+                                            <!--<div style="padding: 5px;">
+                                            <img src="{!v.asset.Helper_Image_URL__c}"></img>
+                                            </div>-->
+                                        </div>
+
+                                        <div class="globalBox2">
+                                            <div class="globalBoxInner">
+                                                <div class="slds-form-element slds-m-top--medium">
+                                                    <img src="{!v.siteSettings.HelperIcon__c}"
+                                                        class="helperImage"></img>
+                                                    <label class="outputlabel"
+                                                        style="padding-left: 5px; padding-right: 5px;"
+                                                        for="serialNoP">For long receipts fold the receipt to display
+                                                        your RYOBI tool.</label>
+                                                </div>
+                                                <div class="slds-m-bottom--small slds-m-top--medium">
+                                                    <div class="slds-grid slds-wrap">
+                                                        <div class="slds-size--1-of-1">
+                                                            <!-- RDAVID 1/9/23 INC0030635 -->
+                                                            <div class="container">
+                                                                <label for="file" class="file-style">
+                                                                    <img src="{!$Resource.Download}" />
+                                                                    <p> Attach Receipt</p>
+                                                                </label>
+                                                                <input type="file" class="file" aura:id="file" id="file"
+                                                                    onchange="{!c.fileUploaded}" />
+                                                            </div>
+                                                            <div class="receiptImageContainer">
+                                                                <img id="receiptView" src="#" alt="receipt image"
+                                                                    hidden="true" class="receiptImage" />
+                                                            </div>
+                                                            <img height="20" width="20"
+                                                                src="{!v.siteSettings.HelperIcon__c}"></img>
+                                                            <label class="outputlabel" for="location"> Ensure you attach
+                                                                the correct Bunnings receipt for this tool as this may
+                                                                impact any future warranty claims.</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-size--1-of-1 slds-align--absolute-center">
+                                            <!--div aura:id="errorDiv" class="globalerrordisplay"--><!--/div-->
+                                            <aura:renderIf isTrue="{!v.showError}">
+                                                <div class="globalerrordisplay">
+                                                    <ui:outputRichText value="{!v.errorMessage}" />
+                                                </div>
+                                            </aura:renderIf>
+                                        </div>
+
+                                        <div class="btnActions" data-cypressid="btnActions">
+                                            <ui:button aura:id="backBtn" press="{!c.goBackToSelection}"
+                                                class="globalProductItemButton modifyBtn"><img src="{!$Resource.Pen}" />
+                                                Modify</ui:button>
+                                            <ui:button aura:id="confirmBtn" press="{!c.confirmAddMore}"
+                                                class="globalProductItemButton registerBtn"><img
+                                                    src="{!$Resource.Add_circle}" /> Register</ui:button>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="kitDetailDiv" style="display: none;">
+                    <!--KIT DETAIL-->
+                    <div class="">
+                        <div>
+                            <div class="slds-text-align--center">
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-p-horizontal--small assetImageContainer">
+                                        <span class="slds-image slds-image--card productKitImage">
+                                            <img src="{!v.assetImageURL}" alt="{!v.asset.Name}" />
+                                        </span>
+                                    </div>
+                                    <div class="productContainer">
+                                        <div>
+                                            <div class="productKitTitle slds-text-heading--medium ">{!v.asset.Name}
+                                            </div>
+                                            <div class="slds-text-body--regular">MODEL#
+                                                {!v.asset.ProductCode}</div>
+                                        </div>
+                                        <div
+                                            class="slds-small-size--3-of-3 slds-medium-size--3-of-3 slds-large-size--3-of-3 slds-form--stacked slds-m-top--large ">
+                                            <div class="slds-form-element">
+                                                <div class="slds-form-element__control" data-cypressid="dateOfPurchase">
+                                                    <ui:inputDate aura:id="purchaseDateK" label="Date of purchase" class="slds-input globalInput"
+                                                        value="{!v.purchaseDateK}" displayDatePicker="true" />
+                                                </div>
+                                            </div>
+
+                                            <!-- <div class="slds-form-element">
+                                    <label class="outputlabel" for="location">* Purchased from? </label>
+                                    <div class="slds-form-element__control">
+                                        ui:inputSelect aura:id="locationSelectK" value="{!v.locationK}" change="{!c.onGroupK}"
+                                        <ui:inputSelect aura:id="locationSelectK" value="{!v.locationK}" class="globalInput">
+                                            <aura:iteration items="{!v.locationList}" var="location">
+                                                <ui.inputSelectOption text="{!location}" label="{!location}"/>
+                                            </aura:iteration>
+                                        </ui:inputSelect>
+                                        <aura:if isTrue="{!v.locationK == 'Others'}">
+                                            <ui:inputtext aura:id="otherLocK" class="slds-input globalInput" placeholder="Please specify" value="{!v.locationHolderK}"/>
+                                        </aura:if>
+                                    </div>
+                                  </div> -->
+                                        </div>
+                                        <div class="globalBox2">
+                                            <div class="globalBoxInner">
+                                                <div class="slds-form-element slds-m-top--medium">
+                                                    <img src="{!v.siteSettings.HelperIcon__c}"
+                                                        class="helperImage"></img>
+                                                    <label class="outputlabel"
+                                                        style="padding-left: 5px; padding-right: 5px;"
+                                                        for="serialNoP">For long receipts fold the receipt to display
+                                                        your RYOBI tool.</label>
+                                                </div>
+                                                <div class="slds-m-bottom--small slds-m-top--medium">
+                                                    <div class="slds-grid slds-wrap">
+                                                        <div class="slds-size--1-of-1">
+                                                            <!-- RDAVID 1/9/23 INC0030635 -->
+                                                            <div class="container">
+                                                                <label for="kitFile" class="file-style">
+                                                                    <img src="{!$Resource.Download}" />
+                                                                    <p> Attach Receipt</p>
+                                                                </label>
+                                                                <input type="file" class="file" aura:id="kitFile"
+                                                                    id="kitFile" onchange="{!c.kitFileUploaded}" />
+                                                            </div>
+                                                            <div class="receiptImageContainer">
+                                                                <img id="kitReceiptView" src="#" alt="receipt image"
+                                                                    hidden="true" class="receiptImage" />
+                                                            </div>
+                                                            <img height="20" width="20"
+                                                                src="{!v.siteSettings.HelperIcon__c}"></img>
+                                                            <label class="outputlabel" for="location"> Ensure you attach
+                                                                the correct Bunnings receipt for this tool as this may
+                                                                impact any future warranty claims.</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="whitespace slds-size--1-of-1"></div>
+                                    <div class="slds-size--1-of-1 slds-text-heading--small slds-text-align--left"
+                                        style="font-weight: bold;"> Registration Details:</div>
+                                    <div
+                                        class="slds-grid slds-grid--pull-padded slds-wrap slds-p-around--medium kitDetailsContainer">
+
+                                        <aura:iteration items="{!v.individualAssetList}" var="tool">
+                                            <div
+                                                class="slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-1 slds-p-left--medium  slds-p-top--medium">
+                                                <div class="slds-grid slds-wrap slds-grid_vertical-align-start">
+                                                    <div class="slds-col slds-size--1-of-2 slds-large-size--1-of-3"
+                                                        style="max-width: 75px">
+                                                        <div style="text-align:left;">
+                                                            <img src="{!tool.Image_URL__c}" class="kitImage" />
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-col slds-size--1-of-2 slds-large-size--1-of-3">
+                                                        <div style="text-align:left; max-width: 200px; width:100%">
+                                                            <p class="productTitle slds-text-body--regular">
+                                                                {!tool.Name}</p>
+                                                            <p class="productTitle slds-text-body--regular">
+                                                                #{!tool.ProductCode}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        class="slds-col slds-size--1-of-2 slds-large-size--2-of-4 serialDetailContainer">
+                                                        <div class="slds-grid slds-grid_vertical-align-start" style="
+                                                        width: -webkit-fill-available;">
+
+                                                            <div align="left" style="text-align:left; width: -webkit-fill-available;">
+
+                                                                <!--a id="{!tool.ProductCode}" class="outputlabel" href="" onclick="{!c.displaySerialHelper}">* Serial#:</a-->
+
+                                                                <div>
+                                                                    <ui:inputText placeholder="Serial number"
+                                                                        class="slds-input globalInput"
+                                                                        value="{!tool.SerialNumber}" maxlength="{!v.asset.Serial_Number_Length__c}"/>
+
+                                                                    <aura:if isTrue="{!tool.Display_Week__c}">
+                                                                        <ui:inputText aura:id="serialWeek"
+                                                                            class="slds-input inputWidthWeek globalInput"
+                                                                            placeholder="W"
+                                                                            value="{!tool.SerialNumberWeek__c}"
+                                                                            maxlength="2" />
+                                                                    </aura:if>
+                                                                    <aura:if isTrue="{!tool.Display_Year__c}">
+                                                                        <ui:inputText aura:id="serialYear"
+                                                                            class="slds-input inputWidthYear globalInput"
+                                                                            placeholder="Y"
+                                                                            value="{!tool.SerialNumberYear__c}"
+                                                                            maxlength="4" />
+                                                                    </aura:if>
+                                                                </div>
+
+
+                                                            </div>
+
+                                                        </div>
+                                                        <div align="left">
+                                                            <span class="outputlabel">
+                                                                <label class="outputlabel">For serial number information
+                                                                    <a id="{!tool.ProductCode}"
+                                                                        class="outputlabel hyperLinkUnderline" href="{}"
+                                                                        onclick="{!c.displaySerialHelper}">click
+                                                                        here</a></label>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </aura:iteration>
+                                    </div>
+                                    <div class="kitBtnContainer">
+                                        <div class="slds-size--1-of-1 slds-align--absolute-center">
+                                            <!--div aura:id="errorDiv" class="globalerrordisplay"--><!--/div-->
+                                            <aura:renderIf isTrue="{!v.showError}">
+                                                <div class="globalerrordisplay">
+                                                    <ui:outputRichText value="{!v.errorMessage}" />
+                                                </div>
+                                            </aura:renderIf>
+                                        </div>
+
+                                        <div class="kitBtnActions" data-cypressid="btnActions">
+                                            <ui:button aura:id="backBtn" press="{!c.goBackToSelection}"
+                                                class="globalProductItemButton modifyBtn"><img src="{!$Resource.Pen}" />
+                                                Modify</ui:button>
+                                            <ui:button aura:id="confirmBtn" press="{!c.confirmAddMore}"
+                                                class="globalProductItemButton registerBtn"><img
+                                                    src="{!$Resource.Add_circle}" /> Register</ui:button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- enclosing -->
+        </div>
+
+
+        <div class="slds-grid">
+            <p><span style="font-size:12px">Please note: Accuracy of information is your responsibility. Eligibility
+                    for extended warranty is calculated from date of purchase. Please refer to our <a
+                        href="{!v.warrantyURL}" target="_newwindow" style="text-decoration:underline;">Warranty Terms and Conditions</a></span></p>
+        </div>
+    </div>
+    <!--render facet: 1051:2;a-->
+    <!-- / FOOTER -->
+</aura:component>

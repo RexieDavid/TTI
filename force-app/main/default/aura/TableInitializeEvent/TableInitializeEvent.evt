@@ -1,0 +1,7 @@
+<aura:event type="APPLICATION" description="Event template">
+    <aura:attribute name="AllRecord" type="String" required="true" />
+	<aura:attribute name="FieldSetApiName" type="String" required="true" />
+	<aura:attribute name="ObjectApiName" type="String" required="true" />
+    <aura:attribute name="TableId" type="String" required="true" />
+    <aura:attribute name="Title" type="String" required="true" />
+</aura:event>

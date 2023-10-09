@@ -1,0 +1,15 @@
+<aura:component>
+
+    <aura:attribute name="openthesnacks" type="Boolean" />
+
+    <aura:handler name="change" value="{!v.openthesnacks}" action="{!c.snacksbeingopened}"/>
+
+    <!-- <aura:handler name="init" value="{!this}" action="{!c.showSnackbar}" /> -->
+
+    <div>
+        <span aura:id="snackbar" id="snackbar">
+        	Thank you for entering the Ryobi Lucky Draw.
+        </span>
+    </div>
+
+</aura:component>

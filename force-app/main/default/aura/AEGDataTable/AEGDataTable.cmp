@@ -1,0 +1,129 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" 
+                access="global">
+    
+    <!-- String attributes -->
+    <aura:attribute type="String" name="sortedBy" default="CreatedDate" />
+    <aura:attribute type="String" name="sortDirection" default="utility:arrowup" /> 
+    <aura:attribute type="String" name="noRecordsFound" default="No records found" /> 
+
+    <!-- Integer attributes -->
+    <aura:attribute type="Integer" name="currPage" default="1" />
+    <aura:attribute type="Integer" name="pageNumbers" default="1" />
+    <aura:attribute type="Integer" name="maxRecPerPage" default="10" />
+    
+    <!-- Boolean attribute -->
+    <aura:attribute type="Boolean" name="isShowDetails" default="false" />
+
+    <!-- Collection attributes  -->
+    <aura:attribute type="List" name="columns" default="[]" /> 
+    <aura:attribute type="List" name="currData" default="[]" /> 
+    <aura:attribute type="List" name="payload" default="[]" /> 
+    <aura:attribute type="List" name="tableData" default="[]" /> 
+
+    <!-- Object attributes -->
+    <aura:attribute type="Object" name="recordToShow" />
+
+    <!-- Handlers -->
+    <aura:handler name="change" value="{!v.currPage}" action="{!c.handlePagination}" />
+    <aura:handler name="change" value="{!v.payload}" action="{!c.handlePayloadChange}" />
+    
+
+    <aura:if isTrue="{!v.isShowDetails}">
+        <div>
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header slds-theme--shade">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" 
+                                title="Close" 
+                                onclick="{!c.toggleShowDetails}">
+                            <span class="slds-icon_container span__lightning-icon">
+                                <lightning:icon iconName="utility:close" alternativeText="closed" />
+                            </span>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <c:AEGViewRedemption record="{!v.recordToShow}" />
+                    </header>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if>
+    
+    <aura:if isTrue="{!not(empty(v.payload))}">
+        <div onchange="{!c.handleTextChange}" id="searchTextBox">
+            <lightning:input aura:id="searchTextBox"
+                             name="enter-search"
+                             label="Search"
+                             type="search"
+            />
+        </div>
+        <div class="table">
+            <table aria-multiselectable="true" class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols" role="grid">
+                <thead>
+                    <aura:iteration items="{!v.columns}" var="column">
+                        <th data-fieldname="{!column.fieldName}" class="slds-is-resizable slds-is-sortable slds-is-sorted" scope="col" onclick="{!c.handleSort}">
+                            <a class="slds-th__action slds-text-link_reset" href="javascript:void(0);" >
+                                <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                    <span class="slds-truncate" title="{!column.label}">{!column.label}</span>
+                                    <span class="slds-icon_container">
+                                        <aura:renderIf isTrue="{!v.sortedBy == column.fieldName}">
+                                            <lightning:icon iconName="{!v.sortDirection}" size="xx-small" alternativeText="desc" />
+                                        </aura:renderIf>
+                                    </span>
+                                </div>
+                            </a>
+                        </th>
+                    </aura:iteration>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.tableData}" var="item">
+                        <tr aria-selected="false" class="slds-hint-parent">
+                            <aura:iteration items="{!item}" var="data">
+                                <aura:renderIf isTrue="{!data.type == 'Id'}">
+                                    <td data-label="{!data.label}" scope="row">
+                                        <div class="slds-truncate" title="{!data.value}">
+                                            <a data-id="{!data.id}" href="javascript:void(0);" tabindex="0" class="table_anchor" onclick="{!c.toggleShowDetails}">{!data.value}</a>
+                                        </div>
+                                    </td>
+                                    <aura:set attribute="else">
+                                        <aura:renderIf isTrue="{!data.type == 'Freight_Tracking_URL__c'}">
+                                            <td  data-label="{!data.label}" role="gridcell">
+                                                <div class="slds-truncate div-padding-left" title="{!data.value}">
+                                                    <aura:unescapedHtml value="{!data.value}" />&nbsp;
+                                                </div>
+                                            </td>
+                                            <aura:set attribute="else">
+                                                <td  data-label="{!data.label}" role="gridcell">
+                                                    <div class="slds-truncate div-padding-left" title="{!data.value}">{!data.value}&nbsp;</div>
+                                                </td>
+                                            </aura:set>
+                                        </aura:renderIf>
+                                    </aura:set>
+                                </aura:renderIf>
+                            </aura:iteration>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>
+        <div class="slds-align_absolute-center">
+            <aura:if isTrue="{!empty(v.currData)}">
+                <div class="pagination slds-text-heading_small">
+                    <p><b><i>{!v.noRecordsFound}</i></b></p>
+                </div>
+                <aura:set attribute="else">
+                    <div class="pagination">
+                        <c:Pagination currentPageNumber="{!v.currPage}" maxPageNumber="{!v.pageNumbers}" />
+                    </div>
+                </aura:set>
+            </aura:if>
+        </div>
+        <aura:set attribute="else">
+            <div class="slds-align_absolute-center">
+                <div class="pagination slds-text-heading_small">
+                    <p><b><i>{!v.noRecordsFound}</i></b></p>
+                </div>
+            </div>
+        </aura:set>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,443 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global" controller="AEGRedemptionController">
+    
+    <!-- String attributes -->
+    <aura:attribute type="String" name="address" />
+    <aura:attribute type="String" name="confirmationHeader" />
+    <aura:attribute type="String" name="confirmationHeaderMsg" />
+    <aura:attribute type="String" name="country" />
+    <aura:attribute type="String" name="countryListString" default="Australia" />
+    <aura:attribute type="String" name="errorMsg" />
+    <aura:attribute type="String" name="PageName" default="AEGCreateRedemption" />
+    <aura:attribute type="String" name="postcode" />
+    <aura:attribute type="String" name="purchasedProductHelp" default="{!$Label.c.AEG_Redemption_Purchased_Help_Text}" />
+    <aura:attribute type="String" name="redeemHelpText" default="{!$Label.c.AEG_Redeem_Item_Help_Text}" />
+    <aura:attribute type="String" name="redeemrequiredHelpText" default="{!$Label.c.AEG_Redeem_Required_Item_Help_Text}" />
+    <aura:attribute type="String" name="redeemProductHelp" default="{!$Label.c.AEG_Redemption_Redeem_Help_Text}" />
+    <aura:attribute type="String" name="redemptionPopupHeader" />
+    <aura:attribute type="String" name="searchString" />
+    <aura:attribute type="String" name="selectedOption" />
+    <aura:attribute type="String" name="shippingAddressHelpCountry" />
+    <aura:attribute type="String" name="state" />
+    <aura:attribute type="String" name="suburb" />
+    
+    <!-- Collection Attributes -->
+    <aura:attribute type="List" name="carouselsList" />
+    <aura:attribute type="Map" name="contactInfo" />
+    <aura:attribute type="String[]" name="countryList"  required="false" />
+    <aura:attribute type="String[]" name="predictions" />
+    
+    <!-- Boolean Attributes -->
+    <aura:attribute type="Boolean" name="contactEdit" default="false" />
+    <aura:attribute type="Boolean" name="disAddress" default="true" />
+    <aura:attribute type="Boolean" name="isShowRedeemModal" default="false" />
+    <aura:attribute type="Boolean" name="isShowConfirmModal" default="false" />
+    <aura:attribute type="Boolean" name="hasManyRedemptions" default="true" />
+    <aura:attribute type="Boolean" name="shippingAddressEdit" default="false" />
+    <aura:attribute type="Boolean" name="isLoaded" default="isLoaded" />
+    
+    <!-- Object attributes -->  
+    <aura:attribute name="selectedPromo" type="Object" />
+    <aura:attribute name="payload" type="Object" />
+    <aura:attribute name="siteSettings" type="Object"/>
+    <aura:attribute name="surveyEntity" type="Object" />    
+    
+    <!-- Event handlers -->
+    <aura:handler event="c:AlertCloseEvent" action="{!c.closeAlert}" />
+    <aura:handler event="c:NavigateEvent" action="{!c.handleNavigate}" />
+    <aura:registerEvent name="navigate" type="c:NavigateEvent" />
+    <aura:registerEvent name="toggleSpinner" type="c:ToggleSpinner" />
+
+    <aura:method name="navigateToRedemptionList" action="{!c.navigateToRedemptionList}" />
+
+    <c:AgSurvey aura:id="surveyModal" />
+    
+    <aura:if isTrue="{!v.isShowRedeemModal}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header slds-theme--shade div--bg-color-brand">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="{!c.toggleRedeemModal}">
+                        <span class="slds-icon_container span__lightning-icon">
+                            <lightning:icon iconName="utility:close" alternativeText="Close" />
+                        </span>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate h2--font-color">
+                        {!v.redemptionPopupHeader}
+                    </h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium"> 
+                    <center>
+                        <c:AEGLightningCarousel objectList="{!v.selectedPromo.redeemableItems}" 
+                                                redemptionItemId="{!v.selectedPromo.redemptionItemId}"
+                                                isChooseActive="true"
+                                                purchaseProductId="{!v.selectedPromo.purchasedProductId}"
+                                                typeClass="active"
+                                                requiredObjectList="{!v.selectedPromo.requiredRedeemableItems}"
+                                                hasManyRequiredRedemptions="{!v.selectedPromo.hasManyRequiredRedemptions}"/>
+                    </center>
+                </div>
+                <footer class="slds-modal__footer slds-theme--default footer--border-top-none">
+                    <center>
+                        <lightning:button variant="brand" label="Redeem" onclick="{!c.updateRedemption}" class="slds-align_absolute-center footer__lightning-button" />
+                    </center>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+    <div aura:id="limCampaignErrorModal" class="slds-hide">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header slds-theme--shade div--bg-color-brand">
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate h2--font-color">
+                        {!v.redemptionPopupHeader}
+                    </h2>
+                </header>
+                <footer class="slds-modal__footer slds-theme--default footer--border-top-none">
+                    <center>
+                        <lightning:button variant="brand" label="OK" onclick="{!c.redirectHome}" class="slds-align_absolute-center footer__lightning-button" />
+                    </center>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+
+    <aura:if isTrue="{!v.isShowConfirmModal}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header slds-theme--shade div--bg-color-brand">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="{!c.toggleSubmitModal}">
+                        <span class="slds-icon_container span__lightning-icon">
+                            <lightning:icon iconName="utility:close" alternativeText="Close" />
+                        </span>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate h2--font-color">
+                        Confirmation
+                    </h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <h3> <aura:unescapedHtml value="{!v.confirmationHeaderMsg}"/> </h3>
+                </div>
+                <footer class="slds-modal__footer slds-theme--default slds-float_right">
+                    <lightning:button class="cancelButton" variant="destructive" label="No" onclick="{!c.toggleSubmitModal}"/>
+                    <lightning:button variant="brand" label="Yes" onclick="{!c.saveDetails}" class="brandButton"/>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+
+    <div aura:id="createRedemptionDiv" class="slds-hide slds-p-vertical_x-large" >
+        <aura:if isTrue="{!not(v.isLoaded)}">
+            <lightning:spinner alternativeText="Loading" size="medium"/>
+        </aura:if>
+        <div class="slds-grid slds-wrap" >
+            <div class="slds-col slds-size_12-of-12 slds-grid slds-wrap slds-p-vertical_x-large" >
+                <div class="slds-col slds-size_1-of-1 slds-grid slds-wrap slds-p-vertical_x-large div--bg-color-black">
+                    <div class="slds-size_1-of-1">
+                        <div class="slds-align_absolute-center" >
+                            <div class="slds-text-title_caps slds-text-align_center">
+                                <div class="slds-text-heading_large slds-text-color_inverse" >
+                                    Claim Redemption
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-size_1-of-1">
+                        <div class="slds-align_absolute-center" >
+                            <div class="slds-text-body_regular slds-text-color_inverse slds-m-around_small slds-text-align_center">
+                                Your selected BONUS offer is listed below. To claim your BONUS, 
+                                <strong>
+                                    Fill in the required details and 
+                                </strong> 
+                                <span class="div__span--font-style">
+                                    SUBMIT FORM
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slds-grid slds-wrap div--width-100pct">
+                    <div aura:id="pcHeaderGrid" class="slds-col slds-p-top_large slds-size_1-of-1" >
+                        <span class="span--font-size header-text">
+                            <b>{!v.purchasedProductHelp}</b>
+                        </span>
+                        <article class="slds-tile slds-media  div--display-block article__margin-top" >
+                            <aura:if isTrue="{!not(empty(v.selectedPromo.purchasedItems))}">
+                                <c:AgProductCarousel
+                                    aura:id="purchasedProductCarousel" 
+                                    objectList="{!v.selectedPromo.purchasedItems}" />
+                            </aura:if>
+                        </article>
+                    </div>
+                    <div aura:id="pcHeaderGrid" class="slds-col slds-p-top_large slds-size_1-of-1" >
+                        <span class="span--font-size header-text">
+                            <b>{!v.redeemProductHelp}</b>
+                        </span>
+                        <article class="slds-tile slds-media  div--display-block article__margin-top" >
+                            <aura:if isTrue="{!not(empty(v.selectedPromo.redeemedItems))}">
+                                <c:AgProductCarousel
+                                    aura:id="redeemableProductCarousel" 
+                                    objectList="{!v.selectedPromo.redeemedItems}" />
+                            </aura:if>
+                        </article>
+                    </div>
+                    <aura:if isTrue="{!v.selectedPromo.hasManyRedemptions}">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12 slds-large-size_2-of-12 slds-p-top_large slds-align_absolute-center div--justify-content-start">
+                            <article class="slds-tile slds-media slds-align_absolute-center" >
+                                <div class="slds-media__body" >
+                                    <lightning:button variant="brand" 
+                                                      label="Change selection" 
+                                                      onclick="{!c.toggleRedeemModal}" 
+                                                      class="slds-align_absolute-center changeSelectionBtn" />
+                                </div>
+                            </article>
+                        </div>
+                    </aura:if>
+                </div>
+            </div>
+            
+            <div class="slds-col slds-size_12-of-12 slds-grid slds-wrap slds-p-vertical_x-large" >
+                <form class="slds-form div--width-100pct">
+                    <div class="slds-text-heading_small slds-text-color_inverse slds-p-around_medium div--bg-color-black">
+                        Please confirm your contact details:
+                    </div>
+                    <div class="slds-grid slds-wrap slds-wrap slds-p-vertical_medium">
+                        <div aura:id="alertErrorMsg" class="slds-size_1-of-1 slds-p-horizontal_small slds-hide">
+                            <c:Alert alertType="slds-theme_error" >
+                                <aura:set attribute="body">
+                                    <span class="slds-assistive-text">info</span>
+                                    <span class="slds-icon_container slds-icon-utility-user slds-m-right_x-small" title="Description of icon when needed">
+                                        <lightning:icon class="span__lightning-icon" iconName="utility:ban" size="x-small" alternativeText="error" />
+                                    </span>
+                                    <h2>{!v.errorMsg}</h2>
+                                </aura:set>
+                            </c:Alert>
+                        </div>
+                        <div class="slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_6-of-12 slds-p-around_small">
+                            <article class="slds-tile slds-hint-parent">
+                                <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate slds-p-bottom_small">
+                                    <div class="slds-box slds-grid slds-grid--vertical-align-center slds-p-left_small slds-p-around_small div--width-100pct div--bg-color-brand">
+                                        <h3 class="slds-tile__title slds-truncate slds-text-title_caps slds-text-color_inverse" title="Contact Details">
+                                            Contact Details
+                                        </h3>
+                                    </div>
+                                    <div class="slds-shrink-none slds-p-left_xxx-small slds-hide">
+                                        <lightning:button aura:id="conEditButtonRedemption" variant="brand" label="Edit" onclick="{!c.toggleView}" />
+                                        <div aura:id="conDetailsButtons" class="slds-button-group slds-hide" role="group">
+                                            <lightning:button aura:id="conDeleteButtonRedemption" variant="brand" label="Back" onclick="{!c.toggleView}" />
+                                            <lightning:button variant="brand" label="Update" onclick="{!c.saveDetails}" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-tile__detail slds-p-horizontal_small">
+                                    <dl aura:id="conViewDetails" class="slds-list_horizontal slds-wrap slds-hide">
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Name">Name:</dt>
+                                        <dd class="slds-item_detail slds-truncate" title="{!v.contactInfo.Name}">{!v.contactInfo.Name}</dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Mobile">Mobile:</dt>
+                                        <dd class="slds-item_detail slds-truncate" title="{!v.contactInfo.MobilePhone}">{!v.contactInfo.MobilePhone}</dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Email">Email:</dt>
+                                        <dd class="slds-item_detail slds-truncate" title="{!v.contactInfo.Email}">{!v.contactInfo.Email}</dd>
+                                    </dl>
+                                    
+                                    <dl aura:id="conEditDetails" class="slds-list_horizontal slds-wrap">
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="First Name">First Name:</dt>
+                                        <dd class="slds-item_detail slds-truncate" title="{!v.contactInfo.FirstName}">
+                                            <ui:inputText aura:id="inputFirstName" class="slds-input inputText" value="{!v.contactInfo.FirstName}" />
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate slds-p-top_xx" title="Last Name">Last Name:</dt>
+                                        <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="{!v.contactInfo.LastName}">
+                                            <ui:inputText aura:id="inputLastName" class="slds-input inputText" value="{!v.contactInfo.LastName}" />
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Mobile">Mobile:</dt>
+                                        <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="{!v.contactInfo.MobilePhone}">
+                                            <ui:inputText aura:id="inputMobile" class="slds-input inputText" value="{!v.contactInfo.MobilePhone}" />
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Email">Email:</dt>
+                                        <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="{!v.contactInfo.Email}">
+                                            <ui:inputText aura:id="inputEmail" class="slds-input inputText" value="{!v.contactInfo.Email}" />
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_6-of-12  slds-p-around_small">
+                            <article class="slds-tile slds-hint-parent">
+                                <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate slds-p-bottom_small">
+                                    <div class="slds-box slds-grid slds-grid--vertical-align-center slds-p-left_small slds-p-around_small div--width-100pct div--bg-color-brand">
+                                        <h3 class="slds-tile__title slds-truncate slds-text-title_caps slds-text-color_inverse" title="Shipping Address">
+                                            Shipping Address - {!v.shippingAddressHelpCountry} address only 
+                                        </h3>
+                                    </div>
+                                    <div class="slds-shrink-none slds-p-left_xxx-small slds-hide">
+                                        <lightning:button aura:id="shipEditButtonRedemption" variant="brand" label="Edit" onclick="{!c.toggleView}" />
+                                        <div aura:id="shipAddressButtons" class="slds-button-group slds-hide" role="group">
+                                            <lightning:button aura:id="shipDeleteButtonRedemption" variant="brand" label="Back" onclick="{!c.toggleView}" />
+                                            <lightning:button variant="brand" label="Update" onclick="{!c.saveDetails}" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-p-horizontal_small">
+                                    <div class="slds-text-body_small">Cannot be a PO Box</div>
+                                    <dl aura:id="shipViewDetails" class="slds-list_horizontal slds-wrap slds-hide">
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Address">
+                                            Address
+                                        </dt>
+                                        <dd class="slds-item_detail slds-truncate" title="{!v.contactInfo.MailingAddress.street}">
+                                            {!v.contactInfo.MailingAddress.street}
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Suburb">
+                                            Suburb
+                                        </dt>
+                                        <dd class="slds-item_detail slds-truncate" title="{!v.contactInfo.MailingAddress.city}">
+                                            {!v.contactInfo.MailingAddress.city}
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="State">
+                                            State
+                                        </dt>
+                                        <dd class="slds-item_detail slds-truncate" title="{!v.contactInfo.MailingAddress.state}">
+                                            {!v.contactInfo.MailingAddress.state}
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Postcode">
+                                            Postcode
+                                        </dt>
+                                        <dd class="slds-item_detail slds-truncate" title="{!v.contactInfo.MailingAddress.postalCode}">
+                                            {!v.contactInfo.MailingAddress.postalCode}
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Country">
+                                            Country
+                                        </dt>
+                                        <dd class="slds-item_detail slds-truncate" title="{!v.contactInfo.MailingAddress.country}">
+                                            {!v.contactInfo.MailingAddress.country}
+                                        </dd>
+                                    </dl>
+                                    
+                                    
+                                    <dl class="slds-list_horizontal slds-wrap">
+                                       <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Address">Address</dt>
+                                        <dd class="slds-item_detail slds-p-top_xxx-small" title="Address">
+                                            <div class="slds-form-element">
+                                                <div class="slds-form-element__control">
+                                                    <div class="slds-combobox_container slds-has-inline-listbox">
+                                                        <div class="slds-combobox slds-combobox-lookup slds-dropdown-trigger slds-dropdown-trigger_click " 
+                                                             aura:id="searchLookup"
+                                                             aria-expanded="false" aria-haspopup="listbox" role="combobox">
+                                                            <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" aura:id="iconPosition">
+                                                                <ui:inputText updateOn="keyup" disabled="{!not(v.disAddress)}"
+                                                                              keyup="{!c.keyUpHandler}"
+                                                                              class="slds-input slds-combobox__input"
+                                                                              value="{!v.searchString}"
+                                                                              placeholder="Enter a location"/>
+                                                                <aura:if isTrue="{!empty(v.selectedOption)}">
+                                                                    <span class="slds-icon_container slds-input__icon">
+                                                                        <div class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default" >
+                                                                            <lightning:icon iconName="utility:checkin" size="x-small"/>
+                                                                        </div>                                
+                                                                    </span>   
+                                                                    <aura:set attribute="else">
+                                                                        <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" onclick="{!c.clear}">                                    
+                                                                            <div class="slds-button__icon">                                        
+                                                                                <lightning:icon iconName="utility:close" size="x-small"/>                                        
+                                                                            </div>                                    
+                                                                        </button>                                
+                                                                    </aura:set>                            
+                                                                </aura:if>                        
+                                                            </div>                    
+                                                            <div role="listbox"> 
+                                                                <ul class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid">
+                                                                    <aura:iteration items="{!v.predictions}" var="option">
+                                                                        <li class="slds-listbox__item" role="presentation" onclick="{!c.selectOption}" data-value="{!option.value}" data-record="{!option.label}">
+                                                                            <span class="slds-media slds-listbox__option slds-listbox__option_entity " role="option">
+                                                                                <span class="slds-media__body">                                            
+                                                                                    <span class="slds-listbox__option-text slds-listbox__option-text_entity">
+                                                                                        {!option.label}
+                                                                                    </span>                                            
+                                                                                </span>                                        
+                                                                            </span>                                    
+                                                                        </li>                                
+                                                                    </aura:iteration>                            
+                                                                </ul>
+                                                            </div>                    
+                                                        </div>    
+                                                    </div>            
+                                                </div>        
+                                            </div>
+                                            <div class="slds-grid slds-wrap addressNotFoundBorder">
+                                                <ui:inputCheckbox aura:id="checkbox" class="slds-size--1-of-2 addressNotFound" change="{!c.onCheck}"/> 
+                                                <div class="slds-size--1-of-2">
+                                                    Address not found
+                                                </div>
+                                            </div>
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Address">
+                                            <abbr class="slds-required" title="required">*</abbr> 
+                                            Street
+                                        </dt>
+                                        <dd class="slds-item_detail slds-truncate" title="{!v.address}">
+                                            <ui:inputText aura:id="inputStreet" 
+                                                          class="slds-input slds-p-top_xxx-small" 
+                                                          value="{!v.address}" 
+                                                          disabled="{!v.disAddress}" />
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Suburb">
+                                            <abbr class="slds-required" title="required">*</abbr> 
+                                            Suburb
+                                        </dt>
+                                        <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="{!v.suburb}">
+                                            <ui:inputText aura:id="inputSuburb" 
+                                                          class="slds-input inputText" 
+                                                          value="{!v.suburb}" 
+                                                          disabled="{!v.disAddress}" />
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="State">
+                                            <abbr class="slds-required" title="required">*</abbr> 
+                                            State
+                                        </dt>
+                                        <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="{!v.contactInfo.MailingAddress.state}">
+                                            <ui:inputText aura:id="inputPostcode" 
+                                                          class="slds-input inputText" 
+                                                          value="{!v.state}" 
+                                                          disabled="{!v.disAddress}" />
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Postcode">
+                                            <abbr class="slds-required" title="required">*</abbr> 
+                                            Postcode
+                                        </dt>
+                                        <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="{!v.postcode}">
+                                            <ui:inputText aura:id="inputPostcode" 
+                                                          class="slds-input inputText" 
+                                                          value="{!v.postcode}" 
+                                                          disabled="{!v.disAddress}" />
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Country">
+                                            <abbr class="slds-required" title="required">*</abbr> 
+                                            Country</dt>
+                                        <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="{!v.contactInfo.MailingAddress.country}">
+                                            <ui:inputSelect aura:id="inputCountry" 
+                                                            value="{!v.country}" 
+                                                            class="dd__input-select--border" 
+                                                            disabled="{!v.disAddress}" >
+                                                <aura:iteration items="{!v.countryList}" var="country">
+                                                    <ui:inputSelectOption text="{!country}" label="{!country}" />
+                                                </aura:iteration>
+                                            </ui:inputSelect>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                    
+                    <div class="slds-p-vertical_x-large">
+                        <lightning:button variant="brand" label="Submit Redemption" onclick="{!c.handleSubmit}" class="slds-align_absolute-center" />
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</aura:component>

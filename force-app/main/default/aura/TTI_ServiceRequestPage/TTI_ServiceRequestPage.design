@@ -1,0 +1,4 @@
+<design:component >
+    <design:attribute name="dateOpenedFilterOpenClaims" label="dateOpenedFilterOpenClaims" default="90"/>
+    <design:attribute name="dateOpenedFilterClosedClaims" label="dateOpenedFilter" default="30"/>
+</design:component>

@@ -1,0 +1,129 @@
+<aura:component controller="StoreActionChecklistController"
+    implements="flexipage:availableForAllPageTypes,force:hasRecordId,lightning:availableForFlowScreens,force:appHostable"
+    access="global">
+
+    <aura:attribute name="record" type="Object" />
+    <aura:attribute name="isVisible" type="Boolean" default="true" />
+    <aura:attribute name="buttonState" type="Boolean" />
+    <aura:attribute name="iconState" type="String" default="standard:event" />
+    <aura:attribute name="totalTime" type="String" />
+    <aura:attribute name="setHours" type="String"/>
+    <aura:attribute name="setMinutes" type="String"/>
+    <aura:attribute name="isButtonDisabled" type="Boolean" default="false" />
+    <aura:attribute name="isButtonDisabledHour" type="Boolean" default="false" />
+    <aura:handler name="init" value="{!this}" action="{!c.initializeOther}" />
+    <aura:attribute name="isTimeIncrease" type="Boolean" default="true" />
+    <aura:registerEvent name="onChangeTime" type="c:CheckTotalTime" />
+   
+    <aura:if isTrue="{!v.isVisible}">
+        <li>
+            <div class="slds-timeline__item_expandable slds-timeline__item_event slds-is-open" aura:id="otherSection">
+                <span class="slds-assistive-text">{!v.title}</span>
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <button class="slds-button slds-button_icon" title="Toggle for Checklist details"
+                            onclick="{!c.toggleSection}" data-auraId="otherSection1"
+                            aria-controls="event-item-expanded-72" aria-expanded="false">
+                            <lightning:icon class="slds-button__icon slds-timeline__details-action-icon"
+                                iconName="utility:switch" size="xx-small" />
+                            <span class="slds-assistive-text">Toggle for Checklist details</span>
+                        </button>
+                        <div class="slds-icon_container slds-timeline__icon" title="task">
+                            <lightning:icon iconName="{!v.iconState}" size="small" />
+                        </div>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-grid slds-grid_align-spread slds-timeline__trigger div-padding--0px">
+                            <div class="slds-grid slds-wrap slds-grid_vertical-align-center slds-no-space">
+                                <h3 class="slds-truncate slds-truncate slds-p-vertical_xx-small slds-p-horizontal_x-small" title="{!v.record.title}">
+                                    <strong>{!v.record.title}</strong>
+                                </h3>
+                                <div class="slds-no-flex">
+                                    <span class="slds-badge">{!v.totalTime}</span>
+                                </div>
+                            </div>
+                            <button class="slds-button slds-button_neutral slds-float_right"
+                                onclick="{!c.handleRemove}" aura:id="removebutton">
+                                <lightning:icon class="slds-button__icon slds-button__icon_left" iconName="utility:dash"
+                                    size="xx-small" /> Remove
+                            </button>
+                        </div>
+                        <article class="slds-box slds-timeline__item_details slds-theme_shade slds-m-top_xx-small div-padding--825rem"
+                            id="event-item-expanded-72" aria-hidden="true">
+                            <ul class="slds-list_horizontal slds-wrap">
+                            </ul>
+                            <div class="slds-form-element">
+                                <div class="slds-form-element__control">
+                                    <lightning:input type="text" id="text-input-id-46" label="Enter Summary"
+                                        placeholder="Enter Checklist Item" required="" value="{!v.record.summary}" />
+                                </div>
+                            </div>
+                            <div class="slds-grid slds-grid_vertical-align-center slds-truncate_container_75 slds-no-space">
+                                <div class="slds-form-element slds-size_2-of-3">
+                                    <label class="slds-form-element__label slds-m-right_none slds-m-top_xxx-small">Hours</label>
+                                    <div class="slds-form-element__control">
+                                        <lightning:buttonIcon 
+                                            iconName="utility:down"
+                                            variant="bare"
+                                            onclick="{!c.handleHourDecrement}"
+                                            alternativeText="decrement"
+                                            size="small"
+                                            class="slds-button_icon-small slds-input__button_decrement slds-input__button-counter--z-index" 
+                                            disabled= "{!v.isButtonDisabledHour}"
+                                        />
+                                        <input 
+                                            type="text" 
+                                            readonly="true" 
+                                            value="{!v.setHours}"
+                                            class="slds-input slds-input_counter" 
+                                        />
+                                        <lightning:buttonIcon 
+                                            iconName="utility:up"
+                                            variant="bare"
+                                            onclick="{!c.handleHourIncrement}"
+                                            alternativeText="increment"
+                                            size="small"
+                                            class="slds-button_icon-small slds-input__button_increment slds-input__button-counter--z-index" 
+                                            disabled= "{!v.isButtonDisabledHour}"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="divider"> </div>
+                                &nbsp;&nbsp;
+                                <div class="slds-form-element slds-size_2-of-3"> 
+                                    <label class="slds-form-element__label slds-m-right_none slds-m-top_xxx-small">Minutes</label>
+                                    <div class="slds-form-element__control">
+                                        <lightning:buttonIcon 
+                                            iconName="utility:down"
+                                            variant="bare"
+                                            onclick="{!c.handleDecrement}"
+                                            alternativeText="decrement"
+                                            size="small"
+                                            class="slds-button_icon-small slds-input__button_decrement slds-input__button-counter--z-index" 
+                                            disabled= "{!v.isButtonDisabled}"
+                                        />
+                                        <input 
+                                            type="text" 
+                                            readonly="true" 
+                                            value="{!v.setMinutes}"
+                                            class="slds-input slds-input_counter" 
+                                        />
+                                        <lightning:buttonIcon 
+                                            iconName="utility:up"
+                                            variant="bare"
+                                            onclick="{!c.handleIncrement}"
+                                            alternativeText="increment"
+                                            size="small"
+                                            class="slds-button_icon-small slds-input__button_increment slds-input__button-counter--z-index" 
+                                            disabled= "{!v.isButtonDisabled}"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </aura:if>
+</aura:component>

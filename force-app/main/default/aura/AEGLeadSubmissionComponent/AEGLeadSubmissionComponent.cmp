@@ -1,0 +1,19 @@
+<aura:component
+    implements="lightning:availableForFlowActions,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:lightningQuickActionWithoutHeader"
+    access="global">
+
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+
+    <div class="slds-scrollable_y" style="{!if($Browser.isPhone, '', 'height:435px;')}">
+        
+        <div class="slds-clearfix slds-m-right_x-small slds-m-top_x-small">
+        <lightning:button label="Exit Form" class="slds-float_right" onclick="{!c.exitForm}" />
+        </div>
+        
+        <div>
+        <lightning:flow aura:id="flowData" />
+        </div>
+        
+    </div>
+
+</aura:component>

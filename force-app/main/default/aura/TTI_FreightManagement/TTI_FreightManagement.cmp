@@ -1,0 +1,495 @@
+<!--
+  @Component Name     : TTI_FreightManagement.cmp
+  @Description        : 
+  @Author             : Francis Nasalita
+  @Group              : 
+  @Last Modified By   : Francis Nasalita
+  @Last Modified On   : 8/4/2019, 11:08:21 AM
+  @Modification Log   : 
+  ==============================================================================
+  Ver         Date                     Author                 Modification
+  ==============================================================================
+  1.0    18/07/2019, 2:15:06 pm   Francis Nasalita     Initial Version
+-->
+<aura:component
+    implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+    controller="TTI_FreightManagementController">
+
+    <lightning:notificationsLibrary aura:id="notifLib" />
+    <lightning:overlayLibrary aura:id="overlayLib" />
+
+    <!-- attributes -->
+    <aura:attribute name="state" type="String" description="Init, Idle, Loading" />
+
+    <aura:attribute name="getLabelTimeout" type="Integer" />
+    <aura:attribute name="getLabelMaxTimeout" type="Integer" />
+    <aura:attribute name="isTimeoutReachedMax" type="Boolean" default="false" />
+
+    <aura:attribute name="customerNo" type="String" />
+    <aura:attribute name="allowedDelivery" type="Boolean" default="false" />
+    <aura:attribute name="allowedManifest" type="Boolean" default="false" />
+    <aura:attribute name="data" type="Object" />
+    <aura:attribute name="columns" type="List" />
+
+    <aura:attribute name="rawData" type="Object" />
+    <aura:attribute name="allData" type="List" />
+    <aura:attribute name="allDataRetrieved" type="List" />
+    <aura:attribute name="currentPageNumber" type="Integer" default="1" />
+    <aura:attribute name="pageSize" type="Integer" default="25" />
+    <aura:attribute name="totalPages" type="Integer" default="0" />
+    <aura:attribute name="pageList" type="List" />
+    <aura:attribute name="isSearching" type="Boolean" default="false" />
+    <aura:attribute name="searchTimeout" type="Integer" />
+    <aura:attribute name="isInit" type="Boolean" default="false" />
+    <aura:attribute name="noData" type="Boolean" default="false" />
+    <aura:attribute name="showPagination" type="Boolean" default="false" />
+    <aura:attribute name="tableContainerClass" type="String" default="" />
+
+    <aura:attribute name="isBookFreightBtnClicked" type="Boolean" default="false" />
+    <aura:attribute name="selectedCase" type="Case" />
+    <aura:attribute name="isCaseUpdated" type="Boolean" default="false" />
+    <aura:attribute name="trackUrlStarTrack" type="String" default="{!$Label.c.SP_StarTrack_Track_Url}" />
+    <aura:attribute name="labelFormat" type="String" default="PDF" />
+    <aura:attribute name="isChangedToPickup" type="Boolean" default="false" />
+    <aura:attribute name="genericError" type="String" default="{!$Label.c.Generic_Error_Message}" />
+
+    <aura:method name="handleUpdateCaseFreight" action="{!c.handleUpdateCaseFreight}">
+        <aura:attribute name="selectedCase" type="Case" />
+        <aura:attribute name="isCaseUpdated" type="Boolean" default="false" />
+        <aura:attribute name="isChangedToPickup" type="Boolean" default="false" />
+    </aura:method>
+    <aura:method name="handleGetLatestClaims" action="{!c.handleGetLatestClaims}" />
+
+    <aura:attribute name="contactId" type="String" />
+    <aura:attribute name="showConfirmDialog" type="boolean" default="false"/>
+    <aura:attribute name="showAdhocRequest" type="boolean" default="false"/>
+    <aura:attribute name="adhocDetails" type="Object" />
+    <aura:attribute name="hasFormError" type="boolean" default="false" />
+
+    <aura:attribute name="isPastCutOffHour" type="boolean" default="false" />
+    <aura:attribute name="pickupCutOffHour" type="integer" default="13" description="1 PM cut off for adhoc pick-ups"/>
+    <aura:attribute name="manifestDialogHeader" type="String" default="Confirmation" />
+    <aura:attribute
+        name="manifestDialogContent"
+        type="String"
+        default="Please note: Only one manifest can be performed per day. Do you wish to continue?"
+    />
+    <aura:attribute name="manifestDialogNoBtn" type="String" default="No" />
+    <aura:attribute name="serviceAgentTimeZone" type="String" default="Australia/Sydney" />
+
+    <aura:attribute type="String" name="pdfViewerSrc" default="" />
+    <aura:attribute type="String" name="dangerousGoodsContent" default="" />
+    <aura:attribute type="Boolean" name="showDGForm" default="false"/>
+
+    <!-- Dropdown Values -->
+    <aura:attribute name="lastNDays" type="String" default="30" />
+    <aura:attribute
+        name="dropdownValues"
+        type="List"
+        default="[
+            {'label': 'Last 3 Days', 'value': '3'},
+            {'label': 'Last 7 Days', 'value': '7'},
+            {'label': 'Last 30 Days', 'value': '30'},
+            {'label': 'Last 90 Days', 'value': '90'},
+            {'label': 'Last 180 Days', 'value': '180'},
+            {'label': 'Last 360 Days', 'value': '360'}
+        ]"
+    />
+    <aura:attribute name="timeOptions" type="List" default="[]" />
+    <aura:attribute name="claimViewType" type="String" default="pending" />
+    <aura:attribute
+        name="claimViewDropdownValues"
+        type="List"
+        default="[
+            {'label': 'Pending Manifest', 'value': 'pending'},
+            {'label': 'Archived Manifest', 'value': 'archived'}
+        ]"
+    />
+    
+    <!-- handlers-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler
+        name="change"
+        value="{!v.state}"
+        action="{!c.handleStateChange}"
+    />
+    <aura:handler name="change" value="{!v.allDataRetrieved}" action="{!c.handleUpdateRawData}" />
+    <aura:handler event="aura:locationChange" action="{!c.locChanged}" />
+
+    <lightning:card title="Freight Management">
+        <lightning:layout multipleRows="true" horizontalAlign="center">
+            <lightning:layoutItem padding="around-small" size="12">
+                <lightning:layout horizontalAlign="spread">
+                    <lightning:layoutItem padding="around-small" size="2">
+                        <lightning:combobox 
+                            name="claimViewType" 
+                            value="{!v.claimViewType}" 
+                            options="{!v.claimViewDropdownValues}"
+                            onchange="{!c.doInit}" 
+                            variant="label-hidden" 
+                        />
+                        <br />
+                        <lightning:input
+                            aura:id="enter-search"
+                            name="enter-search"
+                            variant="label-hidden"
+                            isLoading="{!v.isSearching}"
+                            type="search"
+                            onchange="{!c.handleSearchTextChange}"
+                            disabled="{!!v.allowedDelivery}"
+                        />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem padding="around-small">
+                        <lightning:layout horizontalAlign="spread">
+                            <lightning:layoutItem padding="around-small">
+                                <lightning:combobox
+                                    name="dateClosed"
+                                    value="{!v.lastNDays}"
+                                    options="{!v.dropdownValues}"
+                                    onchange="{!c.doInit}"
+                                    variant="label-hidden"
+                                    disabled="{!!v.allowedDelivery}"
+                                />
+                            </lightning:layoutItem>
+                            <lightning:layoutItem padding="around-small">
+                                <lightning:button
+                                    label="Create Manifest"
+                                    onclick="{!c.handleShowConfirmManifestDialog}"
+                                    disabled="{!!v.allowedManifest}"
+                                />
+                            </lightning:layoutItem>
+                        </lightning:layout>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </lightning:layoutItem>
+
+            <lightning:layoutItem padding="around-small" size="12">
+                <aura:renderIf isTrue="{!!isInit}">
+                    <aura:if isTrue="{!v.allowedDelivery}">
+                        <div aura:id="div1" class="{!v.tableContainerClass}">
+                            <table aria-multiselectable="true" class="slds-table slds-table_bordered">
+                                <thead>
+                                    <tr class="slds-line-align_reset">
+                                        <th class="slds-text-align_right" scope="col" width="1px;">
+                                            <div class="slds-form-element">
+                                                <div class="slds-form-element__control">
+                                                    <label class="slds-checkbox">
+                                                        <input type="checkbox" aura:id="headerCheckbox"
+                                                            onchange="{!c.handleHeaderCheckboxChange}" />
+                                                        <span class="slds-checkbox_faux"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <aura:iteration items="{!v.columns}" var="column">
+                                            <th aria-label="{!column.label}" scope="col">
+                                                <div
+                                                    class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                                    <span class="slds-truncate"
+                                                        title="{!column.label}">{!column.label}</span>
+                                                </div>
+                                            </th>
+                                        </aura:iteration>
+                                        <th scope="col" tabindex="-1" aria-label="Actions" class="width-50px">
+                                            <div class="slds-cell-fixed table-header_action">
+                                                <span class="slds-th__action">
+                                                    <span class="slds-truncate" title="Actions"></span>
+                                                </span>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:if isTrue="{!v.data}">
+                                        <aura:iteration items="{!v.data}" var="record">
+                                            <tr class="{!record.rowClass}">
+                                                <td class="slds-text-align_right" role="gridcell">
+                                                    <lightning:input type="checkbox" variant="label-hidden"
+                                                        checked="{!record.isSelected}"
+                                                        onchange="{!c.handleCheckboxChange}" />
+                                                </td>
+                                                <th scope="row">
+                                                    <div class="slds-truncate" title="{!record.CaseNumber}">
+                                                        <lightning:formattedUrl value="{!record.case_link}"
+                                                            tooltip="{!record.case_link}" label="{!record.CaseNumber}"
+                                                            target="_self" />
+                                                    </div>
+                                                </th>
+                                                <td>
+                                                    <div class="slds-truncate" title="{!record.AgentRef}">
+                                                        {!record.AgentRef}</div>
+                                                </td>
+                                                <td>
+                                                    <div class="slds-truncate" title="{!record.CustomerName}">
+                                                        {!record.CustomerName}</div>
+                                                </td>
+                                                <td>
+                                                    <div class="slds-truncate" title="{!record.Retailer_Account__c}">{!record.RetailerAccount}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="slds-truncate" title="{!record.shipment_link}">
+                                                        <a href="{!record.shipment_link}"
+                                                            target="_self">{!record.Freight_out_consignment_number__c}</a>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="slds-truncate" title="{!record.track_link}">
+                                                        <lightning:formattedUrl value="{!record.track_link}"
+                                                            tooltip="{!record.track_link}" label="Track"
+                                                            target="_blank" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="slds-truncate" title="{!record.order_link}">
+                                                        <a href="{!record.order_link}"
+                                                            target="_self">{!record.OrderId__c}</a>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="slds-truncate" title="{!record.TTI_Closed_Datetime__c}">
+                                                        <lightning:formattedDateTime
+                                                            value="{!record.TTI_Closed_Datetime__c}" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <!-- rowActions -->
+                                                    <div>
+                                                        <lightning:buttonMenu alternativeText="Show menu"
+                                                            iconSize="x-small" menuAlignment="right"
+                                                            onselect="{!c.handleRowAction}">
+                                                            <lightning:menuItem label="Create Consignment"
+                                                                value="{!'create_shipment:' + record.Id}"
+                                                                iconName="utility:fulfillment_order"
+                                                                disabled="{!record.btnCreateShipmentDisabled}" />
+                                                            <lightning:menuItem label="Update Consignment"
+                                                                value="{!'update_shipment:' + record.Id}"
+                                                                iconName="utility:fulfillment_order"
+                                                                disabled="{!record.btnUpdateShipmentDisabled}" />
+                                                            <lightning:menuItem label="Print Label"
+                                                                value="{!'print_label:' + record.Id}"
+                                                                iconName="utility:copy_to_clipboard"
+                                                                disabled="{!record.btnPrintLabelDisabled}" />
+                                                            <lightning:menuItem label="Print Dangerous Goods Form"
+                                                                value="{!'print_dg_form:' + record.Id}"
+                                                                iconName="utility:copy_to_clipboard"
+                                                                disabled="{!record.btnPrintDGFormDisabled}" />
+                                                            <lightning:menuItem label="Delete Consignment"
+                                                                value="{!'delete_shipment:' + record.Id}"
+                                                                iconName="utility:delete"
+                                                                disabled="{!record.btnDeleteShipmentDisabled}" />
+                                                        </lightning:buttonMenu>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </aura:iteration>
+                                    </aura:if>
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <aura:set attribute="else">
+                            <div class="slds-align_absolute-center">
+                                Freight Process currently unavailable
+                            </div>
+                        </aura:set>
+                    </aura:if>
+                </aura:renderIf>
+            </lightning:layoutItem>
+
+            <lightning:layoutItem padding="around-small" size="12">
+                <aura:if isTrue="{!v.allowedDelivery}">
+                    <aura:renderIf isTrue="{!v.noData}">
+                        <div class="slds-align_absolute-center">
+                            No Results
+                        </div>
+
+                        <aura:set attribute="else">
+                            <aura:renderIf isTrue="{!v.showPagination}" >
+                                <lightning:button
+                                    label="First"
+                                    iconName="utility:left"
+                                    iconPosition="left"
+                                    onclick="{!c.onFirst}"
+                                    disabled="{!v.currentPageNumber == 1}"
+                                />
+                                <lightning:button
+                                    iconName="utility:chevronleft"
+                                    iconPosition="left"
+                                    onclick="{!c.onPrev}"
+                                    disabled="{!v.currentPageNumber == 1}"
+                                />
+                                <span class="slds-p-horizontal_x-small">
+                                    <a onclick="{!c.handlePageClick}" name="1"
+                                        class="{!(v.currentPageNumber == 1) ? 'selected' : ''}">
+                                        1
+                                    </a>
+                                </span>
+
+                                <span class="slds-p-horizontal_xxx-small">
+                                    <a>...</a>
+                                </span>
+
+                                <aura:iteration items="{!v.pageList}" var="item">
+                                    <span class="slds-p-horizontal_x-small">
+                                        <a onclick="{!c.handlePageClick}" name="{!item}"
+                                            class="{!(v.currentPageNumber == item) ? 'selected' : ''}">
+                                            {!item}
+                                        </a>
+                                    </span>
+                                </aura:iteration>
+
+                                <span class="slds-p-horizontal_xxx-small">
+                                    <a>...</a>
+                                </span>
+
+                                <span class="slds-p-horizontal_x-small">
+                                    <a onclick="{!c.handlePageClick}" name="{!v.totalPages}"
+                                        class="{!(v.currentPageNumber == v.totalPages) ? 'selected' : ''}">
+                                        {!v.totalPages}
+                                    </a>
+                                </span>
+                                <lightning:button
+                                    iconName="utility:chevronright"
+                                    iconPosition="right"
+                                    disabled="{!v.currentPageNumber == v.totalPages}"
+                                    onclick="{!c.onNext}"
+                                />
+                                <lightning:button
+                                    label="Last"
+                                    iconName="utility:right"
+                                    iconPosition="right"
+                                    disabled="{!v.currentPageNumber == v.totalPages}"
+                                    onclick="{!c.onLast}"
+                                />
+                            </aura:renderIf>
+                        </aura:set>
+                    </aura:renderIf>
+                </aura:if>
+            </lightning:layoutItem>
+        </lightning:layout>
+        <lightning:spinner
+            aura:id="mySpinner"
+            class="spinnerContainer"
+            alternativeText="Loading"
+            size="large"
+        />
+    </lightning:card>
+
+    <aura:if isTrue="{!v.showConfirmDialog}">
+        <div role="dialog" class="slds-modal slds-fade-in-open ">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header slds-theme_info slds-theme_alert-texture">
+                    <h1 class="slds-text-heading--medium ">{!v.manifestDialogHeader}</h1>
+                </header>
+                    
+                <div class="slds-modal__content slds-p-around--medium">
+                    <center>{!v.manifestDialogContent}
+                        <br />
+                        <br />
+                        <aura:if isTrue="{!!v.isPastCutOffHour}">
+                            <lightning:button variant="brand" name="Yes" label="Yes" onclick="{!c.showAdhocModal}"/>
+                        </aura:if>
+                        <lightning:button variant="brand" name="No" label="{!v.manifestDialogNoBtn}" onclick="{!c.handleConfirmManifestDialogNo}"/>
+                    </center>
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showAdhocRequest}">
+        <div role="dialog" class="slds-modal slds-modal_medium slds-fade-in-open ">
+            <div class="modal-container slds-modal__container">
+                <header class="modal-header slds-modal__header">
+                    <h1 class="slds-text-heading--medium slds-hyphenate">Schedule Pickup</h1>
+                </header>
+                    
+                <div class="modal-body scrollable slds-modal__content slds-p-around--medium">
+                    <div class="slds-form slds-form_compound adhoc-form">
+                        <div class="slds-form-element__row">
+                            <p>
+                                IMPORTANT: Please ensure that the correct claims have been selected for this shipment 
+                                as all submission details are final. Limit of one pickup request per day.
+                            </p>
+                        </div>
+                        <br/>
+                        <div class="slds-form-element__row">
+                            <div class="slds-form-element slds-size_1-of-2">
+                                <lightning:input
+                                    aura:id="adhocFields"
+                                    type="date"
+                                    label="Requested Date"
+                                    name="Freight_Out_Manifest_Requested_Date__c"
+                                    required="true"
+                                    disabled="true"
+                                />
+                            </div>
+                            <div class="slds-form-element slds-size_1-of-2">
+                                <lightning:input
+                                    aura:id="adhocFields"
+                                    type="text"
+                                    label="Pickup Instructions"
+                                    name="Freight_Out_Manifest_Pickup_Instructions__c"
+                                    onchange="{!c.handleAdhocInputChange}"
+                                    required="true"
+                                    maxlength="128"
+                                />
+                            </div>
+                        </div>
+                        <div class="slds-form-element__row">
+                            <div class="slds-form-element slds-size_1-of-2">
+                                <lightning:input
+                                    aura:id="adhocFields"
+                                    label="Requested Pickup Start Time"
+                                    name="Freight_Out_Manifest_Req_Win_Start__c"
+                                    required="true"
+                                    disabled="true"
+                                    type="time"
+                                    value="13:00:00.000"
+                                />
+                            </div>
+                            <div class="slds-form-element slds-size_1-of-2">
+                                <lightning:combobox
+                                    aura:id="adhocFields"
+                                    label="Requested Pickup End Time"
+                                    placeholder="Select Time"
+                                    name="Freight_Out_Manifest_Req_Win_End__c"
+                                    options="{!v.timeOptions}"
+                                    onchange="{!c.handleAdhocInputChange}"
+                                    required="true"
+                                    value="17:00:00.000"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer slds-modal__footer">
+                    <lightning:button label="Cancel" onclick="{!c.closeModal}" />
+                    <lightning:button label="Proceed" onclick="{!c.execCreateOrder}" variant="brand" />
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if>
+
+    <aura:if isTrue="{!v.showDGForm}">
+        <div role="dialog" class="slds-modal slds-modal_large slds-fade-in-open ">
+            <div class="modal-container slds-modal__container">
+                <header class="slds-modal__header slds-modal__header_empty">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{!c.closeDGFormModal}"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                </header>
+                <div class="pdfViewer modal-body slds-modal__content">
+                    <iframe width="100%" height="100%" onload='{!c.loadDGPDF}' src="{!v.pdfViewerSrc}" scrolling="yes"></iframe>
+                </div>
+        	</div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,330 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" 
+                access="global" controller="MyRyobiCustomerSurveyController">
+    <style>
+        .survey-table {
+            border: solid 0px #FFF;
+        }
+        .survey-cols {
+            width: 10%;
+            color: #FFF;
+            background-color: #42b3ee;
+            padding: 5px;
+            border: solid 0px #FFF;
+            font-weight: bolder;
+            font-size: 16pt;
+        }
+        .survey-rows {
+            height: 50px;
+            text-align: center;
+            background-color: #DDD;
+        }
+        .selected-rows {
+            background-color: #CCCB2B !important;
+            color: #FFF !important;
+        }
+        .q1-circles, .q2-circles {
+            border: solid 0px #42b3ee;
+            background-color: rgba(128, 128, 128, .75);
+            padding: 0px;
+            margin: 10px;
+            width: 60px;
+            height: 60px;
+            border-radius: 100px;
+            text-align: center;
+            color: #FFF;
+            font-weight: bolder;
+            font-size: 20pt;
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+        }
+        .q1-circles span, .q2-circles span {
+            margin-top: 10px;
+            display: block;
+        }
+        p.question {
+            font-weight: bolder;
+            color: #000;
+            font-size: 16pt;
+        }
+        p.intro {
+            font-weight: bolder;
+            color: #000;
+            font-size: 16pt;
+        }
+        .loginButton {
+            padding: 5px 10px 5px 10px;
+            font-size: 1.5em;
+            margin-bottom: 50px;
+        }
+        .headerimage2 {
+            width: 250px;
+        }
+        .green {
+            background-color: #CCCB2B;
+        }
+        @media only screen and (max-width: 920px) {
+            .q1-circles, .q2-circles {
+                border: solid 0px #42b3ee;
+                background-color: rgba(128, 128, 128, .75);
+                padding: 0px;
+                margin: 15px 7px 15px 7px;
+                width: 35px;
+                height: 35px;
+                border-radius: 100px;
+                text-align: center;
+                color: #FFF;
+                font-weight: bolder;
+                font-size: 10pt;
+                display: inline-block;
+                vertical-align: middle;
+                position: relative;
+            }
+            .q1-circles span, .q2-circles span {
+                margin-top: 8px;
+                display: block;
+            }
+            p.question {
+                font-weight: bold;
+                color: #000;
+                font-size: 12pt;
+            }
+            .survey-cols {
+                width: 10%;
+                color: #FFF;
+                background-color: #42b3ee;
+                padding: 5px;
+                border: solid 0px #FFF;
+                font-weight: bold;
+                font-size: 11pt;
+            }
+            p.intro {
+                font-weight: bold;
+                color: #000;
+                font-size: 12pt;
+            }
+            .headerimage2 {
+                width: 150px;
+            }
+            .loginButton {
+                padding: 2px 10px 2px 10px;
+                font-size: 12pt;
+                margin-bottom: 10px;
+            }
+        }
+        @media only screen and (max-width: 579px) {
+            .q1-circles, .q2-circles {
+                border: solid 0px #42b3ee;
+                background-color: rgba(128, 128, 128, .75);
+                padding: 0px;
+                margin: 15px 2px 15px 2px;
+                width: 25px;
+                height: 25px;
+                border-radius: 100px;
+                text-align: center;
+                color: #FFF;
+                font-weight: bolder;
+                font-size: 9pt;
+                display: inline-block;
+                vertical-align: middle;
+                position: relative;
+            }
+            .q1-circles span, .q2-circles span {
+                margin-top: 5px;
+                display: block;
+            }
+            p.question {
+                font-weight: bold;
+                color: #000;
+                font-size: 10pt;
+            }
+            .survey-cols {
+                width: 10%;
+                color: #FFF;
+                background-color: #42b3ee;
+                padding: 4px;
+                border: solid 0px #FFF;
+                font-weight: bold;
+                font-size: 8pt;
+            }
+            p.intro {
+                font-weight: bold;
+                color: #000;
+                font-size: 10pt;
+            }
+            .headerimage2 {
+                width: 150px;
+            }
+            .loginButton {
+                padding: 2px 10px 2px 10px;
+                font-size: 10pt;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+    <aura:attribute name="currentUser" type="String" />
+    <aura:attribute name="isGuest" type="Boolean" />
+    <aura:attribute name="hasCustomerFinishedSurvey" type="Boolean" />
+    <aura:attribute name="submitButtonLabel" type="String" required="false" default="Submit" />
+    <aura:attribute name="dismissButtonLabel" type="String" required="false" default="Dismiss" />
+    
+    <aura:attribute name="homeUrl" type="String" required="false" default="/" />
+    <aura:attribute name="question1" type="String" required="false" default=""/>
+    <aura:attribute name="question1List" type="String[]" required="false" default="0 - I am not very confident using power tools,1,2,3,4,5,6,7,8,9,10 - I am very confident using power tools" />
+    <aura:attribute name="question2" type="String" required="false" default="" />
+    <aura:attribute name="question2List" type="String[]" required="false" default="0 - I don’t enjoy doing DIY type tasks around my home and garden,1,2,3,4,5,6,7,8,9,10 - I love doing DIY-type tasks around my home and garden" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}" />
+
+    <aura:if isTrue="{!v.isGuest == false}">
+        <div class="slds-p-bottom--xx-large"> 
+            <center>
+                <img class="headerimage" src="{!$Resource.RyobiCommunityLandingHeader}"/> 
+            </center>
+        </div>
+    </aura:if>
+
+    <aura:if isTrue="{!v.isGuest == true}">
+        <div class="slds-p-bottom--xx-large"> 
+            <center class="green">
+                <img class="headerimage2" src="{!$Resource.RYOBI_Brand_Logo}"/> 
+            </center>
+        </div>
+    </aura:if>
+
+    <aura:if isTrue="{!v.hasCustomerFinishedSurvey == true}">
+        <p class="intro" style="text-align: center;">Hi {!v.currentUser},</p>
+
+        <br />
+
+        <aura:if isTrue="{!v.isGuest == false}">
+            <p class="intro" style="text-align: center;">
+                Thanks for your time in completing the survey.
+            </p>
+        </aura:if>
+
+        <aura:if isTrue="{!v.isGuest == true}">
+            <p class="intro" style="text-align: center;">
+                Winners for the Competition are:
+                <ol>
+                    <li>Brent Lantry  - NSW</li>
+                    <li>Bruce Cunningham – NSW</li>
+                    <li>Chris Crawford – WA</li>
+                    <li>Clint Belz – NSW</li>
+                    <li>Colin Haine – VIC</li>
+                    <li>David Rhoades – TAS</li>
+                    <li>Garry Mcswain – NSW</li>
+                    <li>Graham Rocher – NSW</li>
+                    <li>Ian Mason – SA</li>
+                    <li>Ian Woods – VIC</li>
+                    <li>Jacob Nobbs – QLD</li>
+                    <li>John Spiller – WA</li>
+                    <li>Malcolm Anto – NSW</li>
+                    <li>Mathew French – QLD</li>
+                    <li>Melitta Kelly – QLD</li>
+                    <li>Michael Bozier – QLD</li>
+                    <li>Rob Anderson – ACT</li>
+                    <li>Robert Wherrett – TAS</li>
+                    <li>Scott Nankervis – VIC</li>
+                    <li>Susan Murrell – NSW</li>
+                </ol>
+                <br />
+                We have tried reaching the winners via phone and email to get your preferred delivery address to send your Bunnings $100 Gift Cards. 
+
+                <!--
+                Thanks for your time in completing the survey. We wish you luck with your competition entry.<br />
+                Note: Results will be announced here and will be notified by email.<br />
+                For details, Refer to <a href="http://www.ryobi.com.au/myryobi-segmentation-competition-terms-conditions">Competition terms &amp; conditions</a><br />-->
+            </p>
+        </aura:if>
+
+        <p>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+        </p>
+    </aura:if>
+
+    <aura:if isTrue="{!v.hasCustomerFinishedSurvey == false}">
+
+        <p class="intro">Welcome {!v.currentUser},</p>
+
+        <br />
+
+        <p class="intro">Please rate yourself on a scale of 0 to 10 for the below:</p><br />
+
+        <div id="" class="containerpadding">
+            <p class="question">How would you rate your confidence with using power tools?</p>
+            <table style="survey-table" border="0">
+                <tr>
+                    <td colspan="11">
+                        <center>
+                            <div class="q1-circles" onclick="{!c.selectQ1Answer}" data-value="0 - I don’t enjoy doing DIY type tasks around my home and garden"><span>0</span></div>
+                            <div class="q1-circles" onclick="{!c.selectQ1Answer}" data-value="1"><span>1</span></div>
+                            <div class="q1-circles" onclick="{!c.selectQ1Answer}" data-value="2"><span>2</span></div>
+                            <div class="q1-circles" onclick="{!c.selectQ1Answer}" data-value="3"><span>3</span></div>
+                            <div class="q1-circles" onclick="{!c.selectQ1Answer}" data-value="4"><span>4</span></div>
+                            <div class="q1-circles" onclick="{!c.selectQ1Answer}" data-value="5"><span>5</span></div>
+                            <div class="q1-circles" onclick="{!c.selectQ1Answer}" data-value="6"><span>6</span></div>
+                            <div class="q1-circles" onclick="{!c.selectQ1Answer}" data-value="7"><span>7</span></div>
+                            <div class="q1-circles" onclick="{!c.selectQ1Answer}" data-value="8"><span>8</span></div>
+                            <div class="q1-circles" onclick="{!c.selectQ1Answer}" data-value="9"><span>9</span></div>
+                            <div class="q1-circles" onclick="{!c.selectQ1Answer}" data-value="10 - I love doing DIY-type tasks around my home and garden"><span>10</span></div>
+                        </center>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="survey-cols" style="text-align: left;">I am not very confident using power tools</td>
+                    <td class="survey-cols">&nbsp;</td>
+                    <td colspan="5" class="survey-cols" style="text-align: right;">I am very confident using power tools</td>
+                </tr>
+            </table>
+            
+        </div>
+
+        <br />
+        <br />
+        <br />
+
+        <div id="" class="containerpadding">
+            <p class="question">Please think about your attitudes towards the different jobs you might tackle at home and the tools you use. To what extent does the following statement describe the way you feel?</p>
+            <table style="survey-table" border="0">
+                <tr>
+                    <td colspan="11">
+                        <center>
+                            <div class="q2-circles" onclick="{!c.selectQ2Answer}" data-value="0 - I don’t enjoy doing DIY type tasks around my home and garden"><span>0</span></div>
+                            <div class="q2-circles" onclick="{!c.selectQ2Answer}" data-value="1"><span>1</span></div>
+                            <div class="q2-circles" onclick="{!c.selectQ2Answer}" data-value="2"><span>2</span></div>
+                            <div class="q2-circles" onclick="{!c.selectQ2Answer}" data-value="3"><span>3</span></div>
+                            <div class="q2-circles" onclick="{!c.selectQ2Answer}" data-value="4"><span>4</span></div>
+                            <div class="q2-circles" onclick="{!c.selectQ2Answer}" data-value="5"><span>5</span></div>
+                            <div class="q2-circles" onclick="{!c.selectQ2Answer}" data-value="6"><span>6</span></div>
+                            <div class="q2-circles" onclick="{!c.selectQ2Answer}" data-value="7"><span>7</span></div>
+                            <div class="q2-circles" onclick="{!c.selectQ2Answer}" data-value="8"><span>8</span></div>
+                            <div class="q2-circles" onclick="{!c.selectQ2Answer}" data-value="9"><span>9</span></div>
+                            <div class="q2-circles" onclick="{!c.selectQ2Answer}" data-value="10 - I love doing DIY-type tasks around my home and garden"><span>10</span></div>
+                        </center>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="survey-cols" style="text-align: left;">I don’t enjoy doing DIY type tasks around my home and garden</td>
+                    <td class="survey-cols">&nbsp;</td>
+                    <td colspan="5" class="survey-cols" style="text-align: right;">I love doing DIY-type tasks around my home and garden</td>
+                </tr>
+            </table>
+                        
+        </div>
+        <br />
+        <br />
+        <center>
+            <div style="display: inline-block;">
+                <lightning:button name="submitButton" class="slds-button slds-button--neutral loginButton" label="{!v.submitButtonLabel}" onclick="{!c.submitSurvey}" />
+                &nbsp;
+                <lightning:button name="submitButton" class="slds-button slds-button--neutral loginButton" label="{!v.dismissButtonLabel}" onclick="{!c.dismissSurvey}" />
+            </div>
+        </center>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,50 @@
+<aura:component>
+    <!-- Collection attributes -->
+    <aura:attribute name="objectList" type="List" />
+    <aura:attribute name="carouselPanelStyle" type="String" default="transform:translateX(0%)" />
+    <div class="slds-carousel">
+        <div class="slds-carousel__stage">
+            <div class="slds-carousel__panels" style="{!v.carouselPanelStyle}">
+                <aura:iteration items="{!v.objectList}" var="item">
+                    <div class="slds-carousel__panel" role="tabpanel">
+                        <div class="slds-carousel__panel-action slds-text-link_reset slds-p-horizontal_medium div-border--none">
+                            <div class="slds-carousel__image slds-media">
+                                <div class="slds-media__figure">
+                                    <img src="{!item.imageURL}" alt="{!item.productName}" class="carousel-image" />
+                                </div>
+                                <div class="slds-media__body slds-p-top_large">
+                                     <h3 class="slds-title__title slds-truncate" >
+                                        <b>{!item.title}</b>
+                                    </h3>
+                                    <div class="slds-tile__detail" >
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Product Name">
+                                            Product Name:
+                                        </dt>
+                                        <dd class="slds-item_detail slds-truncate" title="1">
+                                            {!item.productName}
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Redemption Period">
+                                            Redemption Period:
+                                        </dt>
+                                        <dd class="slds-item_detail slds-truncate" title="1">
+                                            {!item.validFrom} to {!item.validTo}
+                                        </dd>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aura:iteration>
+            </div>
+            <ul class="slds-carousel__indicators" role="tablist">
+                <aura:iteration items="{!v.objectList}" var="item">
+                    <li class="slds-carousel__indicator" role="presentation">
+                        <a class="{item.indicatorClass}" href="#" data-id="{item.id}" role="tab" title="{!item.productName}" onclick="{!handleIndicatorChange}">
+                            <span class="slds-assistive-text">{!item.productName}</span>
+                        </a>
+                    </li>
+                </aura:iteration>
+            </ul>
+        </div>
+    </div>
+</aura:component>

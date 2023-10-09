@@ -527,14 +527,13 @@ public class CaseTriggerHandler {
     /**
     * @author: Rexie Aaron David
     * @date: 8/29/2023
-    * @description: [SD-2350] Validate Division Field 
+    * @description: Validate Division Field
     */ 
     public static void validateOrPopulateDivision(List<Case> caseList, Map<Id,Case> oldCasesMap){
 
-        Set<String> industrialBrands = new Set<String>(System.Label.Industrial_Brands.split(','));
-        Set<String> floorcareBrands = new Set<String>(System.Label.Floorcare_Brands.split(','));
-        Set<String> consumerBrands = new Set<String>(System.Label.Consumer_Brands.split(','));
-
+        Set<String> industrialBrands = new Set<String>{'Milwaukee','Stilleto'};
+        Set<String> floorcareBrands = new Set<String>{'VAX','Dirt Devil','Hoover','Oreck'};
+        Set<String> consumerBrands = new Set<String>{'Ryobi','AEG','Homelite','Powerfit','Hart','Empire','Kango'};
         Map<Id,List<Case>> accountCaseMap = new  Map<Id,List<Case>>();
         Map<String,Division_Mapping__c> divisionMap = retrieveDivisionMappings();
 

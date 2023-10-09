@@ -1,0 +1,4 @@
+<design:component>
+    <design:attribute label="Country code" name="country" default="AU"/>
+    <design:attribute label="Additional Info Delivery" name="additionalInfoDelivery" />
+</design:component>

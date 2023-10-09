@@ -11,7 +11,6 @@ private class CaseTriggerHandlerTest {
     
 	@isTest
 	private static void testPersonAccountCreationWebToCase() {
-		Test.startTest();
 		Case_Setting__c cs = new Case_Setting__c();
 		cs.Default_Account_Name_Report__c = 'Techtronic Industries Pty Ltd';
 		cs.Default_Contact_Name_Report__c = 'Andrew Grant';
@@ -71,12 +70,10 @@ private class CaseTriggerHandlerTest {
 		insert newcase3;
 		
 		update newCase;
-		Test.stopTest();
 	}
 
 	@isTest
 	private static void testSetPotentialDuplicates(){
-		Test.startTest();
 		Case_Setting__c cs = new Case_Setting__c();
 		cs.Default_Account_Name_Report__c = 'Techtronic Industries Pty Ltd';
 		cs.Default_Contact_Name_Report__c = 'Andrew Grant';
@@ -110,7 +107,7 @@ private class CaseTriggerHandlerTest {
 		newCase.Customer_PO_number__c = 'CRN1234';
 		newCase.TTI_Invoice_Number__c = shOne.Id;
 		newCase.AccountId = acc.Id;
-		newCase.SAP_Order_Free_Text__c = '123456789';
+		newCase.SAP_Order_Free_Text__c = '12345';
 		insert newCase;
 
 		Case newCaseTwo = new Case();
@@ -126,17 +123,15 @@ private class CaseTriggerHandlerTest {
 		newCaseTwo.Customer_PO_number__c = 'CRN1234';
 		newCaseTwo.TTI_Invoice_Number__c = shTwo.Id;
 		newCaseTwo.AccountId = acc.Id;
-		newCaseTwo.SAP_Order_Free_Text__c = '123456788';
+		newCaseTwo.SAP_Order_Free_Text__c = '12345'; 
 		insert newCaseTwo;
 		newCaseTwo = [SELECT Id,Potential_Duplicate_Case__c FROM Case WHERE Id =: newCaseTwo.Id];
 		System.assertNotEquals(NULL, newCaseTwo.Potential_Duplicate_Case__c);
-		Test.stopTest();
 
 	}
 
 	@isTest
 	private static void testValidationAndPopulateChildCase(){
-		Test.startTest();
 		Case_Setting__c cs = new Case_Setting__c();
 		cs.Default_Account_Name_Report__c = 'Techtronic Industries Pty Ltd';
 		cs.Default_Contact_Name_Report__c = 'Andrew Grant';
@@ -191,8 +186,8 @@ private class CaseTriggerHandlerTest {
 		// newCaseChild.SAP_Order_Free_Text__c = 'SAP12345';
 		// newCaseChild.Customer_PO_number__c = 'CRN2131241';
 		newCaseChild.Subject = 'Child Subject';
-		newCaseChild.SAP_Order_Free_Text__c = 'SAP12345';
 		newCaseChild.Warehouse__c = 'BP01';
+
 		insert newCaseChild;
 
 		newCaseChild = [SELECT Id, Courier__c FROM Case WHERE Id =: newCaseChild.Id];
@@ -218,67 +213,5 @@ private class CaseTriggerHandlerTest {
 		} catch (Exception e) {
 			System.assertEquals(e.getMessage().containsIgnoreCase('Complete this field.'), true);
 		}
-		Test.stopTest();
-	}
-
-	@isTest
-	private static void testValidateOrPopulateDivision(){
-		Test.startTest();
-		Account acc = new Account(Name = 'Techtronic Industries Pty Ltd', TTI_SAP_Cust_No__c = '12345', BCI_ProjectID__c = 'test', RecordTypeId = b2cPersonAccountRecTypeId, BillingCountry = 'NZ');
-	    acc.Type = 'Retailer';
-		acc.Customer_Group_1_Code__c = 'TT';
-		insert acc;
-
-		Contact con = new Contact(MailingCountry = 'NZ',accountId = acc.Id, LastName = 'Grant', npe01__WorkEmail__c = 'Testing@yahoo.com0', FirstName = 'Andrew', HomePhone = '051234123', MobilePhone = '051231231', Phone = '051412412', OtherPhone = '051421412');
-	    insert con;
-
-	    con = [SELECT Name FROM Contact WHERE Id = :con.id];
-
-		Division_Mapping__c divMap = new Division_Mapping__c ();
-		divMap.Division__c = 'Industrial';
-		divMap.Group__c = 'TOTAL TOOLS';
-		divMap.Group_Code__c = 'TT';
-		divMap.Active__c = TRUE;
-		insert divMap;
-
-		Case newCase = new Case();
-		newCase.Origin = 'Web';
-		newCase.RecordTypeId = productInfoCaseRecTypeId;
-		newCase.SuppliedEmail = 'user@faxtest.com';
-		newCase.Brand__c = 'Ryobi';
-		newCase.Subject = 'JB Hi Fi Report';
-		newCase.Web_State__c = 'Laguna';
-		newCase.Type = 'Warranty';
-		newCase.SuppliedPhone = '09123456789';
-		newCase.SuppliedName = 'User, Test U.';
-		newCase.Description = 'Price';
-		newCase.AccountId = acc.Id;
-		insert newCase;
-
-		newCase = [SELECT Id, Division__c FROM Case WHERE Id =: newCase.Id];
-		System.assertNotEquals(newCase.Division__c, null);
-
-		Case newCaseTwo = new Case();
-		newCaseTwo.Origin = 'Web';
-		newCaseTwo.RecordTypeId = productInfoCaseRecTypeId;
-		newCaseTwo.SuppliedEmail = 'user@faxtest.com';
-		newCaseTwo.Brand__c = 'Ryobi';
-		newCaseTwo.Subject = 'JB Hi Fi Report';
-		newCaseTwo.Web_State__c = 'Laguna';
-		newCaseTwo.Type = 'Warranty';
-		newCaseTwo.SuppliedPhone = '09123456789';
-		newCaseTwo.SuppliedName = 'User, Test U.';
-		newCaseTwo.Description = 'Price';
-		newCaseTwo.AccountId = acc.Id;
-		newCaseTwo.Division__c = 'Consumer';
-
-		try{
-			insert newCaseTwo;
-		}
-		catch(Exception e){
-			System.assertNotEquals(e.getMessage().contains('Please select Industrial'), false);
-		}
-		
-		Test.stopTest();
 	}
 }

@@ -1,0 +1,3 @@
+<design:component>
+    <design:attribute name="countryCode" label="Country" required="true" default="AU" datasource="AU,NZ"/>
+</design:component>

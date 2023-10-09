@@ -1,0 +1,71 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <div class="slds-grid slds-wrap slds-grid_pull-padded ">
+        <div class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_4-of-12 marginTop">
+            <center>
+                <button aura:id="submitClaimId" onclick="{!c.redirectToSubmitClaim}" class="removeBorder slds-button_neutral">
+                    <lightning:icon iconName="action:follow" size="medium" />
+                    <br/>
+                    <p class="paddingText">SUBMIT CLAIM</p>
+                    <p class="lineSeparator"> </p>
+                    <p class="padding-top--4px">Submit a new Service Claim</p>
+                </button>
+            </center>
+        </div>
+        <div class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_4-of-12 marginTop">
+            <center> 
+                <button onclick="{!c.redirectToClaim}" class="removeBorder slds-button_neutral"> 
+                    <lightning:icon iconName="utility:note" size="large"/>
+                    <p class="paddingText">MY SERVICE CLAIMS</p>
+                    <p class="lineSeparator"> </p>
+                    <p class="padding-top--4px">View your Service Claims by Status</p>
+                </button>
+            </center>
+        </div>
+        <div class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_4-of-12 marginTop">
+            <center> 
+                <button onclick="{!c.redirectToSearchClaim}" class="removeBorder slds-button_neutral">
+                    <lightning:icon iconName="utility:search" size="large"/>
+                    <p class="paddingText">SEARCH CLAIM</p>
+                    <p class="lineSeparator"> </p>
+                    <p class="padding-top--4px">Search for a Service Claim</p>
+                </button> 
+            </center>
+        </div>
+    </div>
+    <div class="slds-grid slds-wrap slds-grid_pull-padded">
+        <div class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_4-of-12 marginTop">
+            <center> 
+                <button onclick="{!c.redirectToPermormance}" class="removeBorder slds-button_neutral">
+                    <lightning:icon iconName="utility:chart" size="large"/>
+                    <p class="paddingText">MY PERFORMANCE</p>
+                    <p class="lineSeparator"> </p>
+                    <p class="padding-top--4px">Dashboard displaying key performance indicators</p>  
+                </button>
+            </center>
+        </div>
+        
+        <div class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_4-of-12 marginTop">
+            <center> 
+                <button onclick="{!c.redirectToTask}" class="removeBorder slds-button_neutral">
+                    <lightning:icon iconName="utility:task" size="large"/>
+                    <p class="paddingText">MY TASKS</p>
+                    <p class="lineSeparator"> </p>
+                    <p class="padding-top--4px">Reply to requests for more information</p>  
+                </button>
+            </center>
+        </div>
+        <div class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_4-of-12 marginTop">
+            <center>
+                <button onclick="{!c.redirectToReplenishment}" class="removeBorder slds-button_neutral">
+                    <lightning:icon iconName="action:share_poll" size="medium"/>
+                    <p class="paddingText">REPLENISHMENT</p>
+                    <p class="lineSeparator"> </p>
+                    <p class="padding-top--4px">Stock Replenishment Order</p> 
+                </button>
+            </center>
+        </div>
+        
+    </div>
+    
+</aura:component>

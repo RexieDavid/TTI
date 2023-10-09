@@ -1,0 +1,326 @@
+.THIS {
+    /* Heading/H3 - 48 Bold */
+    font-family: "Helvetica Now Var", Helvetica;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 56px; /* 116.667% */
+    letter-spacing: -0.48px;    
+    margin: 64px 135px 48px;
+}
+
+.THIS .productTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--monochrome-dark-grey-222222, #222);
+
+}
+
+.THIS .productDetailsList {
+    /* Paragraph/PXS-M - 12 */
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px; /* 166.667% */
+    letter-spacing: -0.12px;
+    color: var(--monochrome-dark-grey-222222, #222)
+}
+
+.THIS .categoryImage {
+    display: block;
+    max-width: 150px;
+    max-height: 150px;
+    justify-self: center;
+}
+
+.THIS .spacing {
+    height: 22px;
+}
+
+.THIS .fullCardheight {
+    width: 330px;
+}
+
+.THIS .fullSize {
+    min-height: 570px;
+    width: 100%;
+    border: none;
+    /* color: white; */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    color: black;
+    -webkit-appearance: none;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    border-radius: 10px;
+    background: var(--ryobi-ryobi-hyper-green-d-9-e-409, #D9E409);
+}
+
+.THIS .addProductItemInverse {
+    padding-left: 15px;
+}
+
+.THIS .globalInput {
+    border: 2px solid #cccccc;
+}
+
+.THIS .receiptImage {
+    max-width: 100%;
+}
+
+.THIS .globalProductItemButton {
+    background-color: var(--backgrounds-super-light-grey-f-9-f-9-f-9, #F9F9F9);
+    width: 50px;
+    height: 50px;
+    margin: 5px 5px 0 5px;
+    border-radius: 30px;
+}
+
+.THIS .globalProductItemBox {
+    display: grid;
+    width: 330px;
+    min-height: 570px;
+    margin-bottom: 30px;
+    padding: 21px 32px 32px 32px;
+    flex-direction: column;
+    align-content: space-between;
+    border-radius: 10px;
+    background: var(--backgrounds-super-light-grey-f-9-f-9-f-9, #F9F9F9);
+}
+
+.THIS .globalProductItemBlurb {
+    /* padding: 1em 1.75em 0; */
+}
+
+.THIS td {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.THIS .bg-color-yellow {
+    background-color: #cccb2b;
+}
+
+.THIS .bg-color-red {
+    background-color: #e32526;
+}
+
+.THIS .flex {
+    display: flex;
+}
+
+.THIS .button1-margin {
+    margin: 0px 2.5px 0px 0px;
+}
+
+.THIS .button2-margin {
+    margin: 0px 0px 0px 2.5px;
+}
+
+.THIS .button-below {
+    text-align: center;
+}
+
+.THIS .div-center {
+    width: 30px;
+    margin-bottom: 10px;
+}
+
+.THIS .productDetailsContainer {
+    margin-top: 20px;
+    padding-top: 12px;
+    border-top: 1px solid var(--monochrome-black-line-10, rgba(0, 0, 0, 0.10));
+}
+
+.THIS .productDetailsContainer div p:nth-child(3), .THIS .productDetailsContainer div p:nth-child(5){
+    margin-top: 10px;
+}
+
+.THIS .partOfContainer {
+    background-color: white;
+    padding: 0px 12px;
+}
+
+.THIS .modalContainer {
+    width: 510px;
+    height: 474px;
+    padding: 48px 56px;
+}
+
+.THIS .closeBtn {
+    border-radius: 5px;
+    justify-content: end;
+    display: flex;
+    padding-bottom: 10px;
+}
+
+.THIS .closeBtn button {
+    width: 40px;
+    height: 40px;
+    color: #00001A;
+}
+
+.THIS .modalBtnContainer {
+    justify-content: center;
+    display: flex;
+}
+
+.THIS .modalBtn {
+    display: flex;
+    width: 260px;
+    padding: 15px 22px 15px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+    border-radius: 50px;
+    background: var(--ryobi-ryobi-hyper-green-d-9-e-409, #D9E409);
+    color: var(--monochrome-dark-grey-222222, #222);
+    border: 0;
+}
+
+.THIS .wordWrap {
+    word-wrap: break-word;
+}
+
+@media (min-width: 64em) {
+    .THIS .imageThumb {
+        height: 338px;
+    }
+}
+
+@media (min-width: 48em) {
+    .THIS .imageThumb {
+        height: 340px;
+    }
+}
+
+@media screen and (max-width: 320px) {
+    .THIS .categoryImage {
+        display: block;
+        height: auto;
+        width: auto;
+        max-width: 99%;
+        max-height: 99%;
+    }
+}
+
+.THIS .mouse-pointer {
+    cursor: pointer;
+}
+
+.THIS h2 {
+    background: none !important;
+}
+
+.THIS .plusIcon {
+    height: 445px;
+    padding-left: 15px;
+    display: flex;
+}
+
+.THIS .plusIcon p {
+    background-image: url('/resource/Eclipse');
+    color: #D9E409;
+    height: 48px;
+    width: 48px;
+    font-size: 45px;
+    padding-top: 13px;
+}
+
+.THIS .fullSize h4 {
+    display: flex;
+    font-family: "Helvetica Now Var", Helvetica;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 40px; /* 125% */
+    letter-spacing: -0.32px;
+    color: var(--monochrome-dark-grey-222222, #222);
+
+}
+
+.THIS .globalPromptTitle {
+    background-color: #D9E409;
+}
+
+.THIS .slds-modal__footer .globalProductItemButton {
+    width: 290px;
+}
+
+@media only screen and (max-width: 600px) {
+    .THIS {
+        margin: 0 24px 48px;
+
+    }
+
+    .THIS .fullCardheight {
+        width: auto;
+    }
+
+    .THIS .globalProductItemBox{
+        width: auto;
+        margin-top: 24px;
+        margin-bottom: 0;
+    }
+
+    .THIS .fullSize {
+        min-height: 168px;
+        display: grid;
+        align-items: center;
+    }
+
+    .THIS .plusIcon {
+        height: auto;
+    }
+
+    .THIS .modalContainer {
+        width: auto;
+        height: auto;
+        margin-top: 0;
+        padding: 0;
+    }
+
+
+}
+
+@media only screen and (min-width: 601px) and (max-width: 900px) {
+    .THIS {
+        margin: 64px 60px 48px;
+    }
+
+}
+
+@media only screen and (min-width: 1000px) and (max-width: 1200px) {
+    .THIS {
+        margin: 0 30px 48px;
+
+    }
+
+    .THIS .fullCardheight {
+        width: 240px;
+    }
+
+    .THIS .globalProductItemBox {
+        width: 240px;
+        padding: 21px 10px 32px 10px;
+    }
+
+
+}
+
+@media only screen and (min-width: 1201px) and (max-width: 1600px) {
+    .THIS .fullCardheight {
+        width: 250px;
+    }
+
+    .THIS .globalProductItemBox {
+        width: 250px;
+        padding: 21px 10px 32px 10px;
+    }
+
+}

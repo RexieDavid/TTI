@@ -1,0 +1,62 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" 
+                access="global" 
+                controller="AgRedemptionsListController">
+
+    <!-- String attributes -->
+    <aura:attribute type="String" name="pageName" default="AEGRedemptionList" />
+    
+    <!-- Boolean attributes -->
+    <aura:attribute type="Boolean" name="isLoaded" default="false" />
+
+    <!-- Collection -->
+    <aura:attribute type="List" name="activeRedemptionsList" default="[]" />
+    <aura:attribute type="List" name="activeTableColumns" default="[]" />
+    <aura:attribute type="List" name="completeRedemptionsList" default="[]" />
+    <aura:attribute type="List" name="completeTableColumns" default="[]" />
+
+    <!-- Event handlers -->
+    <aura:registerEvent name="navigate" type="c:NavigateEvent" />
+    <aura:handler event="c:NavigateEvent" action="{!c.handleNavigate}" />
+    
+    <!-- Notification library -->
+    <lightning:notificationsLibrary aura:id="notifLib" />
+    
+    <div aura:id="promotionListDiv" class="slds-hide">
+        <aura:if isTrue="{!not(v.isLoaded)}">
+            <lightning:spinner alternativeText="Loading" size="medium" />
+        </aura:if>
+        
+        <div class="slds-grid slds-wrap" >
+            <div class="slds-col slds-size_1-of-1 slds-grid slds-p-vertical_medium width--100pct bg-color--brand">
+                <div class="slds-grid slds-grid_vertical-align-center" >
+                    <a href="javascript:void(0);" class="slds-col margin-left--75pct" onclick="{!c.navigateTo}">
+                        <lightning:icon iconName="utility:back" alternativeText="Back" size="small" variant="inverse" />
+                    </a>
+                </div>
+                    
+                <div class="slds-align_absolute-center" >
+                    <div class="slds-text-title_caps slds-text-align_center">
+                        <div class="slds-text-heading_large slds-text-color_inverse" title="Your Redemptions" >Your Redemptions</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-col slds-size_1-of-1 slds-grid slds-wrap slds-p-vertical_small" >
+                <div class="slds-text-heading_small slds-text-color_inverse slds-p-around_medium width--100pct bg-color--black">ACTIVE REDEMPTIONS</div>
+
+                <div class="width--100pct">
+                    <c:AEGDataTable payload="{!v.activeRedemptionsList}" 
+                                    columns="{!v.activeTableColumns}" />
+                </div>
+            </div>
+
+            <div class="slds-col slds-size_1-of-1 slds-grid slds-wrap slds-p-vertical_small" >
+                <div class="slds-text-heading_small slds-text-color_inverse slds-p-around_medium width--100pct bg-color--black">COMPLETE REDEMPTIONS</div>
+                <div class="width--100pct">
+                    <c:AEGDataTable payload="{!v.completeRedemptionsList}" 
+                                    columns="{!v.completeTableColumns}" />
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

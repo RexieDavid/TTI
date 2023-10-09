@@ -1,0 +1,114 @@
+<!-- add implements="forceCommunity:availableForAllPageTypes" to surface the component in community builder -->
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="LightningLoginFormController">
+
+    <aura:attribute name="showError" type="Boolean" required="true" description="" default="false" access="private"/>
+    <aura:attribute name="errorMessage" type="String" required="false" description="" access="private"/>
+    <aura:attribute name="startUrl" type="String" required="false" description="The url you go to after a successful login" />
+    <aura:attribute name="usernameLabel" type="String" required="false" default="Username"/>
+    <aura:attribute name="passwordLabel" type="String" required="false" default="Password"/>
+    <aura:attribute name="loginButtonLabel" type="String" required="false" default="Log in"/>
+    <!-- Community Portal Outages - 11/08/2022 - JAC -->
+    <aura:attribute name="showComponent" type="Boolean" />
+    <!-- Community Portal Outages End -->
+    
+    <aura:attribute name="forgotPasswordLabel" type="String" required="false" default="Forgot your password?"/>
+    <aura:attribute name="selfRegisterLabel" type="String" required="false" default="Not a member?"/>
+    <aura:attribute name="forgotPasswordUrl" type="String" required="false" default="/ForgotPassword"/>
+    <aura:attribute name="selfRegisterUrl" type="String" required="false" default="/SelfRegister"/>
+    
+    <aura:attribute name="isUsernamePasswordEnabled" type="Boolean" access="private"/>
+    <aura:attribute name="isSelfRegistrationEnabled" type="Boolean" access="private"/>
+    
+    <aura:attribute name="communityForgotPasswordUrl" type="String" access="private"/>
+    <aura:attribute name="communitySelfRegisterUrl" type="String" access="private"/>
+
+    <aura:attribute name="username" type="String"/>
+    <aura:attribute name="password" type="String"/>
+    
+    <aura:registerevent name="sitePropagatedStartUrl" type="c:setStartUrl"/>
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}"/>
+    <aura:dependency resource="c:setStartUrl" type="EVENT"/>
+    
+    <!-- Please uncomment
+    <aura:dependency resource="siteforce:registerQueryEventMap" type="EVENT"/>
+    -->
+    
+    <aura:handler event="c:setStartUrl" action="{!c.setStartUrl}"/>
+
+    <div>
+        <div id="login-container">
+            <img id="logo" src="{!$Resource.MyRyobi_logo_New}"></img>
+            <h4>Sign In</h4>
+            <p>My RYOBI is your exclusive area to access RYOBI services like online registration of your favourite tools, get extended warranties and more.</p>
+
+            <aura:if isTrue="{!v.showComponent}">
+                    <aura:if isTrue="{!v.isUsernamePasswordEnabled}">
+                        <aura:if isTrue="{!v.showError}">
+                            <div class="globalerrordisplay"> 
+                                <p>{!v.errorMessage}</p>
+                            </div>
+                        </aura:if>
+                        <div class="input-container">
+                            <lightning:icon iconName="utility:user" 
+                                            alternativeText="user" 
+                                            title="user" 
+                                            size="x-small"
+                                            class="icon-padding" />
+                            <div onkeyup="{!c.onKeyUp}" class="div-width-100pct">
+                                <lightning:input class="input"
+                                                aura:id="requiredField"
+                                                placeholder="{!v.usernameLabel}"
+                                                value="{!v.username}"
+                                                variant="label-hidden"
+                                                required="required"
+                                                />
+                            </div>
+                        </div>
+                        <div class="input-container margin-top-2pct">
+                            <lightning:icon iconName="utility:lock" 
+                                            alternativeText="lock" 
+                                            title="lock" 
+                                            size="x-small"
+                                            class="icon-padding" />
+                            <div onkeyup="{!c.onKeyUp}" class="div-width-100pct">
+                                <lightning:input class="input"
+                                                aura:id="requiredField"
+                                                type="password"
+                                                placeholder="{!v.passwordLabel}"
+                                                value="{!v.password}"
+                                                variant="label-hidden" />
+                            </div>
+                        </div>
+                        <div class="margin-top-2pct">
+                            <!-- <lightning:button name="submitButton" 
+                                            class="loginButton slds-m-right_xx-small"
+                                            label="{!v.loginButtonLabel}" 
+                                            onclick="{!c.handleLogin}" /> -->
+                            <button class="loginButton" onclick="{!c.handleLogin}">{!v.loginButtonLabel} <img src="{!$Resource.Chevron_Circle_Right}" /></button>
+                            <hr/>
+                        </div>
+                        <div>
+                            <span>
+                                <aura:if isTrue="{!v.communityForgotPasswordUrl}">
+                                    <a href="{!v.communityForgotPasswordUrl}"> {!v.forgotPasswordLabel} <img src="{!$Resource.Chevron_Right}"/></a>
+                                    <aura:set attribute="else">
+                                        <a href="{!v.forgotPasswordUrl}"> {!v.forgotPasswordLabel} <img src="{!$Resource.Chevron_Right}"/></a>
+                                    </aura:set>
+                                </aura:if>
+                            </span>
+                            <aura:if isTrue="{!v.isSelfRegistrationEnabled}">
+                                <span class="slds-float_right">
+                                    <aura:if isTrue="{!v.communitySelfRegisterUrl}">
+                                        <a href="{!v.communitySelfRegisterUrl}"> {!v.selfRegisterLabel} <img src="{!$Resource.Chevron_Right}"/> </a>
+                                        <aura:set attribute="else">
+                                            <a href="{!v.selfRegisterUrl}"> {!v.selfRegisterLabel} <img src="{!$Resource.Chevron_Right}"/> </a>
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </aura:if>
+                        </div>
+                    </aura:if>
+            </aura:if>
+        </div>
+    </div>
+</aura:component>

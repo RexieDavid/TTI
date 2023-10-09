@@ -1,0 +1,25 @@
+.THIS {
+}
+
+.THIS .heading{
+    
+    font-size:20pt;
+    
+    color:#F48026;
+    font-weight: bold;
+}
+
+.THIS .subheading{
+	font-size:16pt;
+
+    color:black;
+}
+
+.THIS .headerimage{
+	max-height: 140px;	
+    max-width: 140px;	
+}
+
+.THIS .headers{
+
+}

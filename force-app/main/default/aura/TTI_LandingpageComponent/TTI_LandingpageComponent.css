@@ -1,0 +1,41 @@
+.THIS {
+}
+
+.THIS .fontSize {
+    font-size: 17px;
+}
+
+.THIS .removeBorder {
+    border: none !important;
+    color: black;
+}
+
+.THIS .paddingText {
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+.THIS .padding-top--4px {
+    padding-top: 4px;
+    margin-top: 0;
+}
+
+.THIS .lineSeparator {
+    font-size: 1px;
+}
+
+.THIS .slds-button {
+    line-height: 0.875rem;
+}
+
+.THIS .slds-icon-action-follow {
+    background-color: #aaaaaa;
+}
+
+.THIS .slds-icon-action-share-poll {
+    background-color: #aaaaaa;
+}
+
+.THIS .marginTop {
+    margin-top: 18px;
+}

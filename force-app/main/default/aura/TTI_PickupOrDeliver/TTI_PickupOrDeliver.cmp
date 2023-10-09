@@ -1,0 +1,103 @@
+<aura:component implements="c:TTI_Constants" access="global">
+    <aura:attribute name="isDeliver" type="Boolean" />
+    <aura:attribute name="myId" type="String" default="6"/>
+    <aura:attribute name="claim" type="Case" />
+    <aura:attribute name="address1" type="String"/> 
+    <aura:attribute name="address2" type="String"/>
+    <aura:attribute name="postalCode" type="String"/>
+    <aura:attribute name="suburb" type="String"/>
+    <aura:attribute name="state" type="String"/>
+    <aura:attribute name="userType" type="String" />
+    <aura:attribute name="countryRestrict" type="String" />
+    <aura:attribute name="userObject" type="User"/>
+
+    <aura:attribute name="hasRetailer" type="Boolean" />
+    <aura:attribute type="Boolean" name="isInferStreet" default="true" />
+
+    <aura:attribute name="pickupOrDeliverLabel1" type="String"
+        default="{!$Label.c.SP_Pickup_Or_Deliver_Message1}" />
+    <aura:attribute name="pickupOrDeliverLabel2" type="String"
+        default="{!$Label.c.SP_Pickup_Or_Deliver_Message2}" />
+
+    <aura:registerEvent name="submitClaimEvent" type="c:TTI_SubmitClaimEvent" />
+
+    <!-- Custom Labels -->
+    <aura:attribute name="regexPhoneFormat" type="String"
+        default="{!$Label.c.UTIL_REGEX_AU_Phone_Format}" />
+    <aura:attribute name="errPhoneNumberNotMatch" type="String"
+        default="{!$Label.c.Regex_AU_Phone_Format_Pattern_Mismatch}" />
+
+    <aura:attribute name="deliverMethodOptions" type="List"
+        default="[
+            {'label': 'Pickup from Service Agent', 'value': 'Pickup from Service Agent'},
+            {'label': 'Deliver', 'value': 'Deliver'}
+        ]" />
+
+    <aura:attribute name="countryOptions" type="List"
+        default="[
+            {'label': 'Australia', 'value': 'Australia'},
+            {'label': 'New Zealand', 'value': 'New Zealand'}
+        ]" />
+
+    <c:UtilityMethods aura:id="utilityMethods" />
+
+    <aura:if isTrue="{!v.activeScreenId == v.myId}">
+        <lightning:layout multipleRows="true" class="slds-align_absolute-center ">
+            <lightning:layoutItem padding="around-small" size="7"
+                class="slds-form slds-form_horizontal" >
+
+                <p><lightning:formattedText value="{!v.pickupOrDeliverLabel1}"/></p>
+                <p><lightning:formattedText value="{!v.pickupOrDeliverLabel2}"/></p>
+
+                <lightning:combobox
+                    name="progress"
+                    label="Pick Up/Deliver"
+                    value="{!v.claim.TTI_Customer_Delivery_Method__c}"
+                    options="{!v.deliverMethodOptions}"
+                    onchange="{!c.populateDeliveryAddress}"
+                    required="true"
+                />
+
+                <aura:if isTrue="{!v.claim.TTI_Customer_Delivery_Method__c == 'Deliver'}" >
+                    
+                    <lightning:input label="Receiver" value="{!v.claim.FreightOutDeliverTo__c}" />
+                    
+                    <c:googleAddressAutocomplete 
+                        filteredByCountries="{!v.countryRestrict}" 
+                        label="Address Search"
+                        onselect="{!c.handleAddressSelect}"
+                        inferStreetNumber="{!v.isInferStreet}"
+                    />
+
+                    <lightning:input aura:id="addressField" label="Address Line 1" value="{!v.address1}" required="true" />
+
+                    <lightning:input label="Address Line 2" value="{!v.address2}" />
+
+                    <lightning:input aura:id="addressField" label="Suburb" value="{!v.suburb}" required="true" />
+
+                    <lightning:input aura:id="addressField" label="Post Code" value="{!v.postalCode}" required="true" />
+
+                    <lightning:input aura:id="fieldState" label="State" value="{!v.state}" required="true" onblur="{!c.handleBlurState}" />
+
+                    <lightning:combobox aura:id="addressField" label="Country" value="{!v.claim.TTI_Freight_Out_Delivery_Country__c}" required="true" options="{!v.countryOptions}" onchange="{!c.setPhoneNumberValidation}" />
+
+                    <lightning:input
+                        aura:id="mobile"
+                        type="tel"
+                        label="Contact Number"
+                        value="{!v.claim.SuppliedPhone}"
+                        pattern="{!v.regexPhoneFormat}"
+                        messageWhenPatternMismatch="{!v.errPhoneNumberNotMatch}"
+                        onblur="{!c.checkIfLocalPhoneNumber}"
+                        onchange="{!c.setPhoneNumberValidation}"
+                        maxlength="15"
+                    />
+                </aura:if>
+                <div class="slds-form-element">
+                    <lightning:button variant="brand" label="Previous" title="Previous" onclick="{!c.previous}" />
+                    <lightning:button variant="brand" label="Submit" title="Submit" onclick="{!c.submit}" />
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </aura:if>
+</aura:component>

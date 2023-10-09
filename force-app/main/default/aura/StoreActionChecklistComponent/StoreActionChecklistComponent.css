@@ -1,0 +1,21 @@
+.THIS .sWrap {
+    max-height: 82vh;
+    width: auto;
+}
+
+.THIS .modal__container {
+    height: 100%;
+}
+.THIS .totalTime {
+    font-size: large;
+    font-weight: 600;
+    margin-left: 7%;
+    margin-bottom: 3%;
+}
+
+.THIS .div--box-color {
+    background-color: rgb(243, 243, 243);
+    border-radius: 5px;
+    border-style: solid rgb(201, 201, 201);
+    border-width: 2px;
+}

@@ -1,0 +1,383 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" 
+    access="global" controller="MlRedemptionFormController">
+    
+    <!-- String attributes -->
+    <aura:attribute type="String" name="country" required="true" default="AU"/>
+    <aura:attribute type="String" name="fileSource" default="" />
+    <aura:attribute type="String" name="PageName" default="MILRedemptionForm" />
+    <aura:attribute type="String" name="redeemNowBtn" default="REDEEM NOW"/>
+    <aura:attribute type="String" name="selectedPromoJSON" />
+    <aura:attribute type="String" name="storeName" />
+    <aura:attribute type="String" name="storeSuburb" />
+    <aura:attribute type="String" name="countryLongName" />
+    <aura:attribute type="String" name="purchasedProductName" default="" />
+    <aura:attribute type="String" name="confirmationHeaderMsg" />
+
+    <!-- Texts -->
+    <aura:attribute type="String" name="additionalInfoDelivery" required="true" default="" />
+
+    <!-- Boolean attributes -->
+    <aura:attribute type="Boolean" name="isAddressNotFound" default="false"/>
+    <aura:attribute type="Boolean" name="hasFile" default="false" />
+    <!-- ADDED BY: KB - INC0042223 - 08/15/23 -->
+    <aura:attribute type="Boolean" name="fileUploadErrorMsg" default="false" />
+    <aura:attribute type="Boolean" name="isProcessing" default="false" />
+    <aura:attribute type="Boolean" name="isSubmitted" default="false" />
+    <aura:attribute type="Boolean" name="isTNCchecked" default="false" />
+    <aura:attribute type="Boolean" name="isInferStreet" default="true" />
+    <aura:attribute type="Boolean" name="isCmpInitiated" default="false" />
+    <aura:attribute type="Boolean" name="isPayloadReady" default="false" />
+    <aura:attribute type="Boolean" name="isMultipleRedemption" default="false" />
+    <aura:attribute type="Boolean" name="showConfirmModal" default="false" />
+    <aura:attribute type="Boolean" name="hasRequiredRedeemedProduct" default="false" />
+
+    <!--Collection attributes-->
+    <aura:attribute type="List" name="purchasedProducts" />
+    <aura:attribute type="List" name="redeemableProducts" />
+    <aura:attribute type="List" name="acceptedFileType" default="['.pdf', '.png', '.jpg', '.jpeg']" />
+    <aura:attribute type="Map" name="contactInfo" />
+    <aura:attribute type="String[]" name="redeemOptions" default="[]" />
+    <aura:attribute type="String[]" name="requiredProductsRedemption" default="[]" />
+    <aura:attribute type="Map" name="selectedPromo" />
+    <aura:attribute type="Object" name="contentDocument" />
+    <aura:attribute type="String" name="contentDocumentId" />
+
+    <!-- Object attributes -->
+    <aura:attribute type="Object" name="selectedItem" />
+
+    <!-- Event handlers -->
+    <aura:registerEvent name="tableRefreshEvent" type="c:MILTableRefreshEvent" />
+    <aura:registerEvent name="toggleSpinner" type="c:MILToggleSpinner" />
+    <aura:handler event="c:MILNavigateEvent" action="{!c.handleNavigate}" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <!-- Notification library -->
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+
+    <div aura:id="createRedemptionDiv" class="slds-hide slds-grid slds-wrap slds-p-top_x-small">
+        <c:MLProgressBar page="MILRedemptionForm" />
+
+        <div class="slds-col slds-size_1-of-1 slds-grid slds-gutters_direct slds-wrap div--margin-0px">
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3 slds-grid slds-grid_vertical div--padding-left-0px">
+                <div class="redemptionFormTile slds-col slds-p-around_medium">
+                    <h2 class="formHeader slds-tile__title slds-size_1-of-1 slds-p-horizontal_small">YOU'VE SELECTED</h2>
+                    <div class="headerContent slds-size_1-of-1 slds-p-horizontal_small">
+                        <p>Simply BUY a {!v.purchasedProductName}</p>
+                        <p>Products must be purchased in the promotional period <lightning:formattedDateTime value="{!v.selectedPromo.Valid_From__c}" timeZone="UTC"/> to <lightning:formattedDateTime value="{!v.selectedPromo.Valid_To__c}" timeZone="UTC"/>
+                            from an approved Milwaukee dealer. All redemption offers must be received by close of business <lightning:formattedDateTime value="{!v.selectedPromo.Redeemed_By__c}" timeZone="UTC"/>.
+                            Only one redemption per transaction. Cannot be used in conjunction with any other offer.</p>
+                    </div>
+                </div>
+                <div class="productImageTile productDetails slds-col div--margin-left-0px">
+                    <div class="slds-size_1-of-1">
+                        <center>
+                            <img class="productImage" src="{!v.selectedPromo.Redemption_Image_URL__c}" />
+                            <h2 class="productHeader">REDEEM</h2>
+                            <span class="productName slds-small-size_1-of-1">{!v.selectedPromo.Redeemed_Item__r.Customer_Facing_Name__c}</span>
+                        </center>
+                    </div>
+                </div>
+            </div> 
+            
+            <div class="redemptionFormTile slds-col slds-size_1-of-1 slds-large-size_2-of-3 slds-grid slds-wrap slds-p-around_medium" >
+                <div class="slds-form div--width-100pct form-header-container">
+                    <h2 class="formHeader slds-p-horizontal_small">Complete your Redemption Form</h2>
+                    <div class="slds-size_1-of-1 slds-p-top_medium slds-p-horizontal_small">
+                        <p class="additionalInfo" >Redemption offer available in {!v.countryLongName} only from purchases made at authorised Milwaukee dealers</p>
+                        <abbr class="slds-required" title="required">*</abbr> Indicates required field
+                    </div>
+                    
+                    <div class="slds-grid slds-wrap slds-wrap slds-p-top_medium">
+                        <div class="slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-1 slds-p-horizontal_small">
+                            <article class="slds-tile slds-hint-parent">
+                                <div class="slds-tile__detail slds-p-stacked_small">                                    
+                                    <dl aura:id="conEditDetails" class="slds-list_stacked slds-wrap">
+                                        <div class="slds-grid">
+                                            <div class="slds-col">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate slds-p-top_xx slds-p-right_small" title="First Name"><abbr class="slds-required" title="required">*</abbr>First Name</dt>
+                                                <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small slds-p-right_small" title="{!v.contactInfo.FirstName}">
+                                                    <lightning:input aura:id="requiredField" variant="label-hidden" value="{!v.contactInfo.FirstName}" required="true"/>
+                                                </dd>
+                                            </div>
+                                            <div class="slds-col">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate slds-p-top_xx" title="Last Name"><abbr class="slds-required" title="required">*</abbr>Last Name</dt>
+                                                <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="{!v.contactInfo.LastName}">
+                                                    <lightning:input aura:id="requiredField" variant="label-hidden" value="{!v.contactInfo.LastName}" required="true"/>
+                                                </dd>
+                                            </div>
+                                        </div>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Mobile">Company Name</dt>
+                                        <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="">
+                                            <lightning:input aura:id="requiredField" type="tel" variant="label-hidden" value="" />
+                                        </dd>
+                                    </dl>
+                                    <dl class="slds-list_stacked slds-wrap">
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Complete Address"><abbr class="slds-required" title="required">*</abbr> Address</dt>
+                                        <dd class="slds-item_detail slds-p-top_xxx-small slds-grid slds-wrap" title="Complete Address">
+                                            <div class="slds-large-size_3-of-4 slds-medium-size_1-of-1">
+                                                <div class="slds-form-element__control">
+                                                    <c:googleAddressAutocomplete 
+                                                        label=""
+                                                        variant="label-hidden"
+                                                        disabled="{!v.isAddressNotFound}"
+                                                        onselect="{!c.handleAddressSelect}"
+                                                        filteredByCountries="{!v.country}"
+                                                        inferStreetNumber="{!v.isInferStreet}">
+                                                    </c:googleAddressAutocomplete>
+                                                    <div class="slds-text-body_small div--color-FFC300">(Please note we cannot deliver to a PO box. 
+                                                        This delivery will require a signature so please address to a location occupied during business hours.)
+                                                    </div>
+                                                </div>        
+                                            </div>
+                                            <div class="slds-large-size_1-of-4 slds-medium-size_1-of-1">
+                                                <dl class="slds-list_inline">
+                                                    <dt class="slds-item_label slds-truncate slds-p-top_xx-small slds-p-left_x-small" title="">
+                                                        <lightning:input type="checkbox" 
+                                                                         label="Address not found"
+                                                                         checked="{!v.isAddressNotFound}"
+                                                                         onchange="{!c.reRenderAddressFields}" />
+                                                    </dt>
+                                                </dl> 
+                                            </div>
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Address"><abbr class="slds-required" title="Street">*</abbr> Street</dt>
+                                        <dd class="slds-item_detail slds-truncate" title="{!v.contactInfo.MailingStreet}">
+                                            <lightning:input aura:id="address" 
+                                                             variant="label-hidden" 
+                                                             value="{!v.contactInfo.MailingStreet}" 
+                                                             disabled="{!!v.isAddressNotFound}" 
+                                                             required="true" 
+                                                             messageWhenValueMissing="Please enter a Street"/>
+                                        </dd>
+                                        <div class="slds-grid">
+                                            <div class="slds-col">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate slds-p-right_small" title="Suburb"><abbr class="slds-required" title="required">*</abbr> Suburb</dt>
+                                                <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small slds-p-right_small" title="{!v.contactInfo.MailingCity}">
+                                                    <lightning:input aura:id="address" 
+                                                                     variant="label-hidden" 
+                                                                     value="{!v.contactInfo.MailingCity}" 
+                                                                     disabled="{!!v.isAddressNotFound}" 
+                                                                     required="true" 
+                                                                     messageWhenValueMissing="Please enter a Suburb"/>
+                                                </dd>
+                                            </div>
+                                            <div class="slds-col">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate" title="State"><abbr class="slds-required" title="required">*</abbr> State</dt>
+                                                <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="{!v.contactInfo.MailingState}">
+                                                    <lightning:input aura:id="address" 
+                                                                     variant="label-hidden" 
+                                                                     value="{!v.contactInfo.MailingState}" 
+                                                                     disabled="{!!v.isAddressNotFound}" 
+                                                                     required="true" 
+                                                                     messageWhenValueMissing="Please enter a State"/>
+                                                </dd>
+                                            </div>
+                                        </div>
+                                        <div class="slds-size_1-of-2">
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate slds-p-right_small" title="Postcode"><abbr class="slds-required" title="required">*</abbr> Postcode</dt>
+                                            <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small slds-p-right_small" title="{!v.contactInfo.MailingPostalCode}">
+                                                <lightning:input aura:id="address" 
+                                                                 variant="label-hidden" 
+                                                                 value="{!v.contactInfo.MailingPostalCode}" 
+                                                                 disabled="{!!v.isAddressNotFound}" 
+                                                                 required="true" 
+                                                                 maxlength="4" 
+                                                                 messageWhenValueMissing="Please enter a Postcode" 
+                                                                 pattern="[0-9]{4}" 
+                                                                 messageWhenPatternMismatch="Postcode should be numbers only" 
+                                                                 messageWhenTooLong="Postcode should be up to 4 digits only"/>
+                                            </dd>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-col">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate slds-p-right_small" title="Mobile">Mobile</dt>
+                                                <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small slds-p-right_small" title="{!v.contactInfo.MobilePhone}">
+                                                    <lightning:input name="inputMobile" type="tel" variant="label-hidden" value="{!v.contactInfo.MobilePhone}" />
+                                                </dd>
+                                            </div>
+                                            <div class="slds-col">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Phone">Phone</dt>
+                                                <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="{!v.contactInfo.MobilePhone}">
+                                                    <lightning:input name="inputPhone" type="tel" variant="label-hidden" value="{!v.contactInfo.MobilePhone}" />
+                                                </dd>
+                                            </div>
+                                        </div>
+                                        <div class="slds-size_1-of-2">
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Email">Email</dt>
+                                            <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="{!v.contactInfo.Email}">
+                                                <lightning:input name="inputEmail" type="email" value="{!v.contactInfo.Email}" variant="label-hidden" />
+                                            </dd>
+                                        </div>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="ProductPurchased">Product Purchased</dt>
+                                        <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="{!v.purchasedProductName}">
+                                            <lightning:input name="inputProductPurchased" value="{!v.purchasedProductName}" variant="label-hidden" disabled="true"/>
+                                        </dd>
+                                        <dt class="slds-item_label slds-text-color_weak slds-truncate" title="ReceiptNumber">Receipt Number</dt>
+                                        <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="">
+                                            <lightning:input name="inputReceiptNo" value="" variant="label-hidden"/>
+                                        </dd>
+                                        <div class="slds-grid">
+                                            <div class="slds-col">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate slds-p-right_small" title="Store"><abbr class="slds-required" title="required">*</abbr> Store</dt>
+                                                <dd class="slds-item_detail slds-truncate slds-p-right_small" title="">
+                                                    <lightning:input aura:id="requiredField" name="inputStore" value="{!v.storeName}" variant="label-hidden" required="true" />
+                                                </dd>
+                                            </div>
+                                            <div class="slds-col">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Suburb">Suburb</dt>
+                                                <dd class="slds-item_detail slds-truncate" title="">
+                                                    <lightning:input aura:id="field" name="inputRedemptionSuburb" value="{!v.storeSuburb}" variant="label-hidden"/>
+                                                </dd>
+                                            </div>
+                                        </div>
+
+                                        <aura:if isTrue="{!v.hasRequiredRedeemedProduct}">
+                                            <div>
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate" title="RedemptionProduct">Product/s included on this redemption:</dt>
+                                                <b><p class="requiredProducts" >
+                                                    <aura:iteration items="{!v.requiredProductsRedemption}" var="reqProd" >
+                                                        <option text="{!reqProd.label}" value="{!reqProd.id}" />
+                                                    </aura:iteration>
+                                                </p></b>
+                                            </div>
+
+                                            <dt class="slds-item_label slds-text-color_weak slds-truncate" title="RedemptionProduct">Please select one (1) additional product to complete your redemption: </dt>
+                                            <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="{!v.selectedPromo.Redeemed_Item__r.Customer_Facing_Name__c}">
+                                                <aura:if isTrue="{!v.isMultipleRedemption}">
+                                                    <lightning:select variant="label-hidden" onchange="{!c.onSelectRedeemOption}" >
+                                                        <aura:iteration items="{!v.redeemOptions}" var="option" >
+                                                            <option text="{!option.label}" value="{!option.id}" selected="{!option.selected}" />
+                                                        </aura:iteration>
+                                                    </lightning:select>
+
+                                                    <aura:set attribute="else">
+                                                        <lightning:input name="inputRedemptionProduct" value="{!v.selectedPromo.Redeemed_Item__r.Customer_Facing_Name__c}" variant="label-hidden" disabled="true"/>
+                                                    </aura:set>
+                                                </aura:if>
+                                            </dd>
+
+                                            <aura:set attribute="else">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate" title="RedemptionProduct">Redeemed Product</dt>
+                                                <dd class="slds-item_detail slds-truncate slds-p-top_xxx-small" title="{!v.selectedPromo.Redeemed_Item__r.Customer_Facing_Name__c}">
+                                                    <aura:if isTrue="{!v.isMultipleRedemption}">
+                                                        <lightning:select variant="label-hidden" onchange="{!c.onSelectRedeemOption}" >
+                                                            <aura:iteration items="{!v.redeemOptions}" var="option" >
+                                                                <option text="{!option.label}" value="{!option.id}" selected="{!option.selected}" />
+                                                            </aura:iteration>
+                                                        </lightning:select>
+
+                                                        <aura:set attribute="else">
+                                                            <lightning:input name="inputRedemptionProduct" value="{!v.selectedPromo.Redeemed_Item__r.Customer_Facing_Name__c}" variant="label-hidden" disabled="true"/>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </dd>
+                                            </aura:set>
+
+                                        </aura:if>
+
+                                        <div class="slds-m-bottom--small slds-m-top--medium">
+                                            <div class="slds-grid slds-wrap">
+                                                <div class="slds-size--1-of-1">
+                                                    <!-- ADDED BY: KB - INC0042223 - 08/15/23 -->  
+                                                    <label class="font_color">* </label>&nbsp;<label class="outputlabel" for="location"> Scan/Photograph and upload your receipt </label>
+                                                    <div class="container">
+                                                        <lightning:fileUpload label=""
+                                                                aura:id="fileName"
+                                                                name="fileUploader"
+                                                                multiple="false"
+                                                                accept="{!v.acceptedFileType}"
+                                                                recordId="{!v.contactInfo.Id}"
+                                                                onuploadfinished="{!c.fileUpload}" />
+                                                    </div>
+                                                </div>
+                                                <!-- ADDED BY: KB - INC0042223 - 08/15/23 -->  
+                                                <div class="slds-size--1-of-1 slds-p-top_medium">
+                                                    <aura:if isTrue="{!v.fileUploadErrorMsg}">
+                                                        <p class="font_color">Please upload your receipt.</p>
+                                                    </aura:if>
+                                                </div>                                              
+                                                <div class="slds-size--1-of-1 slds-p-top_medium">
+                                                    <aura:if isTrue="{!v.hasFile}">
+                                                        <lightning:fileCard fileId="{!v.contentDocumentId}" hideDescription="true"/>
+                                                    </aura:if>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </dl>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                    
+                    <div aura:id="termsAndCondition" class="slds-size_1-of-1 slds-p-horizontal_small">
+                        <div class="tnc-container">
+                            <lightning:input aura:id="tncCheckbox"
+                                             type="checkbox"
+                                             class="checkbox--margin-top-bottom"
+                                             label="Terms and Condition" 
+                                             checked="{!v.isTNCchecked}"
+                                             variant="label-hidden" />
+                            <span class="slds-form-element__label">
+                                I agree and understand the <a href="{!$Label.c.MILTermsAndConditions}" target="_blank">terms &amp; conditions.</a>
+                            </span>
+                        </div>
+                        <aura:if isTrue="{!and(!v.isTNCchecked, v.isSubmitted)}">
+                            <span class="slds-form-element__help span--margin-bottom-1em">You should agree to the terms and conditions</span>
+                        </aura:if>
+                    </div>
+                    <div class="slds-size_1-of-1 slds-p-horizontal_small div--margin-top-1em">
+                        <button name="createRedemptionBtn" 
+                                class="btn btn-lg btn-primary btn-icon-right content__cta-btn"
+                                disabled="{!v.isProcessing}"
+                                onclick="{!c.validateDetails}">
+                            {!v.redeemNowBtn} &nbsp;
+                            <img src="{!$Resource.ml_community_assets + '/MILChevronRight.svg'}"
+                                class="chevron_right"/>
+                        </button>
+                    </div>
+                    <div class="additionalInfo slds-size_1-of-1 slds-p-vertical_x-large slds-p-horizontal_small">
+                        <p>If you are entitled to a free Milwaukee product, please complete the 'Redemption Form' 
+                            and submit this with a copy of your purchase receipt of the Milwaukee product related.
+                            If you have any queries on these offers, please Contact Us.</p>
+                        <p>{!v.additionalInfoDelivery}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <aura:if isTrue="{!v.showConfirmModal}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header slds-theme--shade div--bg-color-brand">
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate h2--font-color">
+                        Confirmation
+                    </h2>
+                </header>
+
+                <aura:if isTrue="{!v.hasRequiredRedeemedProduct}">
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <aura:unescapedHtml value="{!format($Label.c.MlConfirmationMessage, v.selectedItem.label)}"/> <br></br><br></br>
+                        You will also automatically receive the following bonus item:
+                        <b>
+                        <aura:iteration items="{!v.requiredProductsRedemption}" var="reqProd" >
+                            <option text="{!reqProd.label}" value="{!reqProd.id}" />
+                        </aura:iteration>
+                        </b>
+                    </div>
+                    <aura:set attribute="else">
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <aura:unescapedHtml value="{!format($Label.c.MlConfirmationMessage, v.selectedItem.label)}"/> 
+                        </div>
+                    </aura:set>
+                </aura:if>
+
+                <footer class="slds-modal__footer slds-theme--default slds-float_right">
+                    <lightning:button class="submitBtn" variant="brand" label="No" onclick="{!c.hideModal}"/>
+                    <lightning:button class="submitBtn" variant="brand" label="Yes" onclick="{!c.saveDetails}"/>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+</aura:component>
