@@ -3,6 +3,8 @@
     <fullName>All</fullName>
     <columns>NAME</columns>
     <columns>Content_Provider_Code__c</columns>
+    <columns>Product_Description__c</columns>
+    <columns>Parent_Brand_Name__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>

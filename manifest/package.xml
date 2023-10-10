@@ -3,6 +3,7 @@
 	<types>
 		<members>BlackhawkApi</members>
 		<members>BlackhawkClientProgramWrapper</members>
+		<members>MembershipLoyaltyContoller</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
@@ -93,6 +94,11 @@
 		<name>CustomTab</name>
 	</types>
 	<types>
+		<members>Member_Benefit_Program_Record_Page</members>
+		<members>Member_Benefit_Record_Page</members>
+		<name>FlexiPage</name>
+	</types>
+	<types>
 		<members>Blackhawk_Card_Product__c-Blackhawk Card Product Layout</members>
 		<members>Eligible_Customer__c-Eligible Customer Layout</members>
 		<members>Eligible_Product_Line_Item__c-Eligible Product Line Item Layout</members>
@@ -110,6 +116,11 @@
 	<types>
 		<members>BlackhawkAPI</members>
 		<name>NamedCredential</name>
+	</types>
+	<types>
+		<members>Member_Benefit_Program__c.Update_Member_Benefit_Program</members>
+		<members>New_Member_Benefit_Program</members>
+		<name>QuickAction</name>
 	</types>
 	<version>58.0</version>
 </Package>
