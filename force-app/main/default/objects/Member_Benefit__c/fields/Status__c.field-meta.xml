@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <externalId>false</externalId>
+    <label>Status</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Submitted</fullName>
+                <default>false</default>
+                <label>Submitted</label>
+            </value>
+            <value>
+                <fullName>Further Information Required</fullName>
+                <default>false</default>
+                <label>Further Information Required</label>
+            </value>
+            <value>
+                <fullName>Approved - Awaiting Activation</fullName>
+                <default>false</default>
+                <label>Approved - Awaiting Activation</label>
+            </value>
+            <value>
+                <fullName>Approved - Activated</fullName>
+                <default>false</default>
+                <label>Approved - Activated</label>
+            </value>
+            <value>
+                <fullName>Approved - Gift Card Platform Success</fullName>
+                <default>false</default>
+                <label>Approved - Gift Card Platform Success</label>
+            </value>
+            <value>
+                <fullName>Approved - Gift Card Platform Error</fullName>
+                <default>false</default>
+                <label>Approved - Gift Card Platform Error</label>
+            </value>
+            <value>
+                <fullName>Approved - Gift Card Issued</fullName>
+                <default>false</default>
+                <label>Approved - Gift Card Issued</label>
+            </value>
+            <value>
+                <fullName>Rejected</fullName>
+                <default>false</default>
+                <label>Rejected</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Registered_Products__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <externalId>false</externalId>
+    <label>Registered Products</label>
+    <referenceTo>Eligible_Products__c</referenceTo>
+    <relationshipLabel>Member Benefits (Registered Products)</relationshipLabel>
+    <relationshipName>Member_Benefits1</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>
