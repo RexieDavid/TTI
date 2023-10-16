@@ -35,8 +35,16 @@
                 <behavior>Edit</behavior>
                 <field>Gift_Card_Validity_Days__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Blackhawk_Catalog_Lookup__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Active__c</field>
+            </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Start_Date__c</field>
@@ -59,7 +67,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Blackhawk_Catalog__c</field>
+                <field>Terms_and_Conditions__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>

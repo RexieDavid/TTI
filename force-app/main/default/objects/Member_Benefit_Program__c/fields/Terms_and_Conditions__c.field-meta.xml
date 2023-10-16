@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Member_Benefit_Eligibility_Flag__c</fullName>
-    <defaultValue>false</defaultValue>
+    <fullName>Terms_and_Conditions__c</fullName>
     <externalId>false</externalId>
-    <label>Member Benefit Eligibility Flag</label>
+    <label>Terms and Conditions</label>
+    <required>false</required>
     <trackTrending>false</trackTrending>
-    <type>Checkbox</type>
+    <type>Url</type>
 </CustomField>

@@ -7,7 +7,6 @@
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
-        <restricted>true</restricted>
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
@@ -29,21 +28,6 @@
                 <fullName>Approved - Activated</fullName>
                 <default>false</default>
                 <label>Approved - Activated</label>
-            </value>
-            <value>
-                <fullName>Approved - Gift Card Platform Success</fullName>
-                <default>false</default>
-                <label>Approved - Gift Card Platform Success</label>
-            </value>
-            <value>
-                <fullName>Approved - Gift Card Platform Error</fullName>
-                <default>false</default>
-                <label>Approved - Gift Card Platform Error</label>
-            </value>
-            <value>
-                <fullName>Approved - Gift Card Issued</fullName>
-                <default>false</default>
-                <label>Approved - Gift Card Issued</label>
             </value>
             <value>
                 <fullName>Rejected</fullName>

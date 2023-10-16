@@ -1,0 +1,2 @@
+Member_Benefit__c memberBenefitRecord = [SELECT Id, Name, Member_Benefit_Program__c, Member_Benefit_Program__r.Gift_Card_Value__c, Member_Benefit_Program__r.Blackhawk_Catalog_Lookup__r.Content_Provider_Code__c FROM Member_Benefit__c WHERE Id = 'a7hAD0000000mELYAY'];
+BlackhawkAPIService.submitRealTimeEgiftBulk(memberBenefitRecord);
