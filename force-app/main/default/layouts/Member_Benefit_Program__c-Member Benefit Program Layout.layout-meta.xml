@@ -39,6 +39,10 @@
                 <behavior>Edit</behavior>
                 <field>Blackhawk_Catalog_Lookup__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Maximum_Gift_Card_Per_Customer__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

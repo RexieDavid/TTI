@@ -1,17 +1,23 @@
 //Kylie Tumulak Assets
 Set<String> assetIds = new Set<String>();
-assetIds.add('02iAD0000017ZwXYAU');
-assetIds.add('02iAD0000017aCfYAI');
-assetIds.add('02iAD0000017aMLYAY');
-assetIds.add('02iAD0000017aHVYAY');
-assetIds.add('02iAD0000018eAzYAI'); //Rex David
+assetIds.add('02iAD000001DLFlYAO');
+assetIds.add('02iAD000001DLFmYAO');
+assetIds.add('02iAD000001DLFnYAO');
+//assetIds.add('02iAD000001ClLxYAK');
+// assetIds.add('02iAD0000017aMLYAY');
+// assetIds.add('02iAD0000017aHVYAY');
+// assetIds.add('02iAD0000018eAzYAI'); //Rex David
 MembershipLoyaltyController.GenerateMemberBenefitWrapper test = MembershipLoyaltyController.generateMemberBenefits(assetIds);
-System.debug('memberBenefitList size >>> '+test.memberBenefitList.size());
-System.debug('assetList size >>> '+test.assetList.size());
-insert(test.memberBenefitList);
-update(test.assetList);
+System.debug('test >>> '+test);
+if(test!=NULL){
+    System.debug('memberBenefitList size >>> '+test.memberBenefitList);
+    System.debug('assetList size >>> '+test.assetList);
+    if(test.memberBenefitList != NULL)insert(test.memberBenefitList);
+    if(test.assetList != NULL)update(test.assetList);    
+}
 
-Database.executeBatch(new BlackhawkAPIBatch(test.memberBenefitList),10);
+
+// Database.executeBatch(new BlackhawkAPIBatch([SELECT ID, Status__c FROM Member_Benefit__c WHERE ID = 'a7hAD0000000o3FYAQ']),10);
 
 /*Member_Benefit__c member = [SELECT ID, Status__c FROM Member_Benefit__c WHERE ID = 'a7hAD0000000mJBYAY'];
 member.Status__c = 'Approved - Activated';

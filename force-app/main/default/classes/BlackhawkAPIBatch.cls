@@ -10,6 +10,9 @@ global class BlackhawkAPIBatch implements database.Batchable<sObject>,Database.A
     public String integAction = '';
     public static final String APPROVEDGIFTCARDSUCCESS = 'Approved - Gift Card Platform Success';
     public static final String APPROVEDGIFTCARDERROR = 'Approved - Gift Card Platform Error';
+    public static final String CURRENTLYUNAVAILABLE = 'The service is not currently available';
+    public static final String ORDERISCANCELLED = 'Order is cancelled due to failure to meet SLA for this SYNCHRONOUS_ONLY order';
+    public static final String REQUESTCANNOTBEPROCESSED = 'Request cannot be processed at this time';
     public static final String SUCCESSCODE = '201';
  
     global BlackhawkAPIBatch(String integAction, List<Member_Benefit__c> memberBenefitList) {
@@ -40,6 +43,11 @@ global class BlackhawkAPIBatch implements database.Batchable<sObject>,Database.A
                     // if(giftCardWrap.hasError == FALSE){
                     memberBenefit = membershipControllerElevContext.updateMemberBenefitFields(memberBenefit,  BlackhawkAPIService.submitRealTimeEgiftBulk(memberBenefit));
                     System.debug('memberBenefit >>> '+memberBenefit);
+                    if(memberBenefit.Status__c == APPROVEDGIFTCARDERROR && (memberBenefit.Gift_Card_Provider_Error_Message__c.containsIgnoreCase(CURRENTLYUNAVAILABLE) 
+                    || memberBenefit.Gift_Card_Provider_Error_Message__c.containsIgnoreCase(ORDERISCANCELLED)
+                    || memberBenefit.Gift_Card_Provider_Error_Message__c.containsIgnoreCase(REQUESTCANNOTBEPROCESSED))){
+                        memberBenefit = membershipControllerElevContext.updateMemberBenefitFields(memberBenefit,  BlackhawkAPIService.submitRealTimeEgiftBulk(memberBenefit));
+                    }
                     memberBenefitToUpdateList.add(memberBenefit);
                     // }
                 }

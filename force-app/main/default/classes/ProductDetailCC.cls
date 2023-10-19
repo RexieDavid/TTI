@@ -112,7 +112,9 @@ public class ProductDetailCC {
                 result.totalWarrantyYears = assets[0].Total_Warranty_Years__c != null ? assets[0].Total_Warranty_Years__c.intValue() : 0;        
                 result.accId = assets[0].AccountId;
                 result.assetId = assets[0].Id;
-                //RDAVID 10/16/2023 SD-2386 Membership Loyalty Program - Blackhawk Integration
+            }
+            //RDAVID 10/16/2023 SD-2386 Membership Loyalty Program - Blackhawk Integration
+            if(assets.size() > 0){
                 Set<String> assetIds = new Set<String>();
                 for(Asset assetRec : assets){
                     assetIds.add(assetRec.Id);
@@ -124,9 +126,9 @@ public class ProductDetailCC {
                         MembershipLoyaltyController.WithoutShare elevatedContext = new MembershipLoyaltyController.WithoutShare();
                         elevatedContext.insertMemberBenefits(generateMemberBenefitRecords.memberBenefitList, generateMemberBenefitRecords.assetList);
                     }
-                }
+                }    
             }
-
+        
             result.assets.addAll(assets);
             result.brand = TTIUtilClass.getBrandCurrentUser();
             

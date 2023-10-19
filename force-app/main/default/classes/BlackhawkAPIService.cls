@@ -62,6 +62,7 @@ public class BlackhawkAPIService {
         httpRequestInstance.setMethod('GET');
         HttpResponse httpResponse = httpInstance.send(httpRequestInstance);  
         BlackhawkClientProgramWrapper bhcpWrapObj = BlackhawkClientProgramWrapper.parse(httpResponse.getBody());
+        System.debug('bhcpWrapObj >>> '+JSON.serializePretty(bhcpWrapObj));
         return httpResponse;
     }
 
@@ -87,7 +88,8 @@ public class BlackhawkAPIService {
     }
 
     public static BlackhawkEGiftRequestWInputWrapper getBlackhawkEGiftRequestWInputWrapper(Member_Benefit__c memberBenefitRecord){
-        return new BlackhawkEGiftRequestWInputWrapper(memberBenefitRecord.Id, memberBenefitRecord.Name, memberBenefitRecord.Member_Benefit_Program__r.Gift_Card_Value__c, memberBenefitRecord.Member_Benefit_Program__r.Blackhawk_Catalog_Lookup__r.Content_Provider_Code__c); 
+        String counter = (memberBenefitRecord.Gift_Card_Request_Counter__c != NULL) ? String.valueOf(memberBenefitRecord.Gift_Card_Request_Counter__c) : '0';
+        return new BlackhawkEGiftRequestWInputWrapper(memberBenefitRecord.Id+counter, memberBenefitRecord.Name+counter, memberBenefitRecord.Member_Benefit_Program__r.Gift_Card_Value__c, memberBenefitRecord.Member_Benefit_Program__r.Blackhawk_Catalog_Lookup__r.Content_Provider_Code__c); 
     }
 
     public List<Blackhawk_Card_Product__c> generateBlackhawkCardProducts (BlackhawkClientProgramWrapper blackhawkClientWrapObj){
@@ -212,9 +214,5 @@ public class BlackhawkAPIService {
                 FROM Blackhawk_API_Settings__c
                 WHERE Is_Active__c = TRUE];
     }
-
-    // private static TTI_Error_Log__c generateErrorLog(){
-
-    // }
 
 }

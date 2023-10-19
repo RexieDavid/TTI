@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Benefit_Activated__c</fullName>
-    <defaultValue>false</defaultValue>
+    <fullName>TTI_Message__c</fullName>
     <externalId>false</externalId>
-    <label>Benefit Activated</label>
+    <label>Message</label>
+    <length>131072</length>
     <trackTrending>false</trackTrending>
-    <type>Checkbox</type>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
 </CustomField>

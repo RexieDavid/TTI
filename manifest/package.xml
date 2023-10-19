@@ -76,7 +76,6 @@
 		<members>Member_Benefit_Program__c.Valid_From__c</members>
 		<members>Member_Benefit_Program__c.Valid_To__c</members>
 		<members>Member_Benefit__c.Address__c</members>
-		<members>Member_Benefit__c.Benefit_Activated__c</members>
 		<members>Member_Benefit__c.Brand__c</members>
 		<members>Member_Benefit__c.Case_Age__c</members>
 		<members>Member_Benefit__c.Customer_Name__c</members>
@@ -89,11 +88,16 @@
 		<members>Member_Benefit__c.Member_Benefit_Program__c</members>
 		<members>Member_Benefit__c.Member_Benefit_UUID__c</members>
 		<members>Member_Benefit__c.Mobile__c</members>
-		<members>Member_Benefit__c.Product_Model__c</members>
-		<members>Member_Benefit__c.Ready_for_MC__c</members>
 		<members>Member_Benefit__c.Registered_Products__c</members>
 		<members>Member_Benefit__c.Rejected_Reason__c</members>
 		<members>Member_Benefit__c.Status__c</members>
+		<members>Member_Benefit__c.Terms_and_Conditions__c</members>
+		<members>TTI_Error_Log__c.TTI_Cause__c</members>
+		<members>TTI_Error_Log__c.TTI_Input_Parameters__c</members>
+		<members>TTI_Error_Log__c.TTI_Line_Number__c</members>
+		<members>TTI_Error_Log__c.TTI_Message__c</members>
+		<members>TTI_Error_Log__c.TTI_Stack_Trace_String__c</members>
+		<members>TTI_Error_Log__c.TTI_Type_Name__c</members>
 		<name>CustomField</name>
 	</types>
 	<types>
@@ -104,6 +108,7 @@
 		<members>Eligible_Products__c</members>
 		<members>Member_Benefit_Program__c</members>
 		<members>Member_Benefit__c</members>
+		<members>TTI_Error_Log__c</members>
 		<name>CustomObject</name>
 	</types>
 	<types>
@@ -111,6 +116,7 @@
 		<members>Eligible_Customer__c</members>
 		<members>Member_Benefit_Program__c</members>
 		<members>Member_Benefit__c</members>
+		<members>TTI_Error_Log__c</members>
 		<name>CustomTab</name>
 	</types>
 	<types>
@@ -136,10 +142,6 @@
 	<types>
 		<members>BlackhawkAPI</members>
 		<name>NamedCredential</name>
-	</types>
-	<types>
-		<members>Member_Benefit</members>
-		<name>PathAssistant</name>
 	</types>
 	<types>
 		<members>Member_Benefit_Program__c.Update_Member_Benefit_Program</members>
