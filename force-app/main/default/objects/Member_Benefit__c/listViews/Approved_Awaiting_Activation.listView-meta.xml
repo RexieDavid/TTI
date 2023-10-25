@@ -12,5 +12,5 @@
         <operation>equals</operation>
         <value>Approved - Awaiting Activation</value>
     </filters>
-    <label>Approved - Awaiting Activation</label>
+    <label>Awaiting Activation</label>
 </ListView>

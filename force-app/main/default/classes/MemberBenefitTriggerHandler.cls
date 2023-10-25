@@ -42,7 +42,7 @@ public class MemberBenefitTriggerHandler {
 
         try{
             List<Member_Benefit__c> validMemberBenefitRecords = getValidMemberBenefitRecords(newMemberBenefitList,oldMemberBenefitMap);
-            if(validMemberBenefitRecords.size() > 0) Database.executeBatch(new BlackhawkAPIBatch(validMemberBenefitRecords),30);
+            if(validMemberBenefitRecords.size() > 0) Database.executeBatch(new BlackhawkAPIBatch('submit',validMemberBenefitRecords),10);
         }
         catch(Exception e){
             System.debug('Error in MemberBenefitTriggerHandler >>> processBlackhawkIntegration >>> ' +' Line Number: '+e.getLineNumber() + ' - ' +e.getMessage());

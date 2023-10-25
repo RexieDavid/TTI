@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Direct_Activation</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+    OR(
+        ISPICKVAL(PRIORVALUE(Status__c),&apos;Submitted&apos;),
+        ISPICKVAL(PRIORVALUE(Status__c),&apos;Further Information Required&apos;)
+    ),
+    ISPICKVAL(Status__c ,&apos;Approved - Activated&apos;)
+)</errorConditionFormula>
+    <errorDisplayField>Status__c</errorDisplayField>
+    <errorMessage>Please select Approved - Awaiting Activation.</errorMessage>
+</ValidationRule>

@@ -6,29 +6,34 @@
 public class BlackhawkAPIService {
 
     public static final String SUCCESSCODE = '201';
+    public static final String RETRYSTATUSCODE = 'Status Code: 5';
 
     public class BlackhawkApiServiceException extends Exception {} 
     
     public static RealTimeEgiftBulkResponseWrapper submitRealTimeEgiftBulk(Member_Benefit__c memberBenefitRecord){
-        
-        RealTimeEgiftBulkResponseWrapper rtebrWrap;// = new RealTimeEgiftBulkResponseWrapper();
+
+        LogException logger = new LogException();
+        RealTimeEgiftBulkResponseWrapper rtebrWrap;
         try{
             HttpResponse responseInstance = getRealTimeEgiftBulk(getBlackhawkEGiftRequestWInputWrapper(memberBenefitRecord));
             String statusCode = String.valueOf(responseInstance.getStatusCode());
             if(statusCode == SUCCESSCODE){
-                System.debug('SUCCESSCODE >>> '+statusCode);
                 RealTimeEgiftBulkSuccessWrapper successWrap = new RealTimeEgiftBulkSuccessWrapper();
                 rtebrWrap = new RealTimeEgiftBulkResponseWrapper(false,statusCode,successWrap.parse(responseInstance.getBody()),null);
             }
             else if(statusCode.startsWith('4') || statusCode.startsWith('5')){
-                System.debug('responseInstance >>> '+responseInstance); 
-                System.debug('ERRORCODE >>> '+responseInstance.getStatusCode()); 
+                System.debug('memberBenefitRecord.Gift_Card_Request_Counter__c  >>> ' + memberBenefitRecord.Gift_Card_Request_Counter__c);
                 RealTimeEgiftBulkErrorWrapper errorWrap = new RealTimeEgiftBulkErrorWrapper();
                 rtebrWrap = new RealTimeEgiftBulkResponseWrapper(false,statusCode,null,errorWrap.parse(responseInstance.getBody()));
+                if(memberBenefitRecord.Gift_Card_Request_Counter__c == 0) throw new BlackhawkApiServiceException('Status Code: '+rtebrWrap.statusCode + ' - ' + JSON.serialize(rtebrWrap.errorWrap));
             }
         }
         catch(Exception e){
-            throw new BlackhawkApiServiceException('Error in BlackhawkAPIService. '+' Line Number: '+e.getLineNumber() + ' - ' +e.getMessage());
+            logger.Module('Integration')
+                    .ExceptionCause('ApiError')
+                    .SourceObject('Member_Benefit__c')
+                    .SourceRecord(memberBenefitRecord.Id)
+                    .log(e);
         }
         return rtebrWrap;
     }
@@ -45,7 +50,8 @@ public class BlackhawkAPIService {
         httpRequestInstance.setHeader('Requestid',String.valueOf(DateTime.now().millisecond()));
         httpRequestInstance.setMethod('GET');
         HttpResponse httpResponse = httpInstance.send(httpRequestInstance);  
-        System.debug(httpResponse.getBody());
+        System.debug('Status Code >>> '+ httpResponse.getStatusCode());
+        System.debug('Body >>> '+ httpResponse.getBody());
         return httpResponse;        
     }
 
@@ -61,8 +67,10 @@ public class BlackhawkAPIService {
         httpRequestInstance.setHeader('Requestid',String.valueOf(DateTime.now().millisecond())); 
         httpRequestInstance.setMethod('GET');
         HttpResponse httpResponse = httpInstance.send(httpRequestInstance);  
-        BlackhawkClientProgramWrapper bhcpWrapObj = BlackhawkClientProgramWrapper.parse(httpResponse.getBody());
-        System.debug('bhcpWrapObj >>> '+JSON.serializePretty(bhcpWrapObj));
+        System.debug('Status Code >>> '+ httpResponse.getStatusCode());
+        System.debug('Body >>> '+ httpResponse.getBody());
+        // BlackhawkClientProgramWrapper bhcpWrapObj = BlackhawkClientProgramWrapper.parse(httpResponse.getBody());
+        // System.debug('bhcpWrapObj >>> '+JSON.serializePretty(bhcpWrapObj));
         return httpResponse;
     }
 
@@ -82,8 +90,8 @@ public class BlackhawkAPIService {
         httpRequestInstance.setMethod('POST');
         httpRequestInstance.setBody(generateRequest(requestWrap,bhAPISetting));  
         HttpResponse httpResponse = httpInstance.send(httpRequestInstance); 
-        System.debug(httpResponse.getStatusCode());
-        System.debug(httpResponse.getBody());
+        System.debug('Status Code >>> '+ httpResponse.getStatusCode());
+        System.debug('Body >>> '+ httpResponse.getBody());
         return httpResponse; 
     }
 
@@ -92,7 +100,7 @@ public class BlackhawkAPIService {
         return new BlackhawkEGiftRequestWInputWrapper(memberBenefitRecord.Id+counter, memberBenefitRecord.Name+counter, memberBenefitRecord.Member_Benefit_Program__r.Gift_Card_Value__c, memberBenefitRecord.Member_Benefit_Program__r.Blackhawk_Catalog_Lookup__r.Content_Provider_Code__c); 
     }
 
-    public List<Blackhawk_Card_Product__c> generateBlackhawkCardProducts (BlackhawkClientProgramWrapper blackhawkClientWrapObj){
+    public static List<Blackhawk_Card_Product__c> generateBlackhawkCardProducts (BlackhawkClientProgramWrapper blackhawkClientWrapObj){
 
         List<Blackhawk_Card_Product__c> blackHawkCardProductListToInsert = new List<Blackhawk_Card_Product__c>();
 
@@ -207,10 +215,10 @@ public class BlackhawkAPIService {
 
     }
 
-    private static Blackhawk_API_Settings__c getActiveBlackhawkApiSetting (){
+    public static Blackhawk_API_Settings__c getActiveBlackhawkApiSetting (){
         return [SELECT  Id, Catalog_API_Endpoint__c, Client_Program_Id__c, Is_Active__c, Merchant_Id__c, 
                         Milliseconds_To_Wait__c, Monitoring_Status_Endpoint__c, Payment_Type__c, Real_time_eGift_Endpoint__c,
-                        Return_Card_Number_and_PIN__c, SYNCHRONOUS_ONLY__c, Client_Certificate_Name__c
+                        Return_Card_Number_and_PIN__c, SYNCHRONOUS_ONLY__c, Client_Certificate_Name__c, Maximum_Retry_Count__c
                 FROM Blackhawk_API_Settings__c
                 WHERE Is_Active__c = TRUE];
     }

@@ -142,6 +142,66 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
+                    <name>parentFieldApiName</name>
+                    <value>Member_Benefit__c.Id</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListApiName</name>
+                    <value>AttachedContentNotes</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListComponentOverride</name>
+                    <value>NONE</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>rowsToDisplay</name>
+                    <value>10</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>showActionBar</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListSingleContainer</componentName>
+                <identifier>force_relatedListSingleContainer</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-888f9b79-f51d-447c-8249-1bf563ba76c5</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>parentFieldApiName</name>
+                    <value>Member_Benefit__c.Id</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListApiName</name>
+                    <value>Histories</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>relatedListComponentOverride</name>
+                    <value>NONE</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>rowsToDisplay</name>
+                    <value>10</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>showActionBar</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListSingleContainer</componentName>
+                <identifier>force_relatedListSingleContainer2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-11870380-85e7-486a-ae05-defb2b11c4df</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
                     <name>active</name>
                     <value>true</value>
                 </componentInstanceProperties>
@@ -171,6 +231,34 @@
                 <identifier>flexipage_tab</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-888f9b79-f51d-447c-8249-1bf563ba76c5</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Notes</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>flexipage_tab2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-11870380-85e7-486a-ae05-defb2b11c4df</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Member Benefit History</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>flexipage_tab3</identifier>
+            </componentInstance>
+        </itemInstances>
         <mode>Replace</mode>
         <name>maintabs</name>
         <type>Facet</type>
@@ -191,6 +279,96 @@
         <type>Region</type>
     </flexiPageRegions>
     <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>align</name>
+                    <value>Center</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>applyCardBackground</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>autoLaunchFlow</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>buttonBackgroundColor</name>
+                    <value>#16325C</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>buttonHeight</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>buttonLabel</name>
+                    <value>Create Support Case</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>buttonTextColor</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>buttonTextSize</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>buttonWidth</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>closeButtonText</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fixedButtonWidthHeight</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>fixedModalWidthHeight</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>flowInputVariablesString</name>
+                    <value>[   {      &quot;name&quot; : &quot;recordId&quot;, &quot;type&quot; : &quot;String&quot;, &quot;value&quot;: &quot;_RECORDID_&quot;    }]</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>flowModalHeader</name>
+                    <value>Create Support Case</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>flowName</name>
+                    <value>Create_Case_from_Redemption</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>hideButton</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>hideFlowTransitionOverlay</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>hideModalCloseButton</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>modalHeight</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>modalWidth</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>redirectUrlOnFlowCompletion</name>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>refreshPageOnFlowCompletion</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>renderFooter</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentName>sf_flowmodal:ccp_launchFlowModal</componentName>
+                <identifier>sf_flowmodal_ccp_launchFlowModal</identifier>
+            </componentInstance>
+        </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>

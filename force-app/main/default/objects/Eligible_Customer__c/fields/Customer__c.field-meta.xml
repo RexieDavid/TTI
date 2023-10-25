@@ -4,7 +4,7 @@
     <externalId>false</externalId>
     <label>Customer</label>
     <referenceTo>Account</referenceTo>
-    <relationshipLabel>Eligible Customers</relationshipLabel>
+    <relationshipLabel>Eligible Campaigns</relationshipLabel>
     <relationshipName>Eligible_Customers</relationshipName>
     <relationshipOrder>0</relationshipOrder>
     <reparentableMasterDetail>false</reparentableMasterDetail>

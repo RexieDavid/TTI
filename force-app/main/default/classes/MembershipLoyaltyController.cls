@@ -156,6 +156,7 @@ public with sharing class MembershipLoyaltyController {
                             Member_Benefit__c memberBenefitToInsert = new Member_Benefit__c(Status__c = 'Submitted', Member_Benefit_UUID__c = getUUID()); 
                             String productCodes = '';
                             String registeredToolName = '';
+                            Date registeredToolPurchaseDate;
                             String currBrand = '';
                             for(Asset assetRecord : memberBenefitProgramWrap.customerAssetListMap.get(customerId)){
                                 if(contactWithProductCodesMap.containsKey(customerId)){
@@ -173,6 +174,7 @@ public with sharing class MembershipLoyaltyController {
                                             customerAssetCode.add(customerId+assetRecord.ProductCode);
                                             if(!productCodes.containsIgnoreCase(assetRecord.ProductCode)) productCodes += (productCodes != '') ? ';'+assetRecord.ProductCode : assetRecord.ProductCode;
                                             if(!registeredToolName.containsIgnoreCase(assetRecord.Product2.Name)) registeredToolName += (registeredToolName != '') ? ';'+assetRecord.Product2.Name : assetRecord.Product2.Name;
+                                            if(registeredToolPurchaseDate == NULL) registeredToolPurchaseDate = assetRecord.PurchaseDate;
                                             System.debug('CUSTOMER '+assetRecord.Account.Name + ' MATCH VIA PRODUCT CODE >>> '+ 'eligiblePli.Product_Model__c >>> '+elPli.Product_Model__c + ' assetRecord.ProductCode >>> '+assetRecord.ProductCode);
                                             memberBenefitProgramWrap.exactProductMatch = true;
                                             memberBenefitToInsert.Registered_Products__c = currEligibleProductId;
@@ -197,6 +199,7 @@ public with sharing class MembershipLoyaltyController {
                                             if(!productCodes.containsIgnoreCase(assetRecord.ProductCode) && !customerAssetCode.contains(customerId+assetRecord.ProductCode)){
                                                 productCodes += (productCodes != '') ? ';'+assetRecord.ProductCode : assetRecord.ProductCode;
                                                 if(!registeredToolName.containsIgnoreCase(assetRecord.Product2.Name)) registeredToolName += (registeredToolName != '') ? ';'+assetRecord.Product2.Name : assetRecord.Product2.Name;
+                                                if(registeredToolPurchaseDate == NULL) registeredToolPurchaseDate = assetRecord.PurchaseDate;
                                                 customerAssetCode.add(customerId+assetRecord.ProductCode);
                                                 System.debug('registeredToolName >>> '+registeredToolName);
                                                 System.debug('CUSTOMER '+assetRecord.Account.Name +' MATCH VIA PRODUCT HIERARCHY >>> '+ 'memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c >>> '+memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c + ' assetRecord.SAPProductHeirarchy__c >>> '+assetRecord.SAPProductHeirarchy__c);
@@ -229,6 +232,8 @@ public with sharing class MembershipLoyaltyController {
                                 memberBenefitToInsert.Brand__c = currBrand;
                                 memberBenefitToInsert.Customer_Name__c = customerId;
                                 memberBenefitToInsert.Registered_Tool_Name__c = registeredToolName;
+                                memberBenefitToInsert.Registered_Product_Code__c = productCodes;
+                                memberBenefitToInsert.Registered_Tool_Purchase_Date__c = registeredToolPurchaseDate;
                                 memberBenefitToInsertList.add(memberBenefitToInsert);
                             }   
                         }
@@ -272,22 +277,22 @@ public with sharing class MembershipLoyaltyController {
         return meetsDateRange;
     } 
 
-    private static Map<Id,Set<Id>> getMemberBenefitProgramExistingMemberMap(Map<Id,Member_Benefit_Program__c> memberBenefitMap){
-        Map<Id,Set<Id>> memberBenefitProgramExistingMember = new Map<Id,Set<Id>>();
-        for(Member_Benefit_Program__c mbp : memberBenefitMap.values()){
-            if(mbp.Member_Benefits__r != NULL && mbp.Member_Benefits__r.size() > 0){
-                for(Member_Benefit__c mb : mbp.Member_Benefits__r){
-                    if(memberBenefitProgramExistingMember.containsKey(mbp.Id)){
-                        memberBenefitProgramExistingMember.get(mbp.Id).add(mb.Customer_Name__c);
-                    }
-                    else{
-                        memberBenefitProgramExistingMember.put(mbp.Id, new Set<Id> {mb.Customer_Name__c});
-                    }
-                }
-            }
-        }
-        return memberBenefitProgramExistingMember;
-    }
+    // private static Map<Id,Set<Id>> getMemberBenefitProgramExistingMemberMap(Map<Id,Member_Benefit_Program__c> memberBenefitMap){
+    //     Map<Id,Set<Id>> memberBenefitProgramExistingMember = new Map<Id,Set<Id>>();
+    //     for(Member_Benefit_Program__c mbp : memberBenefitMap.values()){
+    //         if(mbp.Member_Benefits__r != NULL && mbp.Member_Benefits__r.size() > 0){
+    //             for(Member_Benefit__c mb : mbp.Member_Benefits__r){
+    //                 if(memberBenefitProgramExistingMember.containsKey(mbp.Id)){
+    //                     memberBenefitProgramExistingMember.get(mbp.Id).add(mb.Customer_Name__c);
+    //                 }
+    //                 else{
+    //                     memberBenefitProgramExistingMember.put(mbp.Id, new Set<Id> {mb.Customer_Name__c});
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return memberBenefitProgramExistingMember;
+    // }
 
     public class memberBenefitProgramWrapper {
         public Member_Benefit_Program__c memberBenefitProgramRec {get; set;}
@@ -438,22 +443,19 @@ public with sharing class MembershipLoyaltyController {
                     memberBenefit.Status__c = APPROVEDGIFTCARDSUCCESS;
                     memberBenefit.Gift_Card_Provider_Order_Number__c = giftCardWrap.successWrap.orderNumber;
                     memberBenefit.Gift_Card_Provider_Transaction_Id__c = giftCardWrap.successWrap.transactionId;
+                    memberBenefit.Gift_Card_Provider_Error_Message__c = '';
                 }
             }
             else {
                 if(giftCardWrap.statusCode.startsWith('4') || giftCardWrap.statusCode.startsWith('5')){
                     memberBenefit.Status__c = APPROVEDGIFTCARDERROR;
-                    memberBenefit.Gift_Card_Provider_Error_Message__c = '';
+                    memberBenefit.Gift_Card_Provider_Error_Message__c = 'Status Code: '+giftCardWrap.statusCode + '\n';
                     if(giftCardWrap.errorWrap.errors.size() > 0){
                         for(BlackhawkAPIService.Errors errorLog : giftCardWrap.errorWrap.errors){
                             memberBenefit.Gift_Card_Provider_Error_Message__c += ('Error Code: '+errorLog.errorCode + '\n' + 'Message: '+errorLog.message + '\n\n');
                         }
                     }
                 }
-                // else{
-                //     memberBenefit.Status__c = APPROVEDGIFTCARDERROR;
-                //     memberBenefit.Gift_Card_Provider_Error_Message__c = JSON.serialize(giftCardWrap.errorWrap);
-                // }
             }
     
             return memberBenefit;
@@ -467,6 +469,34 @@ public with sharing class MembershipLoyaltyController {
             catch(Exception e){
                 System.debug('MembershipLoyaltyController >>> insertMemberBenefits >>> ' + e.getLineNumber() + ' - ' +e.getMessage());  
             }
+        }
+
+        public List<Member_Benefit__c> getMemberBenefitToResubmit(){
+
+            List<TTI_Error_Log__c> ttiErrorLog = [  SELECT Id, Name, Class_Name__c, Method_Name__c, Source_Object__c, Source_Record_Id__c, TTI_Line_Number__c, TTI_Message__c, TTI_Stack_Trace_String__c, TTI_Type_Name__c
+                                                    FROM TTI_Error_Log__c 
+                                                    WHERE Source_Object__c = 'Member_Benefit__c' 
+                                                    AND Module_Name__c = 'Integration' 
+                                                    AND Class_Name__c = 'BlackhawkAPIService' 
+                                                    AND Method_Name__c = 'submitRealTimeEgiftBulk'
+                                                    AND CreatedDate >= LAST_N_DAYS:2];
+
+            Set<Id> memberBenefitIds = new Set<Id>();
+            List<Member_Benefit__c> memberBenefitList = new List<Member_Benefit__c>();
+            Blackhawk_API_Settings__c blackhawkApiSetting = BlackhawkAPIService.getActiveBlackhawkApiSetting();
+
+            for(TTI_Error_Log__c errorLog : ttiErrorLog){
+                
+                if(errorLog.Source_Record_Id__c != NULL && errorLog.TTI_Message__c.containsIgnoreCase(BlackhawkAPIService.RETRYSTATUSCODE)){
+                    memberBenefitIds.add(errorLog.Source_Record_Id__c);
+                }
+
+            }
+
+            memberBenefitList = [SELECT Id FROM Member_Benefit__c WHERE ID IN: memberBenefitIds AND Status__c = 'Approved - Gift Card Platform Error' AND Gift_Card_Request_Counter__c <: blackhawkApiSetting.Maximum_Retry_Count__c];
+
+            return memberBenefitList;
+
         }
 
     }   

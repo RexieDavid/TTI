@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
+		<members>AccountTriggerHandler</members>
+		<members>AccountTriggerHandlerTest</members>
 		<members>BlackhawkAPIBatch</members>
+		<members>BlackhawkAPISchedule</members>
 		<members>BlackhawkAPIService</members>
+		<members>BlackhawkAPIServiceMock</members>
+		<members>BlackhawkAPITest</members>
 		<members>BlackhawkClientProgramWrapper</members>
+		<members>LogException</members>
 		<members>MemberBenefitTriggerHandler</members>
 		<members>MembershipLoyaltyController</members>
 		<members>ProductDetailCC</members>
+		<members>ProductDetailCCTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
 		<members>MemberBenefitTrigger</members>
 		<name>ApexTrigger</name>
+	</types>
+	<types>
+		<members>BlackhawkPreProd</members>
+		<name>Certificate</name>
 	</types>
 	<types>
 		<members>Member_Benefit__c.Member_Benefit_Compact_Layout</members>
@@ -27,6 +38,7 @@
 		<members>Blackhawk_API_Settings__c.Client_Certificate_Name__c</members>
 		<members>Blackhawk_API_Settings__c.Client_Program_Id__c</members>
 		<members>Blackhawk_API_Settings__c.Is_Active__c</members>
+		<members>Blackhawk_API_Settings__c.Maximum_Retry_Count__c</members>
 		<members>Blackhawk_API_Settings__c.Merchant_Id__c</members>
 		<members>Blackhawk_API_Settings__c.Milliseconds_To_Wait__c</members>
 		<members>Blackhawk_API_Settings__c.Monitoring_Status_Endpoint__c</members>
@@ -59,8 +71,6 @@
 		<members>Eligible_Product_Line_Item__c.Eligible_Product__c</members>
 		<members>Eligible_Product_Line_Item__c.Product_Model__c</members>
 		<members>Eligible_Product_Line_Item__c.Product__c</members>
-		<members>Eligible_Product_Line_Item__c.Quantity__c</members>
-		<members>Eligible_Product_Line_Item__c.Required__c</members>
 		<members>Member_Benefit_Program__c.Activation_Validity_Days__c</members>
 		<members>Member_Benefit_Program__c.Active__c</members>
 		<members>Member_Benefit_Program__c.Blackhawk_Catalog_Lookup__c</members>
@@ -70,11 +80,13 @@
 		<members>Member_Benefit_Program__c.End_Date__c</members>
 		<members>Member_Benefit_Program__c.Gift_Card_Validity_Days__c</members>
 		<members>Member_Benefit_Program__c.Gift_Card_Value__c</members>
+		<members>Member_Benefit_Program__c.Maximum_Gift_Card_Per_Customer__c</members>
 		<members>Member_Benefit_Program__c.Product_Hierarchies__c</members>
 		<members>Member_Benefit_Program__c.Start_Date__c</members>
 		<members>Member_Benefit_Program__c.Terms_and_Conditions__c</members>
 		<members>Member_Benefit_Program__c.Valid_From__c</members>
 		<members>Member_Benefit_Program__c.Valid_To__c</members>
+		<members>Member_Benefit__c.Active_Member_Benefit_Program__c</members>
 		<members>Member_Benefit__c.Address__c</members>
 		<members>Member_Benefit__c.Brand__c</members>
 		<members>Member_Benefit__c.Case_Age__c</members>
@@ -85,13 +97,24 @@
 		<members>Member_Benefit__c.Gift_Card_Provider_Transaction_Id__c</members>
 		<members>Member_Benefit__c.Gift_Card_Request_Counter__c</members>
 		<members>Member_Benefit__c.Gift_Card_URL__c</members>
+		<members>Member_Benefit__c.Manual_Activation_Reason__c</members>
 		<members>Member_Benefit__c.Member_Benefit_Program__c</members>
 		<members>Member_Benefit__c.Member_Benefit_UUID__c</members>
 		<members>Member_Benefit__c.Mobile__c</members>
+		<members>Member_Benefit__c.Registered_Product_Code__c</members>
 		<members>Member_Benefit__c.Registered_Products__c</members>
+		<members>Member_Benefit__c.Registered_Tool_Name__c</members>
+		<members>Member_Benefit__c.Registered_Tool_Purchase_Date__c</members>
 		<members>Member_Benefit__c.Rejected_Reason__c</members>
+		<members>Member_Benefit__c.Status2__c</members>
 		<members>Member_Benefit__c.Status__c</members>
 		<members>Member_Benefit__c.Terms_and_Conditions__c</members>
+		<members>TTI_Error_Log__c.Class_Name__c</members>
+		<members>TTI_Error_Log__c.Exception_Cause_Override__c</members>
+		<members>TTI_Error_Log__c.Method_Name__c</members>
+		<members>TTI_Error_Log__c.Module_Name__c</members>
+		<members>TTI_Error_Log__c.Source_Object__c</members>
+		<members>TTI_Error_Log__c.Source_Record_Id__c</members>
 		<members>TTI_Error_Log__c.TTI_Cause__c</members>
 		<members>TTI_Error_Log__c.TTI_Input_Parameters__c</members>
 		<members>TTI_Error_Log__c.TTI_Line_Number__c</members>
@@ -131,12 +154,25 @@
 		<members>Eligible_Products__c-Eligible Products Layout</members>
 		<members>Member_Benefit_Program__c-Member Benefit Program Layout</members>
 		<members>Member_Benefit__c-Member Benefit Layout</members>
+		<members>PersonAccount-B2C Consumer Person Layout</members>
+		<members>PersonAccount-B2C Consumer Person Layout %28Admin%29</members>
+		<members>TTI_Error_Log__c-Error Log Layout</members>
 		<name>Layout</name>
 	</types>
 	<types>
 		<members>Blackhawk_Card_Product__c.All</members>
+		<members>Eligible_Customer__c.All</members>
 		<members>Member_Benefit_Program__c.All</members>
+		<members>Member_Benefit__c.Activated</members>
+		<members>Member_Benefit__c.All</members>
+		<members>Member_Benefit__c.Approved_Awaiting_Activation</members>
+		<members>Member_Benefit__c.Gift_Card_Issued</members>
+		<members>Member_Benefit__c.Platform_Error</members>
+		<members>Member_Benefit__c.Platform_Success</members>
+		<members>Member_Benefit__c.Rejected</members>
 		<members>Member_Benefit__c.Submitted</members>
+		<members>TTI_Error_Log__c.All</members>
+		<members>TTI_Error_Log__c.All1</members>
 		<name>ListView</name>
 	</types>
 	<types>
@@ -144,7 +180,12 @@
 		<name>NamedCredential</name>
 	</types>
 	<types>
+		<members>Membership_Loyalty_Program_Access</members>
+		<name>PermissionSet</name>
+	</types>
+	<types>
 		<members>Member_Benefit_Program__c.Update_Member_Benefit_Program</members>
+		<members>Member_Benefit__c.Change_Status</members>
 		<members>New_Member_Benefit_Program</members>
 		<name>QuickAction</name>
 	</types>
