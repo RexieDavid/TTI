@@ -22,7 +22,6 @@ public class BlackhawkAPIService {
                 rtebrWrap = new RealTimeEgiftBulkResponseWrapper(false,statusCode,successWrap.parse(responseInstance.getBody()),null);
             }
             else if(statusCode.startsWith('4') || statusCode.startsWith('5')){
-                System.debug('memberBenefitRecord.Gift_Card_Request_Counter__c  >>> ' + memberBenefitRecord.Gift_Card_Request_Counter__c);
                 RealTimeEgiftBulkErrorWrapper errorWrap = new RealTimeEgiftBulkErrorWrapper();
                 rtebrWrap = new RealTimeEgiftBulkResponseWrapper(false,statusCode,null,errorWrap.parse(responseInstance.getBody()));
                 if(memberBenefitRecord.Gift_Card_Request_Counter__c == 0) throw new BlackhawkApiServiceException('Status Code: '+rtebrWrap.statusCode + ' - ' + JSON.serialize(rtebrWrap.errorWrap));
@@ -40,7 +39,6 @@ public class BlackhawkAPIService {
 
     public static HttpResponse monitorRewards(){
         Blackhawk_API_Settings__c bhAPISetting = getActiveBlackhawkApiSetting();
-        System.debug('bhAPISetting >>> '+bhAPISetting);
         Http httpInstance = new Http();
         HttpRequest httpRequestInstance = new HttpRequest();
         httpRequestInstance.setEndpoint('callout:BlackhawkAPI'+bhAPISetting.Monitoring_Status_Endpoint__c);
@@ -50,8 +48,6 @@ public class BlackhawkAPIService {
         httpRequestInstance.setHeader('Requestid',String.valueOf(DateTime.now().millisecond()));
         httpRequestInstance.setMethod('GET');
         HttpResponse httpResponse = httpInstance.send(httpRequestInstance);  
-        System.debug('Status Code >>> '+ httpResponse.getStatusCode());
-        System.debug('Body >>> '+ httpResponse.getBody());
         return httpResponse;        
     }
 
@@ -67,10 +63,6 @@ public class BlackhawkAPIService {
         httpRequestInstance.setHeader('Requestid',String.valueOf(DateTime.now().millisecond())); 
         httpRequestInstance.setMethod('GET');
         HttpResponse httpResponse = httpInstance.send(httpRequestInstance);  
-        System.debug('Status Code >>> '+ httpResponse.getStatusCode());
-        System.debug('Body >>> '+ httpResponse.getBody());
-        // BlackhawkClientProgramWrapper bhcpWrapObj = BlackhawkClientProgramWrapper.parse(httpResponse.getBody());
-        // System.debug('bhcpWrapObj >>> '+JSON.serializePretty(bhcpWrapObj));
         return httpResponse;
     }
 
@@ -90,8 +82,6 @@ public class BlackhawkAPIService {
         httpRequestInstance.setMethod('POST');
         httpRequestInstance.setBody(generateRequest(requestWrap,bhAPISetting));  
         HttpResponse httpResponse = httpInstance.send(httpRequestInstance); 
-        System.debug('Status Code >>> '+ httpResponse.getStatusCode());
-        System.debug('Body >>> '+ httpResponse.getBody());
         return httpResponse; 
     }
 
@@ -148,7 +138,6 @@ public class BlackhawkAPIService {
         gen.writeEndArray();
         gen.writeEndObject();
         String pretty = gen.getAsString();
-        System.debug(pretty);
         return pretty;
     }
 

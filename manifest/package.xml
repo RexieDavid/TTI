@@ -148,6 +148,10 @@
 		<name>FlexiPage</name>
 	</types>
 	<types>
+		<members>Eligible_Customer_Update_Send_to_MC</members>
+		<name>Flow</name>
+	</types>
+	<types>
 		<members>Blackhawk_Card_Product__c-Blackhawk Card Product Layout</members>
 		<members>Eligible_Customer__c-Eligible Customer Layout</members>
 		<members>Eligible_Product_Line_Item__c-Eligible Product Line Item Layout</members>

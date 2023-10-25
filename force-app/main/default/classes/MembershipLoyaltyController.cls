@@ -121,8 +121,6 @@ public with sharing class MembershipLoyaltyController {
             }
         }
         
-        System.debug('contactWithProductCodesMap >>> '+contactWithProductCodesMap);
-
         //Retrieve Eligible Products
         for(Eligible_Products__c eligibleProduct : withoutSharing.getEligibleProducts(eligibleProductIds,memberBenefitProgramWrapMap.keySet())){
             //Check Member_Benefit_Programs__r and Eligible_Product_Line_Items__r
@@ -138,7 +136,6 @@ public with sharing class MembershipLoyaltyController {
             }
         }
 
-        // System.debug('memberBenefitProgramWrapMap >>> '+JSON.serializePretty(memberBenefitProgramWrapMap));
         try{
             Set<String> customerAssetCode = new Set<String>();
             //Loop through Member Benefit Program Id
@@ -183,36 +180,26 @@ public with sharing class MembershipLoyaltyController {
                                                 assetRecToUpdate.Id = assetRecord.Id;
                                                 assetRecToUpdate.Member_Benefit__r = new Member_Benefit__c(Member_Benefit_UUID__c = memberBenefitToInsert.Member_Benefit_UUID__c);
                                             }
-                                            System.debug('assetRecToUpdate loop >>> '+memberBenefitToInsert);
-                                            System.debug('assetRecToUpdate.Member_Benefit__r loop >>> '+assetRecToUpdate.Member_Benefit__r);
                                         }
                                     }
                                 }
 
                                 if(assetRecord.SAPProductHeirarchy__c != NULL && memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c != NULL){
-                                    System.debug('memberBenefitProgramWrapMap >>> '+memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c.split(';'));
                                     if(currBrand == '') currBrand = assetRecord.Brand__c;
                                     for(String hierarchy : memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c.split(';')){
-                                        System.debug('hierarchy >>> '+hierarchy);
-                                        System.debug('assetRecord.SAPProductHeirarchy__c >>> '+assetRecord.SAPProductHeirarchy__c);
                                         if(assetRecord.SAPProductHeirarchy__c.containsIgnoreCase(hierarchy)){ //Check if the asset match any of the Product Heirarchy 
                                             if(!productCodes.containsIgnoreCase(assetRecord.ProductCode) && !customerAssetCode.contains(customerId+assetRecord.ProductCode)){
                                                 productCodes += (productCodes != '') ? ';'+assetRecord.ProductCode : assetRecord.ProductCode;
                                                 if(!registeredToolName.containsIgnoreCase(assetRecord.Product2.Name)) registeredToolName += (registeredToolName != '') ? ';'+assetRecord.Product2.Name : assetRecord.Product2.Name;
                                                 if(registeredToolPurchaseDate == NULL) registeredToolPurchaseDate = assetRecord.PurchaseDate;
                                                 customerAssetCode.add(customerId+assetRecord.ProductCode);
-                                                System.debug('registeredToolName >>> '+registeredToolName);
                                                 System.debug('CUSTOMER '+assetRecord.Account.Name +' MATCH VIA PRODUCT HIERARCHY >>> '+ 'memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c >>> '+memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c + ' assetRecord.SAPProductHeirarchy__c >>> '+assetRecord.SAPProductHeirarchy__c);
                                                 memberBenefitToInsert.Registered_Products__c = currEligibleProductId;
                                                 memberBenefitToInsert.Member_Benefit_Program__c = memberBenefitProgramId;
                                                 if(assetRecToUpdate.Id == NULL){
-                                                    System.debug('assetRecToUpdate Id Set >>> '+assetRecToUpdate.Id);
                                                     assetRecToUpdate.Id = assetRecord.Id;
                                                     assetRecToUpdate.Member_Benefit__r = new Member_Benefit__c(Member_Benefit_UUID__c = memberBenefitToInsert.Member_Benefit_UUID__c);
                                                 }
-                                                System.debug('assetRecToUpdate Id >>> '+assetRecToUpdate.Id);
-                                                System.debug('assetRecToUpdate loop >>> '+memberBenefitToInsert);
-                                                System.debug('assetRecToUpdate.Member_Benefit__r loop >>> '+assetRecToUpdate.Member_Benefit__r);
                                                 break;
                                             } 
                                         }
@@ -221,14 +208,11 @@ public with sharing class MembershipLoyaltyController {
                                     // && memberBenefitProgramWrap.exactProductMatch == false){
                                 }
                                 if(assetRecToUpdate.Id != NULL){
-                                    // System.debug('assetRecToUpdate >>> '+assetRecToUpdate);
                                     validRegisteredProductList.add(assetRecToUpdate);
                                 } 
                             }
 
                             if(productCodes.length()>0){
-                                // memberBenefitToInsert.Product_Model__c = productCodes;
-                                System.debug('registeredToolName FINAL >>> '+registeredToolName);
                                 memberBenefitToInsert.Brand__c = currBrand;
                                 memberBenefitToInsert.Customer_Name__c = customerId;
                                 memberBenefitToInsert.Registered_Tool_Name__c = registeredToolName;
@@ -244,13 +228,6 @@ public with sharing class MembershipLoyaltyController {
 
             if(validRegisteredProductList.size() > 0 && memberBenefitToInsertList.size() > 0){
                 genMemberBenefitWrap = new GenerateMemberBenefitWrapper(memberBenefitToInsertList,validRegisteredProductList);
-                System.debug('validRegisteredProductList >>> '+validRegisteredProductList);
-                System.debug('memberBenefitProgramWrapMap >>> '+memberBenefitProgramWrapMap);
-                System.debug('memberBenefitToInsertList.size() >>> '+memberBenefitToInsertList.size());
-                System.debug('memberBenefitToInsertList >>> '+memberBenefitToInsertList);
-                System.debug('genMemberBenefitWrap.memberBenefitList >>> '+genMemberBenefitWrap.memberBenefitList);
-                System.debug('genMemberBenefitWrap.assetList >>> '+genMemberBenefitWrap.assetList);
-                // System.debug('memberBenefitProgramEligiblePliMap >>> '+memberBenefitProgramEligiblePliMap);
             }    
         }
 
@@ -327,7 +304,6 @@ public with sharing class MembershipLoyaltyController {
         Blob b = Crypto.GenerateAESKey(128);
         String h = EncodingUtil.ConvertTohex(b);
         String guid = h.SubString(0,8)+ '-' + h.SubString(8,12) + '-' + h.SubString(12,16) + '-' + h.SubString(16,20) + '-' + h.substring(20);
-        system.debug(guid);
         return guid;
     }
 

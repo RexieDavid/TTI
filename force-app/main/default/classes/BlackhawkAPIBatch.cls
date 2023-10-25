@@ -38,8 +38,6 @@ global class BlackhawkAPIBatch implements database.Batchable<sObject>,Database.A
         List<Member_Benefit__c> memberBenefitList = (List<Member_Benefit__c>)scope;
         MembershipLoyaltyController.WithoutShare membershipControllerElevContext = new MembershipLoyaltyController.WithoutShare();
 
-        system.debug('memberBenefitList size >>> '+memberBenefitList.size());
-
         for(Member_Benefit__c memberBenefit : memberBenefitList){
             if(LIMITS.getCallouts() < LIMITS.getLimitCallouts()){
                 if(integAction == 'submit' && memberBenefit.Member_Benefit_Program__r.Gift_Card_Value__c != NULL && memberBenefit.Member_Benefit_Program__r.Blackhawk_Catalog_Lookup__c != NULL){
@@ -60,7 +58,7 @@ global class BlackhawkAPIBatch implements database.Batchable<sObject>,Database.A
                 update memberBenefitToUpdateList;
             }
             catch (Exception ex){
-                System.debug(ex);
+                System.debug('BlackhawkAPIBatch >>> finish >>> '+ex.getMessage());
             }    
         }
     }

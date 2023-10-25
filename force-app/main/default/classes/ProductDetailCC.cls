@@ -37,7 +37,6 @@ public class ProductDetailCC {
         
         Boolean kt = true;
         for (Asset asset : assets) { 
-            System.debug('JAC asset : ' + asset);
             asset.AccountId = currentUser.contact.accountid;
             asset.ContactId = currentUser.ContactId;
             asset.Status = CommunitySettingsHelperClass.getAssetCreateStatus();
@@ -121,7 +120,6 @@ public class ProductDetailCC {
                 }
                 if(assetIds.size() > 0){
                     MembershipLoyaltyController.GenerateMemberBenefitWrapper generateMemberBenefitRecords = MembershipLoyaltyController.generateMemberBenefits(assetIds);
-                    System.debug('saveProductRegistration >>> generateMemberBenefitRecords >>> ' + generateMemberBenefitRecords);  
                     if(generateMemberBenefitRecords != NULL && generateMemberBenefitRecords.memberBenefitList.size() > 0 && generateMemberBenefitRecords.assetList.size() > 0){
                         MembershipLoyaltyController.WithoutShare elevatedContext = new MembershipLoyaltyController.WithoutShare();
                         elevatedContext.insertMemberBenefits(generateMemberBenefitRecords.memberBenefitList, generateMemberBenefitRecords.assetList);
@@ -131,8 +129,6 @@ public class ProductDetailCC {
         
             result.assets.addAll(assets);
             result.brand = TTIUtilClass.getBrandCurrentUser();
-            
-            System.debug('JAC result : ' + result);
             return result; 
         } catch(Exception e) {
             Database.rollback(sp);

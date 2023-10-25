@@ -28,6 +28,5 @@ member.Status__c = 'Approved - Activated';
 update member;
 
 //GENERATE PRODUCTS
-Blackhawk_API_Settings__c bhAPISetting = BlackhawkAPIService.getActiveBlackhawkApiSetting();
-List<Blackhawk_Card_Product__c> generateBlackhawkCardProducts = BlackhawkAPIService.generateBlackhawkCardProducts(BlackhawkClientProgramWrapper blackhawkClientWrapObj);
-BlackhawkClientProgramWrapper blackhawkClientWrapObj = BlackhawkClientProgramWrapper.parse(BlackhawkAPIService.getCatalogByKey(bhAPISetting.Client_Program_Id__c).getBody());
+insert(BlackhawkAPIService.generateBlackhawkCardProducts(BlackhawkClientProgramWrapper.parse(BlackhawkAPIService.getCatalogByKey(BlackhawkAPIService.getActiveBlackhawkApiSetting().Client_Program_Id__c).getBody())));
+System.debug(generateBlackhawkCardProducts.size());

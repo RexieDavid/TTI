@@ -497,8 +497,6 @@ public class AccountTriggerHandler {
                 }
             } 
         }   
-
-        System.debug('eligListToUpdate >>> '+eligListToUpdate);
         
         if (!eligListToUpdate.isEmpty()) {
             update eligListToUpdate;
