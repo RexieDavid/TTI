@@ -113,6 +113,8 @@
         <fields>NAME</fields>
         <fields>Customer_Name__c</fields>
         <fields>Contact.PC_00N9000000FCgZ3</fields>
+        <fields>Contact.PC_EMAIL</fields>
+        <fields>Send_to_MC__c</fields>
         <relatedList>Eligible_Customer__c.Member_Benefit_Program__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -129,7 +131,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00hAD000000vaYG</masterLabel>
+        <masterLabel>00hOY00000076Gq</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

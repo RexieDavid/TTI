@@ -10,5 +10,10 @@
     <columns>Valid_From__c</columns>
     <columns>Valid_To__c</columns>
     <filterScope>Everything</filterScope>
+    <filters>
+        <field>Active__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
     <label>All</label>
 </ListView>
