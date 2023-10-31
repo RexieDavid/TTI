@@ -23,6 +23,16 @@ public class MemberBenefitTriggerHandler {
     /**
     * @author: Rexie Aaron David
     * @date: October 2023
+    * @description: This method handles all on Before Update
+    * functionalities of the Case
+    */ 
+    public static void onBeforeUpdate(List<Member_Benefit__c> newMemberBenefitList, Map<Id, Member_Benefit__c> oldMemberBenefitMap) {
+        populateExpiryDate(newMemberBenefitList,oldMemberBenefitMap);
+    }
+
+    /**
+    * @author: Rexie Aaron David
+    * @date: October 2023
     * @description: This method handles all on After Update
     * functionalities of the Case
     */ 
@@ -64,6 +74,16 @@ public class MemberBenefitTriggerHandler {
 
         return validMemberBenefitRecords;
 
+    }
+
+    private static void populateExpiryDate(List<Member_Benefit__c> newMemberBenefitList, Map<Id, Member_Benefit__c> oldMemberBenefitMap) {
+
+        for(Member_Benefit__c memberBenefit : newMemberBenefitList){
+            if(memberBenefit.Expiry_Date__c == NULL && memberBenefit.Status__c == 'Approved - Gift Card Platform Success' && oldMemberBenefitMap.get(memberBenefit.Id).Status__c != memberBenefit.Status__c){
+                memberBenefit.Expiry_Date__c = System.today().addMonths(6);
+            }
+        }
+        
     }
 
 }

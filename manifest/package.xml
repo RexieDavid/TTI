@@ -92,6 +92,7 @@
 		<members>Member_Benefit__c.Case_Age__c</members>
 		<members>Member_Benefit__c.Customer_Name__c</members>
 		<members>Member_Benefit__c.Email__c</members>
+		<members>Member_Benefit__c.Expiry_Date__c</members>
 		<members>Member_Benefit__c.Gift_Card_Provider_Error_Message__c</members>
 		<members>Member_Benefit__c.Gift_Card_Provider_Order_Number__c</members>
 		<members>Member_Benefit__c.Gift_Card_Provider_Transaction_Id__c</members>
