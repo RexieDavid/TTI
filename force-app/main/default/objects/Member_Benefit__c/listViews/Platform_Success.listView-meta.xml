@@ -10,7 +10,7 @@
     <filters>
         <field>Status2__c</field>
         <operation>contains</operation>
-        <value>Platform Success</value>
+        <value>Platform Success,Issued</value>
     </filters>
     <label>Platform Success</label>
 </ListView>
