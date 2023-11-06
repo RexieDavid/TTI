@@ -17,7 +17,7 @@ global class BlackhawkAPIBatch implements database.Batchable<sObject>,Database.A
     public static final String NOPERMISSION = 'Does not have permissions to submit order using this quote';
     
     public Blackhawk_API_Settings__c blackhawkApiSetting = new Blackhawk_API_Settings__c();
-    public String query = 'SELECT Id, Name, Gift_Card_Request_Counter__c, Gift_Card_Provider_Error_Message__c, Member_Benefit_Program__r.Blackhawk_Catalog_Lookup__c, Member_Benefit_Program__c, Member_Benefit_Program__r.Gift_Card_Value__c, Member_Benefit_Program__r.Blackhawk_Catalog_Lookup__r.Content_Provider_Code__c FROM Member_Benefit__c ';
+    public String query = 'SELECT Id, Name, Gift_Card_URL__c, Status__c, Gift_Card_Request_Counter__c, Gift_Card_Provider_Error_Message__c, Member_Benefit_Program__r.Blackhawk_Catalog_Lookup__c, Member_Benefit_Program__c, Member_Benefit_Program__r.Gift_Card_Value__c, Member_Benefit_Program__r.Blackhawk_Catalog_Lookup__r.Content_Provider_Code__c, Request_Id__c FROM Member_Benefit__c ';
 
     global BlackhawkAPIBatch(String action, List<Member_Benefit__c> memberBenefitList) {
         integAction = action;
@@ -40,12 +40,17 @@ global class BlackhawkAPIBatch implements database.Batchable<sObject>,Database.A
 
         for(Member_Benefit__c memberBenefit : memberBenefitList){
             if(LIMITS.getCallouts() < LIMITS.getLimitCallouts()){
-                if(integAction == 'submit' && memberBenefit.Member_Benefit_Program__r.Gift_Card_Value__c != NULL && memberBenefit.Member_Benefit_Program__r.Blackhawk_Catalog_Lookup__c != NULL){
+                if(integAction == 'submit' && memberBenefit.Member_Benefit_Program__r.Gift_Card_Value__c != NULL && memberBenefit.Member_Benefit_Program__r.Blackhawk_Catalog_Lookup__c != NULL && memberBenefit.Request_Id__c == NULL){
                     memberBenefit = membershipControllerElevContext.updateMemberBenefitFields(memberBenefit,  BlackhawkAPIService.submitRealTimeEgiftBulk(memberBenefit));
                     memberBenefitToUpdateList.add(memberBenefit);
                 }
-                if(integAction == 'retry' && memberBenefit.Gift_Card_Provider_Error_Message__c.containsIgnoreCase(BlackhawkAPIService.RETRYSTATUSCODE)){
-                    memberBenefit = membershipControllerElevContext.updateMemberBenefitFields(memberBenefit,  BlackhawkAPIService.submitRealTimeEgiftBulk(memberBenefit));
+                if(integAction == 'retry' && memberBenefit.Request_Id__c != NULL && memberBenefit.Gift_Card_Provider_Error_Message__c != NULL && memberBenefit.Gift_Card_Provider_Error_Message__c.containsIgnoreCase(BlackhawkAPIService.RETRYSTATUSCODE)){
+                    Member_Benefit__c memberBenefitInstance = membershipControllerElevContext.updateMemberBenefitFields(memberBenefit, BlackhawkAPIService.getEGiftBulkCodeRetrievalInfo(memberBenefit).successEGiftWrap);
+                    System.debug('not a new request >>> ');
+                    if(memberBenefitInstance == NULL){
+                        System.debug('new request >>> ');
+                        memberBenefit = membershipControllerElevContext.updateMemberBenefitFields(memberBenefit,  BlackhawkAPIService.submitRealTimeEgiftBulk(memberBenefit));
+                    } 
                     memberBenefitToUpdateList.add(memberBenefit);
                 }
             }

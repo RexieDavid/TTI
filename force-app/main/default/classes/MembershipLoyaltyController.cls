@@ -156,8 +156,11 @@ public with sharing class MembershipLoyaltyController {
                             Date registeredToolPurchaseDate;
                             String currBrand = '';
                             for(Asset assetRecord : memberBenefitProgramWrap.customerAssetListMap.get(customerId)){
+                                System.debug('assetRecord >>> '+assetRecord);
                                 if(contactWithProductCodesMap.containsKey(customerId)){
+                                    System.debug('contactWithProductCodesMap.containsKey(customerId) >>> '+contactWithProductCodesMap.containsKey(customerId));
                                     if(contactWithProductCodesMap.get(customerId).contains(assetRecord.ProductCode)){
+                                        System.debug('contactWithProductCodesMap.get(customerId).contains(assetRecord.ProductCode) >>> '+contactWithProductCodesMap.get(customerId).contains(assetRecord.ProductCode));
                                         break; //Do not add Member Benefit if the Customer is currently has a Member Benefit in the same Product Code
                                     }
                                 }
@@ -187,7 +190,11 @@ public with sharing class MembershipLoyaltyController {
                                 if(assetRecord.SAPProductHeirarchy__c != NULL && memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c != NULL){
                                     if(currBrand == '') currBrand = assetRecord.Brand__c;
                                     for(String hierarchy : memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c.split(';')){
-                                        if(assetRecord.SAPProductHeirarchy__c.containsIgnoreCase(hierarchy)){ //Check if the asset match any of the Product Heirarchy 
+                                        if(hierarchy != '' && assetRecord.SAPProductHeirarchy__c.containsIgnoreCase(hierarchy)){ //Check if the asset match any of the Product Heirarchy 
+                                            System.debug('hierarchy >>> '+hierarchy);
+                                            System.debug('memberBenefitProgramId >>> '+memberBenefitProgramId);
+                                            System.debug('memberBenefitProgram Rec Id >>> '+memberBenefitProgramWrap.memberBenefitProgramRec.Id);
+                                            System.debug('assetRecord.SAPProductHeirarchy__c >>> '+assetRecord.SAPProductHeirarchy__c);
                                             if(!productCodes.containsIgnoreCase(assetRecord.ProductCode) && !customerAssetCode.contains(customerId+assetRecord.ProductCode)){
                                                 productCodes += (productCodes != '') ? ';'+assetRecord.ProductCode : assetRecord.ProductCode;
                                                 if(!registeredToolName.containsIgnoreCase(assetRecord.Product2.Name)) registeredToolName += (registeredToolName != '') ? ';'+assetRecord.Product2.Name : assetRecord.Product2.Name;
@@ -200,8 +207,8 @@ public with sharing class MembershipLoyaltyController {
                                                     assetRecToUpdate.Id = assetRecord.Id;
                                                     assetRecToUpdate.Member_Benefit__r = new Member_Benefit__c(Member_Benefit_UUID__c = memberBenefitToInsert.Member_Benefit_UUID__c);
                                                 }
-                                                break;
                                             } 
+                                            break;
                                         }
                                     }
                                     //&& memberBenefitProgramWrap.memberBenefitProgramRec.Product_Hierarchies__c.containsIgnoreCase(assetRecord.SAPProductHeirarchy__c)){
@@ -447,6 +454,21 @@ public with sharing class MembershipLoyaltyController {
             }
         }
 
+        public Member_Benefit__c updateMemberBenefitFields(Member_Benefit__c memberBenefit, BlackhawkEGiftWrapper blackhawkEGiftWrap){
+            Boolean updateMemberBenefit = false;
+            System.debug('blackhawkEGiftWrap >>> '+blackhawkEGiftWrap);
+            if(blackhawkEGiftWrap != NULL && blackhawkEGiftWrap.orderNumber != NULL && blackhawkEGiftWrap.quantity == 1 && memberBenefit.Gift_Card_URL__c == NULL && memberBenefit.Status__c != APPROVEDGIFTCARDSUCCESS){
+                for(BlackhawkEGiftWrapper.EGifts egift : blackhawkEGiftWrap.eGifts){
+                    memberBenefit.Gift_Card_URL__c = egift.url;
+                    memberBenefit.Gift_Card_Provider_Order_Number__c = blackhawkEGiftWrap.orderNumber;
+                    memberBenefit.Gift_Card_Provider_Error_Message__c = '';
+                    memberBenefit.Status__c = APPROVEDGIFTCARDSUCCESS;
+                }
+                updateMemberBenefit = true;
+            }
+            return updateMemberBenefit ? memberBenefit : null;
+        }   
+
         public List<Member_Benefit__c> getMemberBenefitToResubmit(){
 
             List<TTI_Error_Log__c> ttiErrorLog = [  SELECT Id, Name, Class_Name__c, Method_Name__c, Source_Object__c, Source_Record_Id__c, TTI_Line_Number__c, TTI_Message__c, TTI_Stack_Trace_String__c, TTI_Type_Name__c
@@ -474,6 +496,5 @@ public with sharing class MembershipLoyaltyController {
             return memberBenefitList;
 
         }
-
     }   
 }

@@ -135,7 +135,7 @@ private class AccountTriggerHandlerTest {
     private static void testAccountWithCustomerGroup() {
         Account acc = [SELECT Id, Type, Customer_Group__c FROM Account WHERE Name = 'Hayley Williams'][0];
  		
-        // Test.setMock(HttpCalloutMock.class, new Auth0_MockCalloutResponse());
+        Test.setMock(HttpCalloutMock.class, new Auth0_MockCalloutResponse());
         
         Marketing_Preference__c mp = new Marketing_Preference__c(Person_Account__c = acc.Id);
         insert mp;

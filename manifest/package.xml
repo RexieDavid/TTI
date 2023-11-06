@@ -93,6 +93,7 @@
 		<members>Member_Benefit__c.Customer_Name__c</members>
 		<members>Member_Benefit__c.Email__c</members>
 		<members>Member_Benefit__c.Expiry_Date__c</members>
+		<members>Member_Benefit__c.Gift_Card_Issued__c</members>
 		<members>Member_Benefit__c.Gift_Card_Provider_Error_Message__c</members>
 		<members>Member_Benefit__c.Gift_Card_Provider_Order_Number__c</members>
 		<members>Member_Benefit__c.Gift_Card_Provider_Transaction_Id__c</members>
@@ -107,6 +108,7 @@
 		<members>Member_Benefit__c.Registered_Tool_Name__c</members>
 		<members>Member_Benefit__c.Registered_Tool_Purchase_Date__c</members>
 		<members>Member_Benefit__c.Rejected_Reason__c</members>
+		<members>Member_Benefit__c.Request_Id__c</members>
 		<members>Member_Benefit__c.Status2__c</members>
 		<members>Member_Benefit__c.Status__c</members>
 		<members>Member_Benefit__c.Terms_and_Conditions__c</members>
@@ -193,6 +195,18 @@
 		<members>Member_Benefit__c.Change_Status</members>
 		<members>New_Member_Benefit_Program</members>
 		<name>QuickAction</name>
+	</types>
+	<types>
+		<members>Member_Benefit__c.Prevent_Direct_Activation</members>
+		<members>Member_Benefit__c.Require_Manual_Activation_Reason</members>
+		<members>Member_Benefit__c.Status_Approved</members>
+		<members>Member_Benefit__c.Status_Awaiting_Activation</members>
+		<members>Member_Benefit__c.Status_Further_Info_Required</members>
+		<members>Member_Benefit__c.Status_Gift_Card_Issued</members>
+		<members>Member_Benefit__c.Status_Pending</members>
+		<members>Member_Benefit__c.Status_Rejected</members>
+		<members>Member_Benefit__c.Status_Submitted</members>
+		<name>ValidationRule</name>
 	</types>
 	<version>58.0</version>
 </Package>
