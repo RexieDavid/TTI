@@ -11,6 +11,7 @@ public class MemberBenefitTriggerHandler {
     public static final String APPROVEDACTIVATED = 'Approved - Activated';
     public static final String APPROVEDGIFTCARDPLATFORMSUCCESS = 'Approved - Gift Card Platform Success';
     public static final String APPROVEDGIFTCARDPLATFORMPENDING = 'Approved - Gift Card Pending Request';
+    public static final String APPROVEDGIFTCARDISSUED = 'Approved - Gift Card Issued';
 
     /**
     * @author: Rexie Aaron David
@@ -87,6 +88,10 @@ public class MemberBenefitTriggerHandler {
             if(memberBenefit.Status__c == APPROVEDACTIVATED && oldMemberBenefitMap.get(memberBenefit.Id).Status__c == APPROVEDAWAITINGACTIVATION){
                 memberBenefit.Status__c = APPROVEDGIFTCARDPLATFORMPENDING;
             }
+            if(memberBenefit.Gift_Card_Issued__c == TRUE && oldMemberBenefitMap.get(memberBenefit.Id).Gift_Card_Issued__c == FALSE){
+                memberBenefit.Status__c = APPROVEDGIFTCARDISSUED;
+            }
+            
         }
         
     }
