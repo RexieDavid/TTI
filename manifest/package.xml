@@ -5,13 +5,13 @@
 		<members>BlackhawkAPITest</members>
 		<name>ApexClass</name>
 	</types>
-	<types>
+	<!--<types>
 		<members>MemberBenefitTrigger</members>
 		<name>ApexTrigger</name>
 	</types>
 	<types>
 		<members>Member_Benefit__c.Expiry_Date__c</members>
 		<name>CustomField</name>
-	</types>
+	</types>-->
 	<version>58.0</version>
 </Package>

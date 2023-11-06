@@ -9,6 +9,9 @@ public class MemberBenefitTriggerHandler {
 
     public static final String APPROVEDAWAITINGACTIVATION = 'Approved - Awaiting Activation';
     public static final String APPROVEDACTIVATED = 'Approved - Activated';
+    public static final String APPROVEDGIFTCARDPLATFORMSUCCESS = 'Approved - Gift Card Platform Success';
+    public static final String APPROVEDGIFTCARDPLATFORMPENDING = 'Approved - Gift Card Pending Request';
+    public static final String APPROVEDGIFTCARDISSUED = 'Approved - Gift Card Issued';
 
     /**
     * @author: Rexie Aaron David
@@ -66,7 +69,7 @@ public class MemberBenefitTriggerHandler {
 
         for(Member_Benefit__c memberBenefit : newMemberBenefitList){
             if(memberBenefit.Status__c != oldMemberBenefitMap.get(memberBenefit.Id).Status__c){
-                if(oldMemberBenefitMap.get(memberBenefit.Id).Status__c == APPROVEDAWAITINGACTIVATION && memberBenefit.Status__c == APPROVEDACTIVATED){
+                if(oldMemberBenefitMap.get(memberBenefit.Id).Status__c == APPROVEDAWAITINGACTIVATION && memberBenefit.Status__c == APPROVEDGIFTCARDPLATFORMPENDING){
                     validMemberBenefitRecords.add(memberBenefit);
                 }
             }
@@ -79,9 +82,16 @@ public class MemberBenefitTriggerHandler {
     private static void populateExpiryDate(List<Member_Benefit__c> newMemberBenefitList, Map<Id, Member_Benefit__c> oldMemberBenefitMap) {
 
         for(Member_Benefit__c memberBenefit : newMemberBenefitList){
-            if(memberBenefit.Expiry_Date__c == NULL && memberBenefit.Status__c == 'Approved - Gift Card Platform Success' && oldMemberBenefitMap.get(memberBenefit.Id).Status__c != memberBenefit.Status__c){
+            if(memberBenefit.Expiry_Date__c == NULL && memberBenefit.Status__c == APPROVEDGIFTCARDPLATFORMSUCCESS && oldMemberBenefitMap.get(memberBenefit.Id).Status__c != memberBenefit.Status__c){
                 memberBenefit.Expiry_Date__c = System.today().addMonths(6);
             }
+            if(memberBenefit.Status__c == APPROVEDACTIVATED && oldMemberBenefitMap.get(memberBenefit.Id).Status__c == APPROVEDAWAITINGACTIVATION){
+                memberBenefit.Status__c = APPROVEDGIFTCARDPLATFORMPENDING;
+            }
+            if(memberBenefit.Gift_Card_Issued__c == TRUE && oldMemberBenefitMap.get(memberBenefit.Id).Gift_Card_Issued__c == FALSE){
+                memberBenefit.Status__c = APPROVEDGIFTCARDISSUED;
+            }
+            
         }
         
     }
