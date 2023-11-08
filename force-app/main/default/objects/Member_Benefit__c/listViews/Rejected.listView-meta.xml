@@ -6,6 +6,7 @@
     <columns>Member_Benefit_Program__c</columns>
     <columns>Status__c</columns>
     <columns>Rejected_Reason__c</columns>
+    <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>Status2__c</field>

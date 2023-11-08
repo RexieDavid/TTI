@@ -4,7 +4,7 @@
     <active>true</active>
     <errorConditionFormula>AND(
   ISPICKVAL( PRIORVALUE( Status__c ) , &apos;Approved - Awaiting Activation&apos;),
-  NOT( ISPICKVAL( Status__c , &apos;Approved - Activated&apos;) ) 
+  NOT( ISPICKVAL( Status__c , &apos;Approved - Activated&apos;)), NOT( ISPICKVAL( Status__c , &apos;Approved - Gift Card Pending Request&apos;)) 
 )</errorConditionFormula>
     <errorDisplayField>Status__c</errorDisplayField>
     <errorMessage>Can only select Approved - Activated</errorMessage>

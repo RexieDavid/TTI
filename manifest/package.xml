@@ -9,6 +9,7 @@
 		<members>BlackhawkAPIServiceMock</members>
 		<members>BlackhawkAPITest</members>
 		<members>BlackhawkClientProgramWrapper</members>
+		<members>BlackhawkEGiftWrapper</members>
 		<members>LogException</members>
 		<members>MemberBenefitTriggerHandler</members>
 		<members>MembershipLoyaltyController</members>
@@ -46,6 +47,7 @@
 		<members>Blackhawk_API_Settings__c.Real_time_eGift_Endpoint__c</members>
 		<members>Blackhawk_API_Settings__c.Return_Card_Number_and_PIN__c</members>
 		<members>Blackhawk_API_Settings__c.SYNCHRONOUS_ONLY__c</members>
+		<members>Blackhawk_API_Settings__c.eGift_Bulk_Code_Retrieval_Endpoint__c</members>
 		<members>Blackhawk_Card_Product__c.Client_Program_Id__c</members>
 		<members>Blackhawk_Card_Product__c.Content_Provider_Code__c</members>
 		<members>Blackhawk_Card_Product__c.Currency__c</members>
@@ -169,10 +171,14 @@
 	<types>
 		<members>Blackhawk_Card_Product__c.All</members>
 		<members>Eligible_Customer__c.All</members>
+		<members>Eligible_Product_Line_Item__c.All</members>
+		<members>Eligible_Products__c.All</members>
 		<members>Member_Benefit_Program__c.All</members>
+		<members>Member_Benefit_Program__c.All2</members>
 		<members>Member_Benefit__c.Activated</members>
 		<members>Member_Benefit__c.All</members>
 		<members>Member_Benefit__c.Approved_Awaiting_Activation</members>
+		<members>Member_Benefit__c.Further_Information_Required</members>
 		<members>Member_Benefit__c.Gift_Card_Issued</members>
 		<members>Member_Benefit__c.Platform_Error</members>
 		<members>Member_Benefit__c.Platform_Success</members>

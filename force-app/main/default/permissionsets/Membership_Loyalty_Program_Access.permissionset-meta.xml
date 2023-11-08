@@ -283,6 +283,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Member_Benefit__c.Gift_Card_Issued__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Member_Benefit__c.Gift_Card_Provider_Error_Message__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -344,6 +349,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Member_Benefit__c.Rejected_Reason__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Member_Benefit__c.Request_Id__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

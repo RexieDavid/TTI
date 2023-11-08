@@ -378,6 +378,7 @@ private class BlackhawkAPITest {
 		System.assertEquals(0, ct.TimesTriggered);
             
         MembershipLoyaltyController.WithoutShare membershipLoyaltyCtrl = new MembershipLoyaltyController.WithoutShare();
+        Test.setMock(HttpCalloutMock.class, new BlackhawkAPIServiceMock(200,'{"clientProgramNumber" : 95006278,"orderNumber" : "403066728","quantity" : 1,"eGifts" : [ {  "url" : "https://egift.certification.blackhawknetwork.com/egift?tid=657Q0RGVTJTZKC50AW2P8STYQC&gcm=n&gs=n&gw=n&eid=MX09RMR1WAC20ANLHQ900ZMLR8",  "contentProviderCode" : "ASOS_AUD_en_eGift",  "amount" : 20.00, "test" : "20"} ]}'));
         Database.executeBatch(new BlackhawkAPIBatch('retry',membershipLoyaltyCtrl.getMemberBenefitToResubmit()),10);
        
     }

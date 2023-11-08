@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status_Gift_Card_Issued</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+ISPICKVAL( PRIORVALUE( Status__c ) , &apos;Approved - Gift Card Issued&apos;),
+ISCHANGED( Status__c )
+)</errorConditionFormula>
+    <errorDisplayField>Status__c</errorDisplayField>
+    <errorMessage>Gift card already issued. Check the My Incentives tab in MY RYOBI to access your card</errorMessage>
+</ValidationRule>

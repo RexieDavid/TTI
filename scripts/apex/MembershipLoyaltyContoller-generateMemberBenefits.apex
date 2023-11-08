@@ -1,6 +1,6 @@
-//Kylie Tumulak Assets
 Set<String> assetIds = new Set<String>();
-assetIds.add('02iAD000001GrCfYAK');
+assetIds.add('02iAD000001HbAfYAK');
+assetIds.add('02iAD000001HbCHYA0');
 // assetIds.add('02iAD000001DLFmYAO');
 // assetIds.add('02iAD000001DLFnYAO');
 //assetIds.add('02iAD000001ClLxYAK');
@@ -12,8 +12,8 @@ System.debug('test >>> '+test);
 if(test!=NULL){
     System.debug('memberBenefitList size >>> '+test.memberBenefitList);
     System.debug('assetList size >>> '+test.assetList);
-    if(test.memberBenefitList != NULL)insert(test.memberBenefitList);
-    if(test.assetList != NULL)update(test.assetList);    
+    // if(test.memberBenefitList != NULL)insert(test.memberBenefitList);
+    // if(test.assetList != NULL)update(test.assetList);    
 }
 
 BlackhawkAPISchedule bhAPISched = new BlackhawkAPISchedule();

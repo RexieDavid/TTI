@@ -7,6 +7,7 @@
     <columns>Status__c</columns>
     <columns>Gift_Card_Request_Counter__c</columns>
     <columns>Gift_Card_Provider_Error_Message__c</columns>
+    <columns>CREATED_DATE</columns>
     <filterScope>Everything</filterScope>
     <filters>
         <field>Status2__c</field>

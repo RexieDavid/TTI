@@ -160,30 +160,6 @@ public class BlackhawkAPIService {
         return httpResponse; 
     }
 
-    // public static HttpResponse getEGiftBulkCodeRetrieval(){
-    //     Blackhawk_API_Settings__c bhAPISetting = getActiveBlackhawkApiSetting();
-    //     bhAPISetting = getActiveBlackhawkApiSetting();
-    //     Http httpInstance = new Http();
-    //     HttpRequest httpRequestInstance = new HttpRequest();
-    //     httpRequestInstance.setTimeout(120000);
-    //     httpRequestInstance.setEndpoint('callout:BlackhawkAPI'+bhAPISetting.eGift_Bulk_Code_Retrieval_Endpoint__c+'?requestId='+'a7fOY000000DeFlYAK0'+'&clientProgramNumber='+bhAPISetting.Client_Program_Id__c);
-    //     httpRequestInstance.setClientCertificateName(bhAPISetting.Client_Certificate_Name__c);
-    //     httpRequestInstance.setHeader('Content-Type','application/json');
-    //     httpRequestInstance.setHeader('Merchantid',bhAPISetting.Merchant_Id__c);
-    //     httpRequestInstance.setHeader('Requestid','a7fOY000000DeFlYAK0');
-    //     httpRequestInstance.setHeader('millisecondsToWait',bhAPISetting.Milliseconds_To_Wait__c);
-    //     httpRequestInstance.setHeader('SYNCHRONOUS_ONLY',String.valueOf(bhAPISetting.SYNCHRONOUS_ONLY__c));
-    //     httpRequestInstance.setMethod('GET');
-    //     HttpResponse httpResponse = httpInstance.send(httpRequestInstance); 
-    //     String statusCode = String.valueOf(httpResponse.getStatusCode());
-    //     if(statusCode == '200'){
-    //         RealTimeEgiftBulkResponseWrapper rtebrWrap;
-    //         rtebrWrap = new RealTimeEgiftBulkResponseWrapper(false,statusCode,BlackhawkEGiftWrapper.parse(httpResponse.getBody()),null);
-    //         System.debug(rtebrWrap);
-    //     }
-    //     return httpResponse; 
-    // }
-
     public static BlackhawkEGiftRequestWInputWrapper getBlackhawkEGiftRequestWInputWrapper(Member_Benefit__c memberBenefitRecord){
         String counter = (memberBenefitRecord.Gift_Card_Request_Counter__c != NULL) ? String.valueOf(memberBenefitRecord.Gift_Card_Request_Counter__c) : '0';
         return new BlackhawkEGiftRequestWInputWrapper(memberBenefitRecord.Request_Id__c, memberBenefitRecord.Name+'-'+counter, memberBenefitRecord.Member_Benefit_Program__r.Gift_Card_Value__c, memberBenefitRecord.Member_Benefit_Program__r.Blackhawk_Catalog_Lookup__r.Content_Provider_Code__c); 

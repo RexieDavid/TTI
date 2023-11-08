@@ -2,6 +2,7 @@
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>All1</fullName>
     <columns>NAME</columns>
+    <columns>CREATED_DATE</columns>
     <columns>Module_Name__c</columns>
     <columns>Class_Name__c</columns>
     <columns>Method_Name__c</columns>
@@ -12,6 +13,11 @@
         <field>Class_Name__c</field>
         <operation>equals</operation>
         <value>BlackhawkAPIService</value>
+    </filters>
+    <filters>
+        <field>CREATED_DATE</field>
+        <operation>equals</operation>
+        <value>TODAY</value>
     </filters>
     <label>BlackhawkAPI Errors</label>
 </ListView>
