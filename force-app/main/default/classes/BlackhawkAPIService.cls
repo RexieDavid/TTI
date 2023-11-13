@@ -80,11 +80,11 @@ public class BlackhawkAPIService {
         return httpResponse;        
     }
 
-    public static HttpResponse getCatalogByKey(String clientProgramId){
+    public static HttpResponse getCatalogByKey(){
         Blackhawk_API_Settings__c bhAPISetting = getActiveBlackhawkApiSetting();
         Http httpInstance = new Http();
         HttpRequest httpRequestInstance = new HttpRequest();
-        httpRequestInstance.setEndpoint(bhAPISetting.Catalog_API_Endpoint__c+'?clientProgramId='+clientProgramId);
+        httpRequestInstance.setEndpoint(bhAPISetting.Catalog_API_Endpoint__c+'?clientProgramId='+bhAPISetting.Client_Program_Id__c);
         httpRequestInstance.setClientCertificateName(bhAPISetting.Client_Certificate_Name__c);
         httpRequestInstance.setHeader('Content-Type','application/json');
         httpRequestInstance.setHeader('Merchantid',bhAPISetting.Merchant_Id__c);
@@ -145,8 +145,6 @@ public class BlackhawkAPIService {
         httpRequestInstance.setMethod('GET');
         HttpResponse httpResponse = httpInstance.send(httpRequestInstance); 
         String statusCode = String.valueOf(httpResponse.getStatusCode());
-        // System.debug(statusCode);
-        // System.debug(httpResponse.getBody());
         System.debug('Request >>> ');
         System.debug('Current Date Time = ' + System.Now().format());
         System.debug('Endpoint = ' + httpRequestInstance.getEndpoint());
