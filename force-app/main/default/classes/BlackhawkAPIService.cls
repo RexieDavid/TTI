@@ -69,6 +69,14 @@ public class BlackhawkAPIService {
         httpRequestInstance.setHeader('Requestid',String.valueOf(DateTime.now().millisecond()));
         httpRequestInstance.setMethod('GET');
         HttpResponse httpResponse = httpInstance.send(httpRequestInstance);  
+        System.debug('Request >>> ');
+        System.debug('Current Date Time = ' + System.Now().format());
+        System.debug('Endpoint = ' + httpRequestInstance.getEndpoint());
+        System.debug('Header Content-Type = ' + httpRequestInstance.getHeader('Content-Type'));
+        System.debug('Header Merchantid = ' + httpRequestInstance.getHeader('Merchantid'));
+        System.debug('Header Requestid = ' + httpRequestInstance.getHeader('Requestid'));
+        System.debug('Request Body = ' + httpRequestInstance.getBody());
+        System.debug('Response Body = ' + httpResponse.getBody());
         return httpResponse;        
     }
 
