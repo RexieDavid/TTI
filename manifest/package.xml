@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
-		<members>MemberBenefitTriggerHandler</members>
+		<members>BlackhawkAPIService</members>
 		<members>BlackhawkAPITest</members>
 		<name>ApexClass</name>
 	</types>
-	<!--<types>
-		<members>MemberBenefitTrigger</members>
-		<name>ApexTrigger</name>
-	</types>
-	<types>
-		<members>Member_Benefit__c.Expiry_Date__c</members>
-		<name>CustomField</name>
-	</types>-->
 	<version>58.0</version>
 </Package>
