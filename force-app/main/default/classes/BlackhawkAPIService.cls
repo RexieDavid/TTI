@@ -8,6 +8,7 @@ public class BlackhawkAPIService {
     public static final String SUCCESSCODE = '201';
     public static final String SUCCESSEGIFTCODE = '200';
     public static final String RETRYSTATUSCODE = 'Status Code: 5';
+    public static final String REQUESCANNOTBEPROCESSEDATTHISTIME = 'Request cannot be processed at this time. Reference Code VEL';
 
     public class BlackhawkApiServiceException extends Exception {} 
     

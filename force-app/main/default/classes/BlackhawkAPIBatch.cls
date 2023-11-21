@@ -40,11 +40,15 @@ global class BlackhawkAPIBatch implements database.Batchable<sObject>,Database.A
 
         for(Member_Benefit__c memberBenefit : memberBenefitList){
             if(LIMITS.getCallouts() < LIMITS.getLimitCallouts()){
+                System.debug('integAction >>> '+integAction);
                 if(integAction == 'submit' && memberBenefit.Member_Benefit_Program__r.Gift_Card_Value__c != NULL && memberBenefit.Member_Benefit_Program__r.Blackhawk_Catalog_Lookup__c != NULL && memberBenefit.Request_Id__c == NULL){
+                    System.debug('submit');
                     memberBenefit = membershipControllerElevContext.updateMemberBenefitFields(memberBenefit,  BlackhawkAPIService.submitRealTimeEgiftBulk(memberBenefit));
                     memberBenefitToUpdateList.add(memberBenefit);
                 }
-                if(integAction == 'retry' && memberBenefit.Request_Id__c != NULL && memberBenefit.Gift_Card_Provider_Error_Message__c != NULL && memberBenefit.Gift_Card_Provider_Error_Message__c.containsIgnoreCase(BlackhawkAPIService.RETRYSTATUSCODE)){
+                else if(integAction == 'retry' && memberBenefit.Request_Id__c != NULL && memberBenefit.Gift_Card_Provider_Error_Message__c != NULL 
+                && (memberBenefit.Gift_Card_Provider_Error_Message__c.containsIgnoreCase(BlackhawkAPIService.RETRYSTATUSCODE) || memberBenefit.Gift_Card_Provider_Error_Message__c.containsIgnoreCase(BlackhawkAPIService.REQUESCANNOTBEPROCESSEDATTHISTIME))){
+                    System.debug('retry');
                     Member_Benefit__c memberBenefitInstance = membershipControllerElevContext.updateMemberBenefitFields(memberBenefit, BlackhawkAPIService.getEGiftBulkCodeRetrievalInfo(memberBenefit).successEGiftWrap);
                     System.debug('not a new request >>> ');
                     if(memberBenefitInstance == NULL){
@@ -52,6 +56,10 @@ global class BlackhawkAPIBatch implements database.Batchable<sObject>,Database.A
                         memberBenefit = membershipControllerElevContext.updateMemberBenefitFields(memberBenefit,  BlackhawkAPIService.submitRealTimeEgiftBulk(memberBenefit));
                     } 
                     memberBenefitToUpdateList.add(memberBenefit);
+                }
+                else{
+                    System.debug('integAction >>> '+integAction);
+                    System.debug('no action');
                 }
             }
         }
