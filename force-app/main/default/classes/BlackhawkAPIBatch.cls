@@ -47,7 +47,8 @@ global class BlackhawkAPIBatch implements database.Batchable<sObject>,Database.A
                     memberBenefitToUpdateList.add(memberBenefit);
                 }
                 else if(integAction == 'retry' && memberBenefit.Request_Id__c != NULL && memberBenefit.Gift_Card_Provider_Error_Message__c != NULL 
-                && (memberBenefit.Gift_Card_Provider_Error_Message__c.containsIgnoreCase(BlackhawkAPIService.RETRYSTATUSCODE) || memberBenefit.Gift_Card_Provider_Error_Message__c.containsIgnoreCase(BlackhawkAPIService.REQUESCANNOTBEPROCESSEDATTHISTIME))){
+                && (memberBenefit.Gift_Card_Provider_Error_Message__c.containsIgnoreCase(BlackhawkAPIService.RETRYSTATUSCODE) 
+                || memberBenefit.Gift_Card_Provider_Error_Message__c.containsIgnoreCase(BlackhawkAPIService.REQUESCANNOTBEPROCESSEDATTHISTIME))){
                     System.debug('retry');
                     Member_Benefit__c memberBenefitInstance = membershipControllerElevContext.updateMemberBenefitFields(memberBenefit, BlackhawkAPIService.getEGiftBulkCodeRetrievalInfo(memberBenefit).successEGiftWrap);
                     System.debug('not a new request >>> ');

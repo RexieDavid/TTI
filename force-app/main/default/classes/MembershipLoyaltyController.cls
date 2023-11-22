@@ -487,7 +487,9 @@ public with sharing class MembershipLoyaltyController {
 
             for(TTI_Error_Log__c errorLog : ttiErrorLog){
                 
-                if(errorLog.Source_Record_Id__c != NULL && errorLog.TTI_Message__c.containsIgnoreCase(BlackhawkAPIService.RETRYSTATUSCODE)){
+                if(errorLog.Source_Record_Id__c != NULL 
+                && (errorLog.TTI_Message__c.containsIgnoreCase(BlackhawkAPIService.RETRYSTATUSCODE) 
+                || errorLog.TTI_Message__c.containsIgnoreCase(BlackhawkAPIService.REQUESCANNOTBEPROCESSEDATTHISTIME))){
                     memberBenefitIds.add(errorLog.Source_Record_Id__c);
                 }
 
