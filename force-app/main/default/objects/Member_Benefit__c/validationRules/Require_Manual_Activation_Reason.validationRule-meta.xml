@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Require_Manual_Activation_Reason</fullName>
-    <active>true</active>
-    <errorConditionFormula>AND(ISBLANK(TEXT(Manual_Activation_Reason__c)), ISPICKVAL( Status__c , &apos;Approved - Activated&apos;), CONTAINS($Profile.Name, &apos;~ Customer Service&apos;))</errorConditionFormula>
-    <errorDisplayField>Manual_Activation_Reason__c</errorDisplayField>
-    <errorMessage>Complete this field.</errorMessage>
-</ValidationRule>
