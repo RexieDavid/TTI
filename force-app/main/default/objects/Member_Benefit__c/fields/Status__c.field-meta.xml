@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Division__c</fullName>
+    <fullName>Status__c</fullName>
     <externalId>false</externalId>
-    <label>Division</label>
+    <label>Status</label>
     <required>false</required>
+    <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
-        <restricted>true</restricted>
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>Consumer</fullName>
+                <fullName>Submitted</fullName>
                 <default>false</default>
-                <label>Consumer</label>
+                <label>Submitted</label>
             </value>
             <value>
-                <fullName>Floorcare</fullName>
+                <fullName>Further Information Required</fullName>
                 <default>false</default>
-                <label>Floorcare</label>
+                <label>Further Information Required</label>
             </value>
             <value>
-                <fullName>Industrial</fullName>
+                <fullName>Approved - Awaiting Activation</fullName>
                 <default>false</default>
-                <label>Industrial</label>
+                <label>Approved - Awaiting Activation</label>
             </value>
             <value>
-                <fullName>Mixed Bag</fullName>
+                <fullName>Approved - Activated</fullName>
                 <default>false</default>
-                <label>Mixed Bag</label>
+                <label>Approved - Activated</label>
             </value>
             <value>
-                <fullName>TTI</fullName>
+                <fullName>Rejected</fullName>
                 <default>false</default>
-                <label>TTI</label>
+                <label>Rejected</label>
             </value>
         </valueSetDefinition>
     </valueSet>
