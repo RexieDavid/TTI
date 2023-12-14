@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status_Awaiting_Activation</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+  ISCHANGED(Status__c), 
+  ISPICKVAL( PRIORVALUE( Status__c ) , &apos;Approved - Awaiting Activation&apos;),
+  NOT( ISPICKVAL( Status__c , &apos;Approved - Activated&apos;)), 
+  NOT( ISPICKVAL( Status__c , &apos;Activation Link Expired&apos;)),
+  NOT( ISPICKVAL( Status__c , &apos;Approved - Gift Card Pending Request&apos;)) 
+)</errorConditionFormula>
+    <errorDisplayField>Status__c</errorDisplayField>
+    <errorMessage>Can only select Approved - Activated</errorMessage>
+</ValidationRule>

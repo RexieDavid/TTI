@@ -1,67 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <types>
-        <members>CaseTriggerHandlerTest</members>
-        <name>ApexClass</name>
-    </types>
-    <!--<types>
-        <members>CaseTriggerHandler</members>
-        <members>CaseTriggerHandler</members>
-        <name>ApexClass</name>
-    </types>
-    <types>
-        <members>Division_Mapping__c</members>
-        <name>CustomObject</name>
-    </types>
-    <types>
-        <members>Division_Mapping__c.Active__c</members>
-        <members>Division_Mapping__c.Division__c</members>
-        <members>Division_Mapping__c.Group__c</members>
-        <members>Division_Mapping__c.Group_Code__c</members>
-        <name>CustomField</name>
-    </types>
-    <types>
-        <members>Division_Mapping__c-Division Mapping Layout</members>
-        <name>Layout</name>
-    </types>
-    <types>
-        <members>Division_Mapping__c.Active_Division_Mappings</members>
-        <members>Division_Mapping__c.Consumer_Division_Mappings</members>
-        <members>Division_Mapping__c.Other_Division_Mappings</members>
-        <members>Division_Mapping__c.Industrial_Division_Mappings</members>
-        <members>Division_Mapping__c.Mixed_Bag_Division_Mappings</members>
-        <members>Division_Mapping__c.Copy_of_Mixed_Bag_Division_Mappings</members>
-        <name>ListView</name>
-    </types>
 
-    Industrial_Brands
-Floorcare_Brands<types>
-        <members>*</members>
-        <name>ApexComponent</name>
-    </types>
     <types>
-        <members>*</members>
-        <name>ApexPage</name>
+        <members>MemberBenefitTriggerHandler</members>
+        <name>ApexClass</name>
     </types>
+    
     <types>
-        <members>*</members>
-        <name>ApexTestSuite</name>
-    </types>
-    <types>
-        <members>*</members>
+        <members>MemberBenefitTrigger</members>
         <name>ApexTrigger</name>
     </types>
+
     <types>
-        <members>*</members>
-        <name>AuraDefinitionBundle</name>
+        <members>Member_Benefit__c.Activation_Validity_Expiry_Date__c</members>
+        <members>Member_Benefit__c.Activation_Validity_Expired_Today__c</members>
+        <name>CustomField</name>
     </types>
+
     <types>
-        <members>*</members>
-        <name>LightningComponentBundle</name>
+        <members>Member_Benefit_Set_Status_to_Activation_Link_Expired</members>
+        <name>Flow</name>
     </types>
+
     <types>
-        <members>*</members>
-        <name>StaticResource</name>
-    </types>-->
+        <members>Member_Benefit__c-Member Benefit Layout</members>
+        <name>Layout</name>
+    </types>
+
+    <types>
+        <members>Member_Benefit__c.Status_Awaiting_Activation</members>
+        <name>ValidationRule</name>
+    </types>
+
     <version>58.0</version>
 </Package>
