@@ -1,0 +1,150 @@
+:host {
+    --lwc-paletteOrange: #fb8f10;
+    /* orange; */
+    --lwc-paletteDarkOrange: rgb(193, 125, 0);
+    --lwc-paletteWhite: white;
+    --lwc-fontSizeXsmall: 0.625rem;
+    --lwc-buttonSize: 0.875rem;
+    --lwc-badgeBorderRadius: .2rem;
+}
+
+.main-card {
+    /* width: 50vw; */
+    --slds-c-button-neutral-color-background: var(--lwc-paletteOrange);
+    --slds-c-button-text-color: var(--lwc-paletteWhite);
+    --slds-c-button-text-color-active: var(--lwc-paletteWhite);
+    --slds-c-button-text-color-hover: var(--lwc-paletteWhite);
+    --slds-c-button-neutral-color-background-active: var(--lwc-paletteDarkOrange);
+    --slds-c-button-neutral-color-background-hover: var(--lwc-paletteDarkOrange);
+    /* height: 100vh; */
+    min-height: -webkit-fill-available;
+} 
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.message {
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.custom-button {
+    color: white !important;
+    font-size: 1rem !important;
+    padding: 1.5rem 1rem !important;
+}
+
+.header-div {
+    background-color: black;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    /* height: 8vh; */
+}
+
+.body-div {
+    /* height: 92vh; */
+}
+
+.cls-1 {
+    fill: #fff;
+}
+
+.font{
+    font-family: "Metric Semibold", "Helvetica Neue LT Std Medium Condensed", "Helvetica Neue Condensed", "Metric Light", "Helvetica Neue", "Helvetica", sans-serif;
+}
+
+.sub-header{
+    width: 90vw;
+}
+
+.status-header{
+    font-size: var(--lwc-buttonSize,0.875rem);
+}
+
+h2 {
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.p-button-sub-label{
+    font-size: var(--lwc-fontSizeXsmall);
+}
+
+.input {
+    --lwc-colorTextPlaceholder:black;
+    --slds-c-input-color-border-focus: orange;
+    --slds-c-input-shadow-focus: 0 0 2px orange;
+}
+
+/* .input-date {
+    max-width:100%;
+    -webkit-appearance : none;
+} */
+
+/* .badge-green { */
+    /* --slds-c-badge-color-background: #53e253;
+    --slds-c-badge-text-color: white;
+    --slds-c-badge-font-size: 1rem;
+    --slds-c-badge-radius-border: 10rem;
+    --slds-c-badge-line-height: 19; */
+
+    /* --slds-c-badge-color-background: #53e253;
+    --slds-c-badge-text-color: white;
+    --slds-c-badge-font-size: 1.1rem;
+    --slds-c-badge-radius-border: 5px;
+} */
+
+.badge {
+    font-size: var(--lwc-buttonSize,0.875rem);
+    width: 85%;
+    justify-content: center;
+    --slds-c-badge-radius-border: var(--lwc-badgeBorderRadius,.25rem);
+}
+
+.badge-green {
+    --slds-c-badge-color-background: #cee741;
+}
+.badge-red {
+    --slds-c-badge-color-background: #f67e67;
+}
+.badge-yellow {
+    --slds-c-badge-color-background: #eebd10;
+}
+.badge-gray {
+    --slds-c-badge-color-background: #e6e6e6;
+    color: currentColor;
+}
+
+table, th, td {
+    border: 1px solid #9f9f9f;
+    border-collapse: collapse;
+    font-weight: bold;
+}
+
+table {
+    table-layout: fixed; 
+    width: 90vw;
+}
+
+.contact-us-box-text {
+    font-size: var(--lwc-buttonSize,0.875rem);
+    font-weight: bold;
+    line-height: 80%;
+}
+
+.contact-us-sub-label{
+    font-size: var(--lwc-fontSizeXsmall);
+    font-weight: normal;
+}
+
+.contact-us-box{
+    border-radius: 20px;
+    border-color: currentColor;
+}
+

@@ -1,0 +1,240 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <article class="slds-card main-card">
+        <div class="slds-grid header-div">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <svg id="AW" xmlns="http://www.w3.org/2000/svg" width="75" viewBox="0 0 850.39 325.98"
+                        class="slds-var-m-around_small">
+                        <title>AEG_Logo_White_CMYK</title>
+                        <path class="cls-1"
+                            d="M90.5,3.66l19.13,48.87L4.25,318h41.8l29.9-75.31H184L213.5,318h85L175.5,3.66Zm-.21,202.86,40.08-101,39.52,101Z" />
+                        <polygon class="cls-1"
+                            points="414.39 177.43 513.78 177.43 528.36 140.7 414.39 140.7 414.39 41.5 539.05 41.5 554.07 3.66 334.8 3.66 334.8 317.96 542.29 317.96 557.31 280.12 414.39 280.12 414.39 177.43" />
+                        <path class="cls-1"
+                            d="M719.44,177.43h52.46V283.78a80.22,80.22,0,0,1-21.07,2.73c-70.72,0-91.4-65.54-91.4-123.52,0-55.63,17.75-121.49,86.12-121.49h72.86l15-37.84H737c-93.64,0-159.72,64.7-159.72,159.34,0,93.46,63.48,159.34,161.9,159.34,49,0,80.82-9.34,107-18.47V140.7H734Z" />
+                    </svg>
+                </div>
+            </header>
+        </div>
+
+        <div class="slds-card__body slds-card__body_inner body-div">
+            <!-- <h2 class="slds-align_absolute-center slds-p-vertical--x-small">AEG Warranty Repair Claim</h2>
+            <div class="slds-align_absolute-center sub-header">
+                <p class="slds-text-align--center">If you have a MY AEG account, use the contact details you used when creating an account. This will allow us to automatically check your manufacturer warranty eligibility.</p>
+            </div> -->
+            <div class="slds-grid slds-grid_vertical">
+
+                <div class="slds-col slds-size_12-of-12">
+                    <h2 class="slds-align_absolute-center slds-p-vertical--x-small">AEG Warranty Repair Claim</h2>
+                </div>
+                <template lwc:if={firstScreen}>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-align_absolute-center sub-header">
+                            <p class="slds-text-align--center">If you have a MY AEG account, use the contact details you
+                                used when creating an account. This will allow us to automatically check your
+                                manufacturer
+                                warranty eligibility.</p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--small">
+                            <lightning-input class="input" type="text" variant="label-hidden"
+                                placeholder="Store code (provided by Bunnings / Repair Agent)*"></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--x-small">
+                            <lightning-input disabled type="text" variant="label-hidden"
+                                placeholder="Store name & location"></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--x-small">
+                            <lightning-input class="input" type="text" variant="label-hidden"
+                                placeholder="First Name *"></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--x-small">
+                            <lightning-input class="input" type="text" variant="label-hidden"
+                                placeholder="Last Name *"></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--x-small">
+                            <lightning-input class="input" type="email" variant="label-hidden"
+                                placeholder="Email *"></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--x-small">
+                            <lightning-input class="input" type="text" variant="label-hidden"
+                                placeholder="Mobile *"></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--x-small">
+                            <lightning-input class="input" type="text" variant="label-hidden"
+                                placeholder="Tool Model Number *"></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--x-small">
+                            <lightning-input disabled type="text" variant="label-hidden"
+                                placeholder="Tool Model Name"></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--x-small">
+                            <lightning-input type="date" class="input-date" variant="label-hidden"
+                                placeholder="Purchase Date *"></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--x-small">
+                            <lightning-input class="input" type="text" variant="label-hidden"
+                                placeholder="Issue"></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-var-p-top_large">
+                            <button label="submit"
+                                class="slds-button slds-button_neutral slds-button_stretch slds-text-title_bold">SUBMIT</button>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12 slds-align_absolute-center slds-var-p-top_large">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">DATE PURCHASED</td>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">01/08/22</td>
+                                </tr>
+                                <tr>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">DROP OFF STORE</td>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">BUNNINGS VERMONT</td>
+                                </tr>
+                                <tr>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">FIRST NAME</td>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">JIM</td>
+                                </tr>
+                                <tr>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">SURNAME</td>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">SMITH</td>
+                                </tr>
+                                <tr>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">EMAIL</td>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">JIM.SMITH@GMAIL.COM</td>
+                                </tr>
+                                <tr>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">MOBILE</td>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">0400 000 000</td>
+                                </tr>
+                                <tr>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">TOOL MODEL NUMBER</td>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">GM18EX2-0</td>
+                                </tr>
+                                <tr>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">TOOL NAME</td>
+                                    <td class="slds-var-p-left_x-small slds-var-p-vertical_xx-small">AEG 18V WORKSTIE BLOWER</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--small slds-align_absolute-center status-header">
+                            <b class="slds-text-align--center">Claim Status:</b>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--small slds-align_absolute-center status-header">
+                            <b class="slds-text-align--center">Your Claim Number:</b>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--small slds-align_absolute-center status-header">
+                            <b class="slds-text-align--center">Claim Details:</b>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top_x-small slds-align_absolute-center status-header">
+                            <div class="slds-box contact-us-box">
+                                <div class="contact-us-box-text"><a>1800 AEG PWR (1800 234 797)</a>
+                                <br><span class="contact-us-sub-label">8am-5pm Monday to Friday</span>
+                                </div> 
+                                <div class="slds-p-top--small status-header"><b><a>Contact Us Form</a></b></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--small slds-align_absolute-center">
+                            <lightning-badge label="ELIGIBLE FOR REPAIR"
+                                class="slds-badge_inverse badge badge-green slds-button--icon-container-more"></lightning-badge>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--small slds-align_absolute-center">
+                            <lightning-badge label="ELIGIBLE FOR REPLACEMENT"
+                                class="slds-badge_inverse badge badge-green slds-button--icon-container-more"></lightning-badge>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--small slds-align_absolute-center">
+                            <lightning-badge label="OUTSIDE MANUFACTURER'S WARRANTY"
+                                class="slds-badge_inverse badge badge-red slds-button--icon-container-more"></lightning-badge>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--small slds-align_absolute-center">
+                            <lightning-badge label="FURTHER VERIFICATION REQUIRED"
+                                class="slds-badge_inverse badge badge-yellow slds-button--icon-container-more"></lightning-badge>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--small slds-align_absolute-center">
+                            <lightning-badge label="123456"
+                                class="slds-badge_inverse badge badge-gray slds-button--icon-container-more"></lightning-badge>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--small slds-align_absolute-center">
+                            <lightning-badge label="Need further assistance?"
+                                class="slds-badge_inverse badge badge-gray slds-button--icon-container-more"></lightning-badge>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-p-top--large">
+                            <p class="slds-text-align--center p-button-sub-label"><i>By clicking "SUBMIT", you
+                                    acknowledge
+                                    that you have read and agree to the Warranty Terms & Conditions and Privacy
+                                    Policy.</i>
+                            </p>
+                        </div>
+                    </div>
+
+                </template>
+                <!-- <template lwc:elseif={secondScreen}>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-align_absolute-center sub-header">
+                            <b class="slds-text-align--center">Claim Status:</b>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-align_absolute-center sub-header slds-p-top--x-small">
+                            <span class="slds-badge badge-green slds-p-left_large slds-p-right--large">ELIGIBLE FOR REPAIR</span>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_12-of-12">
+                        <div class="slds-box">
+                            <p>ELIGIBLE FOR REPAIR</p>
+                        </div>
+                    </div>
+                </template> -->
+            </div>
+        </div>
+
+    </article>
+</template>
