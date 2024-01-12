@@ -1,5 +1,0 @@
-<aura:event type="APPLICATION" description="Event template">
-	<aura:attribute name="Target" type="String"/>
-	<aura:attribute name="Record" type="Object"/>
-	<aura:attribute name="RecordJSON" type="String"/>
-</aura:event>

@@ -1,9 +1,0 @@
-<aura:component>    
-    <aura:attribute name="selectedValue" type="Object" /> 
-    <aura:registerEvent name="selectedValEvent" type="c:SelectedValueEvent"/>
-    <div class="slds-media__body">
-        <div class="slds-input-has-icon slds-input-has-icon--right">
-            <div class="slds-lookup__result-text" onclick="{!c.handleSelection}">{!v.selectedValue.label}</div>   
-        </div>
-    </div>    
-</aura:component>

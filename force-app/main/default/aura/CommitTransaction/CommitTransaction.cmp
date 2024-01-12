@@ -1,2 +1,0 @@
-<aura:component implements="lightning:availableForFlowActions" access="global">
-</aura:component>

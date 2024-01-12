@@ -1,3 +1,0 @@
-<design:component>
-    <design:attribute name="prodSearchPlaceholder" label="Product search placeholder" required="true" default=""  />
-</design:component>

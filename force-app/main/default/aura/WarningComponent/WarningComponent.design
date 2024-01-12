@@ -1,7 +1,0 @@
-<design:component label="Warning Component">
-    <design:attribute name="showWarning" default="False"/>
-    <design:attribute name="warningHeader" default=""/>
-    <design:attribute name="warningMessage" default=""/>
-    <design:attribute name="theme" default="slds-theme_default"/>
-    <design:attribute name="contactUsLink" default=""/>
-</design:component>

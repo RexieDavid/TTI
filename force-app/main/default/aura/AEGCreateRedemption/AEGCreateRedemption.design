@@ -1,5 +1,0 @@
-<design:component>
-    <design:attribute name="countryListString" default="Australia"/>
-    <design:attribute name="confirmationHeader" label="Confirmation Header" />
-    <design:attribute name="redemptionPopupHeader" label="Redemption Popup Header" />
-</design:component>

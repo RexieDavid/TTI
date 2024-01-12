@@ -1,4 +1,0 @@
-<design:component >
-    <design:attribute name="claimNumber" label="claimNumber"/>
-    <design:attribute name="type" label="type"/>
-</design:component>

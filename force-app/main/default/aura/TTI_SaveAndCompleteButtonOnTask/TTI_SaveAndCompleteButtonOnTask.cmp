@@ -1,4 +1,0 @@
-<aura:component controller="TTI_SaveAndCompleteButtonOnTaskClass" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" >
-	<aura:handler name="init" value="{!this}" action="{!c.updateStatus}"/>
-    <aura:attribute name="recordId" type="String" />
-</aura:component>

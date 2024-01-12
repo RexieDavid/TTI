@@ -1,4 +1,0 @@
-<aura:event type="APPLICATION">
-    <aura:attribute name="customerInformation" type="Object"/>
-    <aura:attribute name="isSearch" type="Boolean" />
-</aura:event>

@@ -1,5 +1,0 @@
-<design:component>
-    <design:attribute name="firstPageSubheader" label="First Page Subheader" />
-    <design:attribute name="secondPageSubheader" label="Second Page Subheader" />
-    <design:attribute name="localBunningsSearchPlaceholder" label="Local Bunnings Search Placeholder" />
-</design:component>

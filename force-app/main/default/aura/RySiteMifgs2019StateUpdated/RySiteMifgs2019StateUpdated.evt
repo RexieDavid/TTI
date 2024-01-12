@@ -1,4 +1,0 @@
-<aura:event type="COMPONENT" description="Fired whenever the dispatcher needs to get updated with the latest visibility state of its components">
-    <aura:attribute name="state" type="String" />
-    <aura:attribute name="personAccountId" type="String" />
-</aura:event>

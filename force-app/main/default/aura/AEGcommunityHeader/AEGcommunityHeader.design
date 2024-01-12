@@ -1,9 +1,0 @@
-<design:component >
-	<design:attribute name="PageName" label="Page Name" description="Page name..." />
-    
-    <design:attribute name="UseStatic" label="Use Static" description="Use static values set in designer"/>
-    <design:attribute name="StaticHeader" label="Static Header" description="Static Header"/>
-    <design:attribute name="StaticTitle" label="Static Title" description="Static Title"/>
-    <design:attribute name="HasImage" label="Has Image" description="Has Image"/>
-    
-</design:component>

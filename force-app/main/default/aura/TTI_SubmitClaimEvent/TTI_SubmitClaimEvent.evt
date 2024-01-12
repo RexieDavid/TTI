@@ -1,3 +1,0 @@
-<aura:event type="APPLICATION" description="To pass address from predictivesearch" >
- 	
-</aura:event>

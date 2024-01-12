@@ -1,5 +1,0 @@
-<aura:event type="APPLICATION" description="To pass selected value from list view" >
- 	<aura:attribute name="selectedValue" type="string" />
-    
-    
-</aura:event>
